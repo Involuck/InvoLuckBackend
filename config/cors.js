@@ -5,6 +5,10 @@ const allowedOrigins = (process.env.CORS_ORIGINS || "").split(",").filter(Boolea
 
 const corsOptions = {
     origin: (origin, callback) => {
+        // Allow requests without origin (direct browser access)
+        if (!origin) {
+            return callback(null, true);
+        }
 
         if (allowedOrigins.includes(origin)) {
             return callback(null, true);

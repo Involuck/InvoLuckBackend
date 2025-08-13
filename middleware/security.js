@@ -2,16 +2,27 @@ import { isDevelopment } from '../config/environment.js';
 
 const allowedOrigins = (process.env.CORS_ORIGINS || "").split(",").filter(Boolean);
 
+const publicRoutes = [
+    '/',
+    '/favicon.ico',
+    '/robots.txt',
+    '/health-check',
+];
+
 const securityMiddleware = (req, res, next) => {
     const origin = req.get("origin");
     const apiKey = req.get("X-API-Key");
     const userAgent = req.get("User-Agent");
+    const path = req.path;
 
     if (isDevelopment()) {
         console.log(`📝 ${req.method} ${req.path} from ${origin || 'No origin'}`);
     }
 
-    // block user-agents sospechosos
+    if (publicRoutes.includes(path)) {
+        return next();
+    }
+    // block suspicious user-agents
     if (userAgent && /bot|crawler|spider|scraper/i.test(userAgent)) {
         return res.status(403).json({
             error: "Access denied",
