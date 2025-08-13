@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { validateEnvironment } from './config/environment.js';
 import connectDB from './config/db.js';
@@ -10,13 +12,8 @@ import errorHandler from './middleware/errorHandler.js';
 
 import routes from './routes/index.js';
 
-import path from "path";
-import { fileURLToPath } from "url";
-
 dotenv.config();
-
 validateEnvironment();
-
 connectDB();
 
 const app = express();
@@ -32,19 +29,18 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/", (req, res) => {
-  const acceptsHTML = req.headers.accept && req.headers.accept.includes("text/html");
-
+app.get('/', (req, res) => {
+  const acceptsHTML = req.headers.accept?.includes('text/html');
   if (acceptsHTML) {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-  } else {
-    res.json({
-      message: "🚀 InvoLuck API is running...",
-      version: "1.0.0",
-      note: "API routes are protected by security middleware"
-    });
+    return res.sendFile(path.join(__dirname, 'public', 'index.html'));
   }
+  return res.json({
+    message: '🚀 InvoLuck API is running...',
+    version: '1.0.0',
+    note: 'API routes are protected by security middleware'
+  });
 });
+
 app.get('/health-check', (req, res) => {
   res.json({
     status: 'OK',
@@ -53,9 +49,8 @@ app.get('/health-check', (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   });
 });
-app.use(securityMiddleware);
 
-app.use('/api', routes);
+app.use('/api', securityMiddleware, routes);
 
 app.use(errorHandler);
 
