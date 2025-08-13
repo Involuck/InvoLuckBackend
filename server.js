@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-
 import { validateEnvironment } from './config/environment.js';
 import connectDB from './config/db.js';
 import corsConfig from './config/cors.js';
@@ -15,7 +14,6 @@ import routes from './routes/index.js';
 
 dotenv.config();
 validateEnvironment();
-connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +27,18 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    return res.status(500).json({
+      error: "Internal Server Error",
+      code: "DB_CONNECTION_FAILED"
+    });
+  }
+})
 
 app.get('/', (req, res) => {
   const acceptsHTML = req.headers.accept?.includes('text/html');
