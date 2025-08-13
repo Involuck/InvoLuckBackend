@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+
 import { validateEnvironment } from './config/environment.js';
 import connectDB from './config/db.js';
 import corsConfig from './config/cors.js';
