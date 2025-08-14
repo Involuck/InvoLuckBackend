@@ -6,11 +6,10 @@ import { fileURLToPath } from 'url';
 import { validateEnvironment } from './config/environment.js';
 import connectDB from './config/db.js';
 import corsConfig from './config/cors.js';
-
 import securityMiddleware from './middleware/security.js';
 import errorHandler from './middleware/errorHandler.js';
-
 import routes from './routes/index.js';
+
 
 dotenv.config();
 validateEnvironment();
@@ -22,10 +21,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(corsConfig);
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
@@ -52,16 +49,42 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/health-check', (req, res) => {
+app.get('/health-check', async (req, res) => {
+  let dbStatus = 'disconnected';
+  let dbError = null;
+
+  try {
+    const conn = await connectDB();
+    dbStatus = conn.connection.readyState === 1 ? 'connected' : 'not-ready';
+  } catch (err) {
+    dbError = err.message;
+  }
+
   res.json({
     status: 'OK',
+    api: 'running',
+    db: {
+      status: dbStatus,
+      error: dbError
+    },
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
   });
 });
 
-app.use('/api', securityMiddleware, routes);
+
+app.use('/api', async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    return res.status(500).json({
+      error: "Internal Server Error",
+      code: "DB_CONNECTION_FAILED"
+    });
+  }
+}, securityMiddleware, routes);
+
 
 app.use(errorHandler);
 
@@ -69,6 +92,4 @@ app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 URL: http://localhost:${PORT}`);
-  console.log(`📄 HTML available at: http://localhost:${PORT}`);
-  console.log(`🔒 API routes (/api/*) are protected by security middleware`);
 });
