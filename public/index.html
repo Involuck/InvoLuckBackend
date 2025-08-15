@@ -1,580 +1,188 @@
 <!DOCTYPE html>
 <html lang="es">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>InvoLuck - API</title>
-      <link
-         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-         rel="stylesheet">
-      <style>
-         :root {
-           --color-white: #ffffff;
-           --color-light: rgba(255, 255, 255, 0.048);
-           --color-purple: #8b5cf6;
-         }
 
-         * {
-           margin: 0;
-           padding: 0;
-           box-sizing: border-box;
-         }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvoLuck - API</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
 
-         html {
-           scroll-behavior: smooth;
-         }
+<body>
+  <div class="particles" id="particles"></div>
 
-         html,
-         body {
-           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-             "Inter", sans-serif;
-           background: black;
-           color: var(--color-white);
-           min-height: 100vh;
-           overflow-x: hidden;
-         }
+  <div class="main-container">
+    <div class="header">
+      <div class="logo">IL</div>
+      <h1>INVOLUCK - API</h1>
+      <p class="subtitle">
+        Consulta en tiempo real la disponibilidad y el rendimiento de
+        nuestra API, con información precisa sobre su estado y posibles
+        incidencias.
+      </p>
+      <div class="api-badge status-checking" id="apiStatusBadge">
+        <i class="fas fa-circle-notch fa-spin"></i>
+        Verificando API...
+      </div>
+    </div>
 
-         body {
-           position: relative;
-         }
-
-         .particles {
-           position: fixed;
-           width: 100%;
-           height: 100%;
-           overflow: hidden;
-           z-index: 1;
-           pointer-events: none;
-         }
-
-         .particle {
-           position: absolute;
-           width: 2px;
-           height: 2px;
-           background: rgba(139, 92, 246, 0.4);
-           border-radius: 50%;
-           animation: float 8s ease-in-out infinite;
-         }
-
-         .particle:nth-child(2n) {
-           background: rgba(59, 130, 246, 0.3);
-           animation-duration: 6s;
-         }
-
-         .particle:nth-child(3n) {
-           background: rgba(16, 185, 129, 0.3);
-           animation-duration: 10s;
-         }
-
-         @keyframes float {
-           0%, 100% {
-             transform: translateY(0) rotate(0deg);
-             opacity: 0.3;
-           }
-           25% {
-             transform: translateY(-30px) rotate(90deg);
-             opacity: 0.7;
-           }
-           50% {
-             transform: translateY(-60px) rotate(180deg);
-             opacity: 0.5;
-           }
-           75% {
-             transform: translateY(-30px) rotate(270deg);
-             opacity: 0.7;
-           }
-         }
-
-         .main-container {
-           position: relative;
-           z-index: 2;
-           width: 100%;
-           max-width: 900px;
-           margin: 0 auto;
-           padding: 2rem 0 8rem 0;
-           min-height: 100vh;
-           display: flex;
-           flex-direction: column;
-           gap: 2rem;
-         }
-
-         .header {
-           text-align: center;
-           animation: slideDown 1s ease-out;
-           padding: 1rem 0;
-         }
-
-         @keyframes slideDown {
-           from {
-             opacity: 0;
-             transform: translateY(-50px);
-           }
-           to {
-             opacity: 1;
-             transform: translateY(0);
-           }
-         }
-
-         .logo {
-           width: 80px;
-           height: 80px;
-           background: #1D1D1D;
-           border-radius: 24px;
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           font-size: 2rem;
-           font-weight: bold;
-           color: white;
-           margin: 0 auto 1.5rem;
-           backdrop-filter: blur(20px);
-           border: 2px solid rgba(255, 255, 255, 0.1);
-           animation: logoGlow 4s ease-in-out infinite;
-           position: relative;
-           overflow: hidden;
-         }
-
-         h1 {
-           font-size: 3rem;
-           font-weight: 800;
-           margin-bottom: 0.5rem;
-           letter-spacing: -2px;
-         }
-
-         .subtitle {
-           font-size: 1.1em;
-           opacity: 0.8;
-           font-weight: 400;
-           margin-bottom: 1rem;
-           max-width: 600px;
-           margin-left: auto;
-           margin-right: auto;
-           line-height: 1.6;
-         }
-
-         .api-badge {
-           display: inline-flex;
-           align-items: center;
-           gap: 0.5rem;
-           background: #1D1D1D;
-           color: white;
-           font-weight: 600;
-           padding: 0.5rem 1rem;
-           border-radius: 50px;
-           font-size: 0.9rem;
-           margin-top: 1rem;
-           transition: all 0.3s ease;
-           border: 2px solid rgba(255, 255, 255, 0.1);
-         }
-
-         .api-badge:hover {
-           transform: translateY(-2px);
-           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-         }
-
-         .badge-success {
-           color: #10b981;
-         }
-
-         .badge-error {
-           color: #ef4444;
-         }
-
-         .main-content {
-           flex: 1;
-           display: flex;
-           flex-direction: column;
-           gap: 2rem;
-         }
-
-         .card {
-           background: var(--color-light);
-           backdrop-filter: blur(25px);
-           border-radius: 20px;
-           border: 1px solid #3a3a3a;
-           padding: 1.6rem;
-           transition: all 0.3s ease;
-           position: relative;
-           overflow: hidden;
-         }
-
-         .security-banner {
-           display: flex;
-           align-items: center;
-           gap: 1.5rem;
-           background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
-           border-radius: 16px;
-           border: 1px solid rgba(139, 92, 246, 0.3);
-           padding: 1.5rem;
-           text-align: left;
-         }
-
-         .security-icon {
-           font-size: 2rem;
-           color: var(--color-purple);
-           animation: pulse 2s ease-in-out infinite;
-         }
-
-         @keyframes pulse {
-           0%, 100% { opacity: 1; }
-           50% { opacity: 0.7; }
-         }
-
-         .security-text {
-           flex: 1;
-         }
-
-         .security-title {
-           font-weight: 600;
-           color: var(--color-purple);
-           margin-bottom: 0.5rem;
-           font-size: 1.1rem;
-         }
-
-         .security-description {
-           opacity: 0.9;
-           line-height: 1.5;
-         }
-
-         .api-info {
-           display: grid;
-           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-           gap: 1.5rem;
-           margin-top: 2rem;
-         }
-
-         .api-info-item {
-           display: flex;
-           align-items: center;
-           gap: 1rem;
-           padding: 1.5rem;
-           background: rgba(255, 255, 255, 0.05);
-           border-radius: 16px;
-           border: 1px solid rgba(255, 255, 255, 0.1);
-           transition: all 0.3s ease;
-           position: relative;
-           overflow: hidden;
-         }
-
-         .api-info-icon {
-           font-size: 1.5rem;
-           color: var(--color-purple);
-           width: 40px;
-           height: 40px;
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
-           border-radius: 12px;
-         }
-
-         .api-info-text {
-           flex: 1;
-         }
-
-         .api-info-title {
-           font-weight: 600;
-           margin-bottom: 0.25rem;
-           color: white;
-         }
-
-         .api-info-desc {
-           font-size: 0.9rem;
-           opacity: 0.7;
-         }
-
-
-         .footer {
-           position: fixed;
-           bottom: 20px;
-           left: 0;
-           right: 0;
-           width: 100%;
-           max-width: 900px;
-           margin: 0 auto;
-           background: #1D1D1D;
-           border-radius: 20px;
-           border: 1px solid rgba(255, 255, 255, 0.1);
-           padding: 1rem;
-           text-align: center;
-         }
-
-         .footer-content {
-           display: flex;
-           justify-content: space-between;
-           align-items: center;
-           flex-wrap: wrap;
-           gap: 1rem;
-         }
-
-         .version-badge {
-           background: #3a3a3a;
-           color: white;
-           padding: 0.5rem 1rem;
-           border-radius: 25px;
-           font-size: 0.85rem;
-           font-weight: 600;
-         }
-
-         .timestamp {
-           font-size: 0.85rem;
-           opacity: 0.7;
-           font-family: 'Courier New', monospace;
-         }
-
-         @media (max-width: 1024px) {
-           .main-container {
-             padding: 1.5rem;
-           }
-
-           .api-info {
-             grid-template-columns: 1fr;
-           }
-         }
-
-         @media (max-width: 768px) {
-           .main-container {
-             padding: 1rem;
-             gap: 1.5rem;
-           }
-
-           .header {
-             padding: .5rem 0;
-           }
-
-           .logo {
-             width: 80px;
-             height: 80px;
-             font-size: 2rem;
-           }
-
-           h1 {
-             font-size: 2.5rem;
-           }
-
-           h2 {
-             font-size: 1.5rem;
-           }
-
-           .subtitle {
-             font-size: 1rem;
-           }
-
-           .card {
-             padding: 1.5rem;
-           }
-
-           .security-banner {
-             flex-direction: column;
-             text-align: center;
-             gap: 1rem;
-           }
-
-           .api-info-item {
-             flex-direction: column;
-             text-align: center;
-           }
-
-           .footer-content {
-             flex-direction: column;
-             text-align: center;
-           }
-
-
-         }
-
-         @media (max-width: 480px) {
-           .logo {
-             width: 60px;
-             height: 60px;
-             font-size: 1.5rem;
-           }
-
-           h1 {
-             font-size: 2rem;
-           }
-
-           .api-info-item {
-             padding: 1rem;
-           }
-         }
-      </style>
-   </head>
-   <body>
-      <div class="particles" id="particles"></div>
-
-      <div class="main-container">
-         <div class="header">
-            <div class="logo">IL</div>
-            <h1>INVOLUCK - API</h1>
-            <p class="subtitle">
-               Consulta en tiempo real la disponibilidad y el rendimiento de
-               nuestra API, con información precisa sobre su estado y posibles
-               incidencias.
-            </p>
-            <div class="api-badge status-checking" id="apiStatusBadge">
-               <i class="fas fa-circle-notch fa-spin"></i>
-               Verificando API...
-            </div>
-         </div>
-
-         <div class="main-content">
-            <div class="security-banner">
-               <i class="fas fa-shield-alt security-icon"></i>
-               <div class="security-text">
-                  <div class="security-title">
-                     Conexión Segura y Autenticada
-                  </div>
-                  <div class="security-description">
-                     El acceso a esta API está protegido mediante API Key.
-                     Asegúrate de contar con credenciales autorizadas para
-                     interactuar con la plataforma de forma segura.
-                  </div>
-               </div>
-            </div>
-
-            <div class="card">
-               <h3
-                  style="margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;"
-               >
-                  Características de la API
-               </h3>
-               <div class="api-info">
-                  <div class="api-info-item">
-                     <div class="api-info-icon">
-                        <i class="fas fa-code"></i>
-                     </div>
-                     <div class="api-info-text">
-                        <div class="api-info-title">API REST</div>
-                        <div class="api-info-desc">
-                           Arquitectura RESTful con autenticación segura
-                        </div>
-                     </div>
-                  </div>
-
-                  <div class="api-info-item">
-                     <div class="api-info-icon">
-                        <i class="fas fa-book"></i>
-                     </div>
-                     <div class="api-info-text">
-                        <div class="api-info-title">Documentación</div>
-                        <div class="api-info-desc">
-                           Guías completas y ejemplos de uso
-                        </div>
-                     </div>
-                  </div>
-
-                  <div class="api-info-item">
-                     <div class="api-info-icon">
-                        <i class="fas fa-tachometer-alt"></i>
-                     </div>
-                     <div class="api-info-text">
-                        <div class="api-info-title">Alto Rendimiento</div>
-                        <div class="api-info-desc">
-                           Respuestas rápidas y confiables
-                        </div>
-                     </div>
-                  </div>
-
-                  <div class="api-info-item">
-                     <div class="api-info-icon">
-                        <i class="fas fa-clock"></i>
-                     </div>
-                     <div class="api-info-text">
-                        <div class="api-info-title">24/7 Disponibilidad</div>
-                        <div class="api-info-desc">
-                           Servicio continuo sin interrupciones
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-
-            <div class="footer">
-               <div class="footer-content">
-                  <div class="version-badge">InvoLuck API v1.0.0</div>
-                  <div class="timestamp" id="timestamp"></div>
-               </div>
-            </div>
-         </div>
+    <div class="main-content">
+      <div class="security-banner">
+        <i class="fas fa-shield-alt security-icon"></i>
+        <div class="security-text">
+          <div class="security-title">
+            Conexión Segura y Autenticada
+          </div>
+          <div class="security-description">
+            El acceso a esta API está protegido mediante API Key.
+            Asegúrate de contar con credenciales autorizadas para
+            interactuar con la plataforma de forma segura.
+          </div>
+        </div>
       </div>
 
-      <script>
-         function createParticles() {
-           const container = document.getElementById("particles");
-           const particleCount = window.innerWidth < 768 ? 20 : 50;
+      <div class="card">
+        <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;">
+          Características de la API
+        </h3>
+        <div class="api-info">
+          <div class="api-info-item">
+            <div class="api-info-icon">
+              <i class="fas fa-code"></i>
+            </div>
+            <div class="api-info-text">
+              <div class="api-info-title">API REST</div>
+              <div class="api-info-desc">
+                Arquitectura RESTful con autenticación segura
+              </div>
+            </div>
+          </div>
 
-           for (let i = 0; i < particleCount; i++) {
-             const particle = document.createElement("div");
-             particle.className = "particle";
-             particle.style.left = Math.random() * 100 + "%";
-             particle.style.top = Math.random() * 100 + "%";
-             particle.style.animationDelay = Math.random() * 8 + "s";
-             particle.style.animationDuration = Math.random() * 4 + 6 + "s";
-             container.appendChild(particle);
-           }
-         }
+          <div class="api-info-item">
+            <div class="api-info-icon">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="api-info-text">
+              <div class="api-info-title">Documentación</div>
+              <div class="api-info-desc">
+                Guías completas y ejemplos de uso
+              </div>
+            </div>
+          </div>
 
-         async function checkAPIHealth() {
-           const badge = document.getElementById("apiStatusBadge");
+          <div class="api-info-item">
+            <div class="api-info-icon">
+              <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="api-info-text">
+              <div class="api-info-title">Alto Rendimiento</div>
+              <div class="api-info-desc">
+                Respuestas rápidas y confiables
+              </div>
+            </div>
+          </div>
 
-           try {
-            const res = await fetch('/health-check');
-             if (res.ok) {
-               badge.innerHTML = '<i class="fas fa-check-circle badge-success"></i> API Funcionando';
-               badge.className = "api-badge status-online";
-             } else throw new Error('No OK');
-           } catch (error) {
-             badge.innerHTML = '<i class="fas fa-exclamation-triangle badge-error"></i> API No Disponible';
-             badge.className = "api-badge status-offline";
-           }
-         }
+          <div class="api-info-item">
+            <div class="api-info-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="api-info-text">
+              <div class="api-info-title">24/7 Disponibilidad</div>
+              <div class="api-info-desc">
+                Servicio continuo sin interrupciones
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-         function updateTimestamp() {
-           const now = new Date();
-           const options = {
-             year: "numeric",
-             month: "short",
-             day: "numeric",
-             hour: "2-digit",
-             minute: "2-digit",
-             second: "2-digit",
-             timeZoneName: "short",
-           };
-           document.getElementById("timestamp").textContent =
-             "Última actualización: " + now.toLocaleString("es-ES", options);
-         }
+      <div class="footer">
+        <div class="footer-content">
+          <div class="version-badge">InvoLuck API v1.0.0</div>
+          <div class="timestamp" id="timestamp"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function createParticles() {
+      const container = document.getElementById("particles");
+      const particleCount = window.innerWidth < 768 ? 20 : 50;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("div");
+        particle.className = "particle";
+        particle.style.left = Math.random() * 100 + "%";
+        particle.style.top = Math.random() * 100 + "%";
+        particle.style.animationDelay = Math.random() * 8 + "s";
+        particle.style.animationDuration = Math.random() * 4 + 6 + "s";
+        container.appendChild(particle);
+      }
+    }
+
+    async function checkAPIHealth() {
+      const badge = document.getElementById("apiStatusBadge");
+
+      try {
+        const res = await fetch('/health-check');
+        if (res.ok) {
+          badge.innerHTML = '<i class="fas fa-check-circle badge-success"></i> API Funcionando';
+          badge.className = "api-badge status-online";
+        } else throw new Error('No OK');
+      } catch (error) {
+        badge.innerHTML = '<i class="fas fa-exclamation-triangle badge-error"></i> API No Disponible';
+        badge.className = "api-badge status-offline";
+      }
+    }
+
+    function updateTimestamp() {
+      const now = new Date();
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZoneName: "short",
+      };
+      document.getElementById("timestamp").textContent =
+        "Última actualización: " + now.toLocaleString("es-ES", options);
+    }
 
 
-         let mouseX = 0, mouseY = 0;
-         document.addEventListener("mousemove", (e) => {
-           mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-           mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-         });
+    let mouseX = 0, mouseY = 0;
+    document.addEventListener("mousemove", (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
 
-         function animateParticles() {
-           const particles = document.querySelectorAll(".particle");
-           particles.forEach((particle, index) => {
-             const speed = ((index % 3) + 1) * 0.2;
-             const x = mouseX * speed * 15;
-             const y = mouseY * speed * 15;
-             particle.style.transform = `translate(${x}px, ${y}px)`;
-           });
-           requestAnimationFrame(animateParticles);
-         }
+    function animateParticles() {
+      const particles = document.querySelectorAll(".particle");
+      particles.forEach((particle, index) => {
+        const speed = ((index % 3) + 1) * 0.2;
+        const x = mouseX * speed * 15;
+        const y = mouseY * speed * 15;
+        particle.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      requestAnimationFrame(animateParticles);
+    }
 
-         document.addEventListener("DOMContentLoaded", () => {
-           createParticles();
-           updateTimestamp();
-           checkAPIHealth();
-           animateParticles();
-         });
+    document.addEventListener("DOMContentLoaded", () => {
+      createParticles();
+      updateTimestamp();
+      checkAPIHealth();
+      animateParticles();
+    });
 
-         window.addEventListener('resize', () => {
-           const container = document.getElementById("particles");
-           container.innerHTML = '';
-           createParticles();
-         });
-      </script>
-   </body>
+    window.addEventListener('resize', () => {
+      const container = document.getElementById("particles");
+      container.innerHTML = '';
+      createParticles();
+    });
+  </script>
+</body>
+
 </html>
