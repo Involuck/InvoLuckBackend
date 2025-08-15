@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .status {
+            background-color: #1a1a1a;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 1rem;
+            border: 1px solid #333;
+        }
+
+        .status.error {
+            color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        a.button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background-color: #6d28d9;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        a.button:hover {
+            background-color: #5b21b6;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 15px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo">IL</div>
+    <h1>404 - Página no encontrada</h1>
+    <p>La ruta que intentas acceder no existe o ha sido movida. Por favor, verifica la URL o regresa a la página
+        principal.</p>
+    <div class="status error">Error: Página no encontrada</div>
+    <br>
+    <a href="/" class="button">Volver al inicio</a>
+    <div class="footer">
+        <div class="footer-content">
+            <div class="version-badge">InvoLuck API v1.0.0</div>
+        </div>
+    </div>
+</body>
+
+</html>

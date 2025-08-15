@@ -9,19 +9,19 @@ const publicRoutes = [
     '/health-check',
 ];
 
-const securityMiddleware = (req, res, next) => {
+export default function securityMiddleware(req, res, next) {
     const origin = req.get("origin");
     const apiKey = req.get("X-API-Key");
     const userAgent = req.get("User-Agent");
     const path = req.path;
 
-    if (isDevelopment()) {
-        console.log(`📝 ${req.method} ${req.path} from ${origin || 'No origin'}`);
-    }
-
     if (publicRoutes.includes(path)) {
+        applySecurityHeaders(res);
         return next();
     }
+
+    applySecurityHeaders(res);
+
     // block suspicious user-agents
     if (userAgent && /bot|crawler|spider|scraper/i.test(userAgent)) {
         return res.status(403).json({
@@ -58,6 +58,17 @@ const securityMiddleware = (req, res, next) => {
         error: "Origin not allowed",
         code: "ORIGIN_NOT_ALLOWED"
     });
-};
+}
 
-export default securityMiddleware;
+// funtion to apply basic security headers
+function applySecurityHeaders(res) {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+
+    if (process.env.NODE_ENV === 'production') {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+}
