@@ -15,3 +15,5 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(`🔗 URL: http://localhost:${PORT}`);
   });
 }
+
+export default app;
