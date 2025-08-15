@@ -22,8 +22,9 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
-});
+  },
+  refreshTokenHash: { type: String, select: false }, // store hashed refresh token
+}, { timestamps: true });
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
@@ -35,6 +36,17 @@ userSchema.pre('save', async function (next) {
 // Compare passwords
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.setRefreshToken = async function (rawToken) {
+  const salt = await bcrypt.genSalt(10);
+  this.refreshTokenHash = await bcrypt.hash(rawToken, salt);
+  await this.save({ validateBeforeSave: false });
+};
+
+userSchema.methods.verifyRefreshToken = async function (rawToken) {
+  if (!this.refreshTokenHash) return false;
+  return bcrypt.compare(rawToken, this.refreshTokenHash);
 };
 
 module.exports = mongoose.model('User', userSchema);
