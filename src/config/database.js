@@ -1,94 +1,154 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import mongoose from 'mongoose';
+import { EventEmitter } from 'events';
+import emailService from '../services/email/emailService.js';
+import { config } from './environment.js';
 
-dotenv.config();
+// database events emitter
+export const dbEvents = new EventEmitter();
 
-let cached = global.mongoose;
+let isConnected = false;
+let connectionAttempts = 0;
+let retryTimeoutId = null;
+let previousDbStatus = null;
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+export function getConnectionStatus() {
+  return {
+    status: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    readyState: mongoose.connection.readyState,
+    host: mongoose.connection.host || 'unknown',
+    attempts: connectionAttempts
+  };
 }
 
-const connectDB = async () => {
-  // if there is a cached connection, use it
-  if (cached.conn && mongoose.connection.readyState === 1) {
-    return cached.conn;
-  }
-
-  // if the connection is bad, clear the cache
-  if (cached.conn && mongoose.connection.readyState !== 1) {
-    cached.conn = null;
-    cached.promise = null;
-  }
-
-  if (!cached.promise) {
-    const opts = {
-      maxPoolSize: 10, // maintain up to 10 socket connections
-      serverSelectionTimeoutMS: 5000, // keep trying to send operations for 5 seconds
-      socketTimeoutMS: 45000, // close sockets after 45 seconds of inactivity
-      family: 4 // use IPv4, skip trying IPv6
-    };
-
-    cached.promise = mongoose.connect(process.env.MONGO_URI, opts)
-      .then((mongoose) => {
-        console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
-        return mongoose;
-      })
-      .catch((err) => {
-        console.error("❌ MongoDB connection failed:", err.message);
-        cached.promise = null; // Reset promise on failure
-        throw err;
-      });
-  }
-
+export async function connectDB() {
   try {
-    cached.conn = await cached.promise;
-  } catch (err) {
-    cached.promise = null;
-    cached.conn = null;
-    console.error("❌ MongoDB connection failed:", err.message);
-    throw err;
+    const mongoUri = config.mongoUri;
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+
+    isConnected = true;
+    connectionAttempts = 0;
+    console.log('✅ MongoDB connected successfully');
+    return true;
+  } catch (error) {
+    isConnected = false;
+    console.error('❌ MongoDB connection failed:', error.message);
+    throw error;
+  }
+}
+
+export function retryConnection() {
+  const maxAttempts = 10;
+  const baseDelay = 1000;
+
+  async function attemptConnection() {
+    if (connectionAttempts >= maxAttempts) {
+      console.error(`❌ Max connection attempts reached (${maxAttempts})`);
+      dbEvents.emit('disconnected', {
+        attempts: connectionAttempts,
+        error: 'Max connection attempts reached',
+        timestamp: new Date().toISOString()
+      });
+      return;
+    }
+
+    connectionAttempts++;
+
+    try {
+      await connectDB();
+      dbEvents.emit('connected', { attempts: connectionAttempts });
+    } catch (error) {
+      if (connectionAttempts >= maxAttempts) {
+        console.error(`❌ Max connection attempts reached (${maxAttempts})`);
+        dbEvents.emit('disconnected', {
+          attempts: connectionAttempts,
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+        return;
+      }
+
+      const delay = Math.min(baseDelay * Math.pow(2, connectionAttempts - 1), 20000);
+      console.log(`🔄 Retrying connection in ${delay}ms... (attempt ${connectionAttempts}/${maxAttempts})`);
+      retryTimeoutId = setTimeout(attemptConnection, delay);
+    }
   }
 
-  return cached.conn;
-};
+  attemptConnection();
+}
 
-// check if the database is connected
-export const isConnected = () => {
-  return mongoose.connection.readyState === 1;
-};
 
-// check the connection status
-export const getConnectionStatus = () => {
-  const states = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting'
-  };
+// setup database connection and event handlers
+export function setupDatabase() {
+  retryConnection();
 
-  return {
-    status: states[mongoose.connection.readyState] || 'unknown',
-    readyState: mongoose.connection.readyState,
-    host: mongoose.connection.host,
-    name: mongoose.connection.name
-  };
-};
+  // database event handlers
+  dbEvents.on("disconnected", async ({ attempts, error, timestamp }) => {
+    console.log("📧 Sending DB error email after retries failed...");
 
-// event listeners
-mongoose.connection.on('connected', () => {
-  console.log('🔗 Mongoose connected to MongoDB');
-});
+    const dbInfo = getConnectionStatus();
 
-mongoose.connection.on('error', (err) => {
-  console.error('❌ Mongoose connection error:', err);
-  cached.conn = null;
-  cached.promise = null;
-});
+    if (previousDbStatus !== "disconnected") {
+      await emailService.sendDatabaseErrorEmail(error, {
+        ...dbInfo,
+        attempts,
+        failedAt: timestamp,
+      });
+    }
 
-mongoose.connection.on('disconnected', () => {
-  console.log('⚠️ Mongoose disconnected from MongoDB');
-  cached.conn = null;
-});
+    previousDbStatus = "disconnected";
+  });
 
-export default connectDB;
+  dbEvents.on("connected", async ({ attempts }) => {
+    if (previousDbStatus === "disconnected") {
+      await emailService.sendRecoveryEmail({
+        message: `Database connection restored after ${attempts || 0} attempts`,
+        service: "Database",
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    previousDbStatus = "connected";
+  });
+
+  // mongoose connection events
+  mongoose.connection.on('disconnected', () => {
+    console.log('⚠️  MongoDB disconnected');
+    isConnected = false;
+
+    if (!retryTimeoutId) {
+      retryConnection();
+    }
+  });
+
+  mongoose.connection.on('error', (err) => {
+    console.error('❌ MongoDB error:', err);
+    isConnected = false;
+  });
+
+  mongoose.connection.on('reconnected', () => {
+    console.log('✅ MongoDB reconnected');
+    isConnected = true;
+    connectionAttempts = 0;
+
+    if (retryTimeoutId) {
+      clearTimeout(retryTimeoutId);
+      retryTimeoutId = null;
+    }
+  });
+}
+
+export function cleanup() {
+  if (retryTimeoutId) {
+    clearTimeout(retryTimeoutId);
+    retryTimeoutId = null;
+  }
+
+  return mongoose.connection.close();
+}
+
+export function isDbConnected() {
+  return isConnected && mongoose.connection.readyState === 1;
+}
