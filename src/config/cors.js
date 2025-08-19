@@ -1,7 +1,7 @@
 import cors from 'cors';
-import { isDevelopment } from './environment.js';
+import { config, isDevelopment } from './environment.js';
 
-const allowedOrigins = (process.env.CORS_ORIGINS || "").split(",").filter(Boolean);
+const allowedOrigins = config.cors.allowedOrigins
 
 const corsOptions = {
     origin: (origin, callback) => {

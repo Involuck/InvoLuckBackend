@@ -2,14 +2,17 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import connectDB, { getConnectionStatus } from './config/database.js';
+import { config } from './config/environment.js';
 import corsConfig from './config/cors.js';
+import { setupDatabase } from './config/database.js';
+import { setupHealthRoutes } from './routes/health.js';
+import { setupDevelopmentRoutes } from './routes/development.js';
 
 import securityMiddleware from './middleware/security.js';
 import errorHandler from './middleware/errorHandler.js';
 import rateLimiter from './middleware/rateLimiter.js';
 
-import routes from './routes/index.js';
+import routes from './routes/api.js';
 
 const app = express();
 
@@ -21,24 +24,21 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-try {
-    await connectDB();
-} catch (error) {
-    console.error('❌ Failed to connect to database on startup:', error.message);
-    // the app may continue to work, it will attempt to reconnect automatically.
-}
+setupDatabase();
 
 // log requests in development
-if (process.env.NODE_ENV !== 'production') {
+if (config.nodeEnv !== 'production') {
     const { default: morgan } = await import('morgan');
     app.use(morgan('dev'));
 }
 
 app.get('/', (req, res) => {
-    const acceptsHTML = req.headers.accept?.includes('text/html');
-    if (acceptsHTML) {
+    const acceptHeader = req.headers.accept || '';
+
+    if (acceptHeader.includes('text/html') && !acceptHeader.includes('application/json')) {
         return res.sendFile(path.join(__dirname, '../public', 'index.html'));
     }
+
     return res.json({
         message: '🚀 InvoLuck API is running...',
         version: '1.0.0',
@@ -47,41 +47,13 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/health-check', async (req, res) => {
-    let responseStatus = 200;
 
-    const dbInfo = getConnectionStatus();
-    let dbStatus = dbInfo.status;
-    let dbError = null;
+setupHealthRoutes(app, securityMiddleware);
 
-    // check if the database is connected, if not, try to connect
-    if (dbStatus !== 'connected') {
-        try {
-            await connectDB();
-            dbStatus = 'connected';
-        } catch (err) {
-            dbError = err.message;
-            dbStatus = 'error';
-            responseStatus = 503;
-        }
-    }
-
-    const healthData = {
-        status: dbStatus === 'connected' ? 'OK' : 'ERROR',
-        api: dbStatus === 'connected' ? 'running' : 'not-ready',
-        database: {
-            status: dbStatus,
-            readyState: dbInfo.readyState,
-            host: dbInfo.host,
-            error: dbError
-        },
-        timestamp: new Date().toISOString(),
-        uptime: Math.floor(process.uptime()),
-        environment: process.env.NODE_ENV || 'development',
-    };
-
-    res.status(responseStatus).json(healthData);
-});
+// development routes
+if (config.nodeEnv !== 'production') {
+    setupDevelopmentRoutes(app);
+}
 
 app.use('/api',
     rateLimiter(),
@@ -90,7 +62,7 @@ app.use('/api',
 );
 
 // not found handler
-app.use('*', (req, res) => {
+app.use((req, res) => {
     const isApiRoute = req.originalUrl.startsWith('/api');
     const acceptsHTML = req.headers.accept?.includes('text/html');
 
@@ -108,6 +80,7 @@ app.use('*', (req, res) => {
         path.join(__dirname, '../public', '404.html')
     );
 });
+
 
 app.use(errorHandler);
 
