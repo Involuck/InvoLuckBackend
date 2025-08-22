@@ -1,0 +1,1070 @@
+openapi: 3.0.3
+info:
+  title: InvoLuck Backend API
+  description: |
+    Professional invoice management system API built with TypeScript, Express, and MongoDB.
+    
+    ## Features
+    - User authentication and authorization
+    - Client management
+    - Invoice creation and management
+    - Email notifications
+    - Analytics and reporting
+    
+    ## Authentication
+    Most endpoints require authentication using JWT tokens. Include the token in the Authorization header:
+    
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+    
+    ## Response Format
+    All responses follow a consistent format with success/error indicators and request IDs for tracing.
+  version: 1.0.0
+  contact:
+    name: InvoLuck Team
+    email: support@involuck.dev
+    url: https://involuck.dev
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Development server
+  - url: https://api.involuck.dev/api/v1
+    description: Production server
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Basic health check
+      description: Returns basic API health status
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /health/detailed:
+    get:
+      tags:
+        - Health
+      summary: Detailed health check
+      description: Returns detailed system health including service dependencies
+      responses:
+        '200':
+          description: Detailed system health
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedHealthResponse'
+
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and receive JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Get user profile
+      description: Get current user's profile information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    patch:
+      tags:
+        - Authentication
+      summary: Update user profile
+      description: Update current user's profile information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /clients:
+    get:
+      tags:
+        - Clients
+      summary: List clients
+      description: Get paginated list of clients with optional filtering
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number (starts from 1)
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: search
+          in: query
+          description: Search term for client name, email, or company
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by client status
+          schema:
+            type: string
+            enum: [active, inactive, suspended]
+        - name: sort
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [name, email, company, createdAt, updatedAt]
+            default: createdAt
+        - name: order
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags:
+        - Clients
+      summary: Create client
+      description: Create a new client
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClientRequest'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponse'
+        '409':
+          description: Client with email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /clients/{id}:
+    get:
+      tags:
+        - Clients
+      summary: Get client by ID
+      description: Get a specific client by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Client ID
+          schema:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+      responses:
+        '200':
+          description: Client details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponse'
+        '404':
+          description: Client not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      tags:
+        - Clients
+      summary: Update client
+      description: Update an existing client
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Client ID
+          schema:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClientRequest'
+      responses:
+        '200':
+          description: Client updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponse'
+        '404':
+          description: Client not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags:
+        - Clients
+      summary: Delete client
+      description: Delete a client (only if no associated invoices)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Client ID
+          schema:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+      responses:
+        '204':
+          description: Client deleted successfully
+        '400':
+          description: Cannot delete client with existing invoices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Client not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /invoices:
+    get:
+      tags:
+        - Invoices
+      summary: List invoices
+      description: Get paginated list of invoices with optional filtering
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number (starts from 1)
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: status
+          in: query
+          description: Filter by invoice status
+          schema:
+            type: string
+            enum: [draft, sent, viewed, paid, overdue, cancelled]
+        - name: clientId
+          in: query
+          description: Filter by client ID
+          schema:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+      responses:
+        '200':
+          description: List of invoices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceListResponse'
+
+    post:
+      tags:
+        - Invoices
+      summary: Create invoice
+      description: Create a new invoice
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvoiceRequest'
+      responses:
+        '201':
+          description: Invoice created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Common Schemas
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        requestId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - success
+        - requestId
+        - timestamp
+
+    ErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [false]
+            error:
+              type: object
+              properties:
+                code:
+                  type: string
+                message:
+                  type: string
+                details:
+                  type: array
+                  items:
+                    type: object
+              required:
+                - code
+                - message
+          required:
+            - error
+
+    ValidationErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            error:
+              type: object
+              properties:
+                code:
+                  type: string
+                  enum: [VALIDATION_ERROR]
+                message:
+                  type: string
+                details:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                      message:
+                        type: string
+                      code:
+                        type: string
+
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+      required:
+        - page
+        - limit
+        - total
+        - totalPages
+        - hasNext
+        - hasPrev
+
+    # Health Schemas
+    HealthResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ok]
+                timestamp:
+                  type: string
+                  format: date-time
+                environment:
+                  type: string
+                version:
+                  type: string
+                uptime:
+                  type: number
+              required:
+                - status
+                - timestamp
+                - environment
+                - version
+                - uptime
+
+    DetailedHealthResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ok, degraded]
+                responseTime:
+                  type: string
+                  pattern: '^\d+ms$'
+                services:
+                  type: object
+                  properties:
+                    database:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: [ok, error]
+                        connectionState:
+                          type: string
+                    email:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: [ok, error]
+
+    # Authentication Schemas
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 50
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          maxLength: 100
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)'
+        confirmPassword:
+          type: string
+      required:
+        - name
+        - email
+        - password
+        - confirmPassword
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 50
+        email:
+          type: string
+          format: email
+      minProperties: 1
+
+    AuthResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+                token:
+                  type: string
+                expiresIn:
+                  type: string
+              required:
+                - user
+                - token
+                - expiresIn
+
+    UserProfileResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              $ref: '#/components/schemas/UserProfile'
+
+    # User Schemas
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [user, admin]
+        isEmailVerified:
+          type: boolean
+        preferences:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - role
+        - isEmailVerified
+        - preferences
+        - createdAt
+
+    UserProfile:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            avatarUrl:
+              type: string
+              format: uri
+            updatedAt:
+              type: string
+              format: date-time
+
+    # Client Schemas
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+          maxLength: 100
+        city:
+          type: string
+          maxLength: 50
+        state:
+          type: string
+          maxLength: 50
+        postalCode:
+          type: string
+          maxLength: 20
+        country:
+          type: string
+          maxLength: 50
+      required:
+        - street
+        - city
+        - state
+        - postalCode
+        - country
+
+    CreateClientRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          maxLength: 20
+        company:
+          type: string
+          maxLength: 100
+        taxId:
+          type: string
+          maxLength: 50
+        website:
+          type: string
+          format: uri
+        notes:
+          type: string
+          maxLength: 500
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        shippingAddress:
+          $ref: '#/components/schemas/Address'
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+          default: active
+        paymentTerms:
+          type: integer
+          minimum: 0
+          maximum: 365
+          default: 30
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          default: USD
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+          maxItems: 10
+      required:
+        - name
+        - email
+
+    UpdateClientRequest:
+      allOf:
+        - $ref: '#/components/schemas/CreateClientRequest'
+        - type: object
+          required: []
+          minProperties: 1
+
+    Client:
+      allOf:
+        - $ref: '#/components/schemas/CreateClientRequest'
+        - type: object
+          properties:
+            _id:
+              type: string
+              pattern: '^[a-fA-F0-9]{24}$'
+            userId:
+              type: string
+              pattern: '^[a-fA-F0-9]{24}$'
+            totalInvoiced:
+              type: number
+              minimum: 0
+            totalPaid:
+              type: number
+              minimum: 0
+            outstandingBalance:
+              type: number
+            invoiceCount:
+              type: integer
+              minimum: 0
+            lastInvoiceDate:
+              type: string
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+          required:
+            - _id
+            - userId
+            - name
+            - email
+            - totalInvoiced
+            - totalPaid
+            - outstandingBalance
+            - invoiceCount
+            - createdAt
+            - updatedAt
+
+    ClientResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              $ref: '#/components/schemas/Client'
+
+    ClientListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Client'
+            pagination:
+              $ref: '#/components/schemas/PaginationMeta'
+
+    # Invoice Schemas
+    InvoiceItem:
+      type: object
+      properties:
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        quantity:
+          type: number
+          minimum: 0.01
+          maximum: 999999.99
+        unitPrice:
+          type: number
+          minimum: 0
+          maximum: 999999.99
+        taxRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 0
+        discount:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 0
+        category:
+          type: string
+          maxLength: 50
+        unit:
+          type: string
+          maxLength: 20
+      required:
+        - description
+        - quantity
+        - unitPrice
+
+    CreateInvoiceRequest:
+      type: object
+      properties:
+        clientId:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        number:
+          type: string
+          maxLength: 50
+        issueDate:
+          type: string
+          format: date-time
+        dueDate:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceItem'
+          minItems: 1
+          maxItems: 100
+        notes:
+          type: string
+          maxLength: 1000
+        terms:
+          type: string
+          maxLength: 1000
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          default: USD
+        status:
+          type: string
+          enum: [draft, sent, viewed, paid, overdue, cancelled]
+          default: draft
+        taxRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 0
+        discountType:
+          type: string
+          enum: [percentage, fixed]
+          default: percentage
+        discountValue:
+          type: number
+          minimum: 0
+          default: 0
+        shippingCost:
+          type: number
+          minimum: 0
+          default: 0
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+          maxItems: 10
+      required:
+        - clientId
+        - dueDate
+        - items
+
+    Invoice:
+      allOf:
+        - $ref: '#/components/schemas/CreateInvoiceRequest'
+        - type: object
+          properties:
+            _id:
+              type: string
+              pattern: '^[a-fA-F0-9]{24}$'
+            userId:
+              type: string
+              pattern: '^[a-fA-F0-9]{24}$'
+            subtotal:
+              type: number
+              minimum: 0
+            taxAmount:
+              type: number
+              minimum: 0
+            discountAmount:
+              type: number
+              minimum: 0
+            total:
+              type: number
+              minimum: 0
+            totalPaid:
+              type: number
+              minimum: 0
+            remainingBalance:
+              type: number
+            sentAt:
+              type: string
+              format: date-time
+            viewedAt:
+              type: string
+              format: date-time
+            paidAt:
+              type: string
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+          required:
+            - _id
+            - userId
+            - clientId
+            - number
+            - issueDate
+            - dueDate
+            - items
+            - subtotal
+            - taxAmount
+            - discountAmount
+            - total
+            - totalPaid
+            - remainingBalance
+            - createdAt
+            - updatedAt
+
+    InvoiceResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              $ref: '#/components/schemas/Invoice'
+
+    InvoiceListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Invoice'
+            pagination:
+              $ref: '#/components/schemas/PaginationMeta'
+
+tags:
+  - name: Health
+    description: API health and system status
+  - name: Authentication
+    description: User authentication and profile management
+  - name: Clients
+    description: Client management operations
+  - name: Invoices
+    description: Invoice management operations
