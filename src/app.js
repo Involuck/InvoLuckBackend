@@ -1,25 +1,29 @@
 import express from 'express';
+import cors from "cors";
 import path from 'path';
 import { fileURLToPath } from 'url';
-
 import connectDB, { getConnectionStatus } from './config/database.js';
-import corsConfig from './config/cors.js';
-
 import securityMiddleware from './middleware/security.js';
 import errorHandler from './middleware/errorHandler.js';
 import rateLimiter from './middleware/rateLimiter.js';
-
 import routes from './routes/index.js';
+import authRoute from './routes/authRoutes.js';
 
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(corsConfig);
+app.use(cors({
+  origin: process.env.CORS_ORIGINS.split(","),
+  credentials: true
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use("/auth", authRoute);
+
 
 try {
     await connectDB();
@@ -88,6 +92,13 @@ app.use('/api',
     securityMiddleware,
     routes
 );
+
+// CORS configuration
+// app.use(cors({
+//     origin: process.env.CORS_ORIGINS.split(","),
+//     credentials: true
+// }));
+
 
 // not found handler
 app.use('*', (req, res) => {
