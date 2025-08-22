@@ -1,10 +1,11 @@
 import express from 'express';
+import authRoute from './authRoutes.js';
 
 const router = express.Router();
 
-/* router.use('/auth', authRoutes);
+router.use('/auth', authRoute);
 
-router.use('/invoices', invoiceRoutes); */
+/* router.use('/invoices', invoiceRoutes); */
 
 router.use('*', (req, res) => {
   res.status(404).json({
