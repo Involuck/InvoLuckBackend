@@ -1,130 +1,209 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-  <meta charset="utf-8">
-  <meta name="x-apple-disable-message-reformatting">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-  
-  <!--[if mso]>
-  <xml>
-    <o:OfficeDocumentSettings>
-      <o:AllowPNG/>
-      <o:PixelsPerInch>96</o:PixelsPerInch>
-    </o:OfficeDocumentSettings>
-  </xml>
-  <![endif]-->
-  
-  <title>{{ title || 'InvoLuck Email' }}</title>
-  
-  <style>
-    /* Reset styles */
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; }
-    
-    /* Remove spaces around email on iOS */
-    a[x-apple-data-detectors] {
-      font-family: inherit !important;
-      font-size: inherit !important;
-      font-weight: inherit !important;
-      line-height: inherit !important;
-      color: inherit !important;
-      text-decoration: none !important;
-    }
-    
-    /* Fix centering issues in Outlook 2007-2013 */
-    .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {
-      line-height: 100%;
-    }
-    
-    /* Prevent Webkit and Windows mobile from changing default text sizes */
-    div[style*="margin: 16px 0;"] { margin: 0 !important; }
-    
-    /* Force Outlook to provide a "view in browser" menu link */
-    #MessageViewBody a { color: inherit; text-decoration: none; }
-    
-    /* Dark mode styles */
-    @media (prefers-color-scheme: dark) {
-      .dark-mode-bg { background-color: #1a1a1a !important; }
-      .dark-mode-text { color: #ffffff !important; }
-    }
-    
-    /* Mobile styles */
-    @media only screen and (max-width: 600px) {
-      .container { width: 100% !important; max-width: 100% !important; }
-      .mobile-center { text-align: center !important; }
-      .mobile-padding { padding: 20px !important; }
-      .mobile-hide { display: none !important; }
-      .mobile-show { display: block !important; max-height: none !important; overflow: visible !important; }
-      .mobile-full-width { width: 100% !important; height: auto !important; }
-      .mobile-stack { display: block !important; width: 100% !important; }
-    }
-  </style>
-  
-  <!-- Custom styles for this template -->
-  <block name="head"></block>
-</head>
+<!doctype html>
+<html
+  lang="en"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
 
-<body class="email-body bg-gray-100" style="margin: 0; padding: 0; width: 100%; word-break: break-word; -webkit-font-smoothing: antialiased; background-color: #f7fafc;">
-  
-  <!-- Preview text (hidden from view but visible in email preview) -->
-  <div style="display: none; max-height: 0; overflow: hidden;">
-    {{ previewText || 'Email from InvoLuck' }}
-  </div>
-  
-  <!-- Spacer for preview text -->
-  <div style="display: none; max-height: 0; overflow: hidden;">
-    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
-  </div>
+    <!--[if mso]>
+      <xml>
+        <o:OfficeDocumentSettings>
+          <o:AllowPNG />
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+      </xml>
+    <![endif]-->
 
-  <!-- Email wrapper -->
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f7fafc;">
-    <tr>
-      <td align="center" style="padding: 40px 20px;">
-        
-        <!-- Email container -->
-        <table class="container email-container" role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-          
-          <!-- Header -->
-          <tr>
-            <td>
-              <block name="header">
-                <include src="src/components/header.html"></include>
-              </block>
-            </td>
-          </tr>
-          
-          <!-- Main content -->
-          <tr>
-            <td style="padding: 40px 40px 20px;">
-              <block name="template"></block>
-            </td>
-          </tr>
-          
-          <!-- Footer -->
-          <tr>
-            <td>
-              <block name="footer">
-                <include src="src/components/footer.html"></include>
-              </block>
-            </td>
-          </tr>
-          
-        </table>
-        
-      </td>
-    </tr>
-  </table>
+    <title>{{ title || 'InvoLuck Email' }}</title>
 
-  <!--[if mso]>
-  <div style="width:0;height:0;overflow:hidden;">
-    <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:1px;height:1px;">
-      <v:fill type="tile" src="" color="#f7fafc" />
-    </v:rect>
-  </div>
-  <![endif]-->
+    <style>
+      /* Reset styles */
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+      img {
+        -ms-interpolation-mode: bicubic;
+      }
 
-</body>
+      /* Remove spaces around email on iOS */
+      a[x-apple-data-detectors] {
+        font-family: inherit !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+        color: inherit !important;
+        text-decoration: none !important;
+      }
+
+      /* Fix centering issues in Outlook 2007-2013 */
+      .ExternalClass,
+      .ExternalClass p,
+      .ExternalClass span,
+      .ExternalClass font,
+      .ExternalClass td,
+      .ExternalClass div {
+        line-height: 100%;
+      }
+
+      /* Prevent Webkit and Windows mobile from changing default text sizes */
+      div[style*='margin: 16px 0;'] {
+        margin: 0 !important;
+      }
+
+      /* Force Outlook to provide a "view in browser" menu link */
+      #MessageViewBody a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* Dark mode styles */
+      @media (prefers-color-scheme: dark) {
+        .dark-mode-bg {
+          background-color: #1a1a1a !important;
+        }
+        .dark-mode-text {
+          color: #ffffff !important;
+        }
+      }
+
+      /* Mobile styles */
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        .mobile-center {
+          text-align: center !important;
+        }
+        .mobile-padding {
+          padding: 20px !important;
+        }
+        .mobile-hide {
+          display: none !important;
+        }
+        .mobile-show {
+          display: block !important;
+          max-height: none !important;
+          overflow: visible !important;
+        }
+        .mobile-full-width {
+          width: 100% !important;
+          height: auto !important;
+        }
+        .mobile-stack {
+          display: block !important;
+          width: 100% !important;
+        }
+      }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <block name="head"></block>
+  </head>
+
+  <body
+    class="email-body bg-gray-100"
+    style="
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      word-break: break-word;
+      -webkit-font-smoothing: antialiased;
+      background-color: #f7fafc;
+    "
+  >
+    <!-- Preview text (hidden from view but visible in email preview) -->
+    <div style="display: none; max-height: 0; overflow: hidden">
+      {{ previewText || 'Email from InvoLuck' }}
+    </div>
+
+    <!-- Spacer for preview text -->
+    <div style="display: none; max-height: 0; overflow: hidden">
+      &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+    </div>
+
+    <!-- Email wrapper -->
+    <table
+      role="presentation"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      width="100%"
+      style="background-color: #f7fafc"
+    >
+      <tr>
+        <td align="center" style="padding: 40px 20px">
+          <!-- Email container -->
+          <table
+            class="container email-container"
+            role="presentation"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            width="600"
+            style="
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #ffffff;
+              border-radius: 8px;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td>
+                <block name="header">
+                  <include src="src/components/header.html"></include>
+                </block>
+              </td>
+            </tr>
+
+            <!-- Main content -->
+            <tr>
+              <td style="padding: 40px 40px 20px">
+                <block name="template"></block>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td>
+                <block name="footer">
+                  <include src="src/components/footer.html"></include>
+                </block>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!--[if mso]>
+      <div style="width: 0; height: 0; overflow: hidden">
+        <v:rect
+          xmlns:v="urn:schemas-microsoft-com:vml"
+          fill="true"
+          stroke="false"
+          style="width: 1px; height: 1px"
+        >
+          <v:fill type="tile" src="" color="#f7fafc" />
+        </v:rect>
+      </div>
+    <![endif]-->
+  </body>
 </html>

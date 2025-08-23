@@ -17,10 +17,10 @@ class ClientsController {
   createClient = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const client = await clientsService.createClient(userId, req.body);
-    
+
     logger.info({
       msg: 'Client created via API',
-      clientId: client._id.toString(),
+      clientId: (client as any)._id.toString(),
       userId,
       requestId: req.id,
     });
@@ -35,7 +35,7 @@ class ClientsController {
   getClients = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const result = await clientsService.getClients(userId, req.query as any);
-    
+
     return ok(res, result.data, 200, result.pagination);
   });
 
@@ -47,7 +47,7 @@ class ClientsController {
     const userId = req.user!.id;
     const clientId = req.params.id;
     const client = await clientsService.getClientById(userId, clientId);
-    
+
     return ok(res, client);
   });
 
@@ -59,10 +59,10 @@ class ClientsController {
     const userId = req.user!.id;
     const clientId = req.params.id;
     const client = await clientsService.updateClient(userId, clientId, req.body);
-    
+
     logger.info({
       msg: 'Client updated via API',
-      clientId: client._id.toString(),
+      clientId: (client as any)._id.toString(),
       userId,
       updatedFields: Object.keys(req.body),
       requestId: req.id,
@@ -79,7 +79,7 @@ class ClientsController {
     const userId = req.user!.id;
     const clientId = req.params.id;
     await clientsService.deleteClient(userId, clientId);
-    
+
     logger.info({
       msg: 'Client deleted via API',
       clientId,
@@ -97,7 +97,7 @@ class ClientsController {
   getClientStats = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const stats = await clientsService.getClientStats(userId);
-    
+
     return ok(res, stats);
   });
 
@@ -109,7 +109,7 @@ class ClientsController {
     const userId = req.user!.id;
     const clientId = req.params.id;
     const stats = await clientsService.getClientStats(userId, clientId);
-    
+
     return ok(res, stats);
   });
 
@@ -121,13 +121,13 @@ class ClientsController {
     const userId = req.user!.id;
     const searchTerm = req.query.q as string;
     const limit = parseInt(req.query.limit as string) || 10;
-    
+
     if (!searchTerm) {
       return ok(res, []);
     }
 
     const clients = await clientsService.searchClients(userId, searchTerm, limit);
-    
+
     return ok(res, clients);
   });
 
@@ -138,13 +138,13 @@ class ClientsController {
   updateClientFinancials = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const clientId = req.params.id;
-    
+
     // Verify client belongs to user
     await clientsService.getClientById(userId, clientId);
-    
+
     // Update financials
     await clientsService.updateClientFinancials(clientId);
-    
+
     logger.info({
       msg: 'Client financials updated via API',
       clientId,

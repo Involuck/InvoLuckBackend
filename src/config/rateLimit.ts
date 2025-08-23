@@ -4,6 +4,7 @@
  */
 
 import rateLimit from 'express-rate-limit';
+import { Request, Response } from 'express';
 import { RATE_LIMIT_WINDOW_MS, RATE_LIMIT_MAX, isDevelopment } from './env';
 import logger from './logger';
 
@@ -35,7 +36,7 @@ const skipRateLimit = (req: any): boolean => {
     const skipPaths = ['/api/v1/health', '/api/v1/docs'];
     return skipPaths.some(path => req.path.startsWith(path));
   }
-  
+
   return false;
 };
 
@@ -43,21 +44,23 @@ const skipRateLimit = (req: any): boolean => {
 export const generalRateLimit = rateLimit({
   windowMs: RATE_LIMIT_WINDOW_MS,
   max: RATE_LIMIT_MAX,
-  message: rateLimitHandler,
+  handler: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
   skip: skipRateLimit,
-  keyGenerator: (req) => {
+  keyGenerator: req => {
     // Use user ID if authenticated, otherwise IP
-    return req.user?.id || req.ip;
+    if (typeof req.user?.id === 'string' && req.user.id.length > 0) {
+      return req.user.id;
+    }
+    return req.ip || '';
   },
 });
 
 // Strict rate limiter for authentication endpoints
 export const authRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per window
-  message: (req, res) => {
+  handler: (req: Request, res: Response) => {
     logger.warn({
       msg: 'Auth rate limit exceeded',
       ip: req.ip,
@@ -72,35 +75,32 @@ export const authRateLimit = rateLimit({
         message: 'Too many authentication attempts, please try again in 15 minutes.',
         retryAfter: 900, // 15 minutes
       },
-      requestId: req.id,
+      requestId: (req as any).id,
     });
   },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => isDevelopment() && req.path === '/api/v1/auth/register',
+  skip: req => isDevelopment() && req.path === '/api/v1/auth/register',
 });
 
 // Moderate rate limiter for data modification endpoints
 export const moderateRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 50, // 50 requests per window
-  message: rateLimitHandler,
+  handler: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
   skip: skipRateLimit,
 });
-
 // Lenient rate limiter for read-only endpoints
 export const lenientRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 200, // 200 requests per window
-  message: rateLimitHandler,
+  handler: rateLimitHandler,
   standardHeaders: true,
   legacyHeaders: false,
   skip: skipRateLimit,
 });
-
-// Log rate limiting configuration
 logger.info({
   msg: 'Rate limiting configuration loaded',
   windowMs: RATE_LIMIT_WINDOW_MS,

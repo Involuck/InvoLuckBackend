@@ -58,7 +58,7 @@ export const httpLoggerConfig = {
       statusCode: res.statusCode,
     }),
   },
-  customLogLevel: (req: any, res: any) => {
+  customLogLevel: (_req: any, res: any) => {
     if (res.statusCode >= 400) return 'warn';
     if (res.statusCode >= 300) return 'info';
     return 'info';

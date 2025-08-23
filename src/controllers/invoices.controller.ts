@@ -7,7 +7,7 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ok, created, noContent } from '../utils/http';
 import logger from '../config/logger';
-import { ApiErrors } from '../utils/ApiError';
+/* import { ApiErrors } from '../utils/ApiError'; */
 
 class InvoicesController {
   /**
@@ -16,7 +16,7 @@ class InvoicesController {
    */
   createInvoice = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
-    
+
     // TODO: Implement invoice creation service
     logger.info({
       msg: 'Invoice creation requested',
@@ -41,7 +41,7 @@ class InvoicesController {
    */
   getInvoices = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
-    
+
     logger.info({
       msg: 'Invoices list requested',
       userId,
@@ -72,7 +72,7 @@ class InvoicesController {
   getInvoiceById = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const invoiceId = req.params.id;
-    
+
     logger.info({
       msg: 'Invoice details requested',
       userId,
@@ -98,7 +98,7 @@ class InvoicesController {
   updateInvoice = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const invoiceId = req.params.id;
-    
+
     logger.info({
       msg: 'Invoice update requested',
       userId,
@@ -125,7 +125,7 @@ class InvoicesController {
   deleteInvoice = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const invoiceId = req.params.id;
-    
+
     logger.info({
       msg: 'Invoice deletion requested',
       userId,
@@ -143,7 +143,7 @@ class InvoicesController {
   sendInvoice = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const invoiceId = req.params.id;
-    
+
     logger.info({
       msg: 'Invoice send requested',
       userId,
@@ -169,7 +169,7 @@ class InvoicesController {
   updateInvoiceStatus = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const invoiceId = req.params.id;
-    
+
     logger.info({
       msg: 'Invoice status update requested',
       userId,
@@ -194,7 +194,7 @@ class InvoicesController {
   markInvoiceAsViewed = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const invoiceId = req.params.id;
-    
+
     logger.info({
       msg: 'Mark invoice as viewed requested',
       userId,
@@ -218,7 +218,7 @@ class InvoicesController {
   duplicateInvoice = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const invoiceId = req.params.id;
-    
+
     logger.info({
       msg: 'Invoice duplication requested',
       userId,
@@ -243,7 +243,7 @@ class InvoicesController {
    */
   getInvoiceStats = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
-    
+
     logger.info({
       msg: 'Invoice statistics requested',
       userId,
@@ -271,7 +271,7 @@ class InvoicesController {
    */
   getOverdueInvoices = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
-    
+
     logger.info({
       msg: 'Overdue invoices requested',
       userId,
@@ -279,7 +279,7 @@ class InvoicesController {
     });
 
     // Placeholder response
-    const overdueInvoices = [];
+    const overdueInvoices: any[] = [];
 
     return ok(res, overdueInvoices);
   });

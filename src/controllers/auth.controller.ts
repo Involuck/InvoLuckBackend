@@ -5,7 +5,7 @@
 
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
-import { ok, created, noContent } from '../utils/http';
+import { ok, created } from '../utils/http';
 import authService from '../services/auth.service';
 import logger from '../config/logger';
 
@@ -16,7 +16,7 @@ class AuthController {
    */
   register = asyncHandler(async (req: Request, res: Response) => {
     const authResponse = await authService.register(req.body);
-    
+
     logger.info({
       msg: 'User registration successful',
       userId: authResponse.user.id,
@@ -33,7 +33,7 @@ class AuthController {
    */
   login = asyncHandler(async (req: Request, res: Response) => {
     const authResponse = await authService.login(req.body);
-    
+
     logger.info({
       msg: 'User login successful',
       userId: authResponse.user.id,
@@ -50,7 +50,7 @@ class AuthController {
    */
   forgotPassword = asyncHandler(async (req: Request, res: Response) => {
     await authService.requestPasswordReset(req.body.email);
-    
+
     // Always return success to prevent email enumeration
     return ok(res, {
       message: 'If an account with that email exists, a password reset link has been sent.',
@@ -64,7 +64,7 @@ class AuthController {
   getProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const profile = await authService.getProfile(userId);
-    
+
     return ok(res, profile);
   });
 
@@ -75,7 +75,7 @@ class AuthController {
   updateProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const updatedProfile = await authService.updateProfile(userId, req.body);
-    
+
     logger.info({
       msg: 'User profile updated',
       userId,
@@ -93,7 +93,7 @@ class AuthController {
   changePassword = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     await authService.changePassword(userId, req.body);
-    
+
     logger.info({
       msg: 'Password changed successfully',
       userId,
@@ -113,7 +113,7 @@ class AuthController {
     // In a JWT-based system, logout is typically handled client-side
     // by removing the token from storage. Server-side logout would
     // require token blacklisting which is not implemented here.
-    
+
     logger.info({
       msg: 'User logout',
       userId: req.user!.id,
@@ -132,7 +132,7 @@ class AuthController {
   deactivateAccount = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     await authService.deactivateAccount(userId);
-    
+
     logger.info({
       msg: 'Account deactivated',
       userId,
@@ -151,7 +151,7 @@ class AuthController {
   getUserStats = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const stats = await authService.getUserStats(userId);
-    
+
     return ok(res, stats);
   });
 }

@@ -38,7 +38,7 @@ export interface PaginationMeta {
  */
 export const parsePagination = (req: Request): PaginationOptions => {
   const parsed = paginationSchema.parse(req.query);
-  
+
   return {
     page: parsed.page,
     limit: parsed.limit,
@@ -57,7 +57,7 @@ export const generatePaginationMeta = (
   total: number
 ): PaginationMeta => {
   const totalPages = Math.ceil(total / limit);
-  
+
   return {
     page,
     limit,
@@ -75,7 +75,7 @@ export const createSortObject = (options: PaginationOptions): Record<string, 1 |
   if (!options.sort) {
     return { createdAt: -1 }; // Default sort by creation date descending
   }
-  
+
   const sortDirection = options.order === 'asc' ? 1 : -1;
   return { [options.sort]: sortDirection };
 };
@@ -97,7 +97,7 @@ export const createPaginatedResponse = <T>(
   options: PaginationOptions
 ): PaginatedResult<T> => {
   const pagination = generatePaginationMeta(options.page, options.limit, total);
-  
+
   return {
     data,
     pagination,
@@ -112,15 +112,15 @@ export const sanitizeSortField = (
   allowedFields: string[]
 ): string | undefined => {
   if (!sortField) return undefined;
-  
+
   // Remove any potential injection attempts
   const cleaned = sortField.replace(/[^a-zA-Z0-9_.]/g, '');
-  
+
   // Check if field is in allowed list
   if (allowedFields.includes(cleaned)) {
     return cleaned;
   }
-  
+
   return undefined;
 };
 

@@ -95,19 +95,19 @@ beforeAll(async () => {
   try {
     // Silence logs during tests
     logger.level = 'silent';
-    
+
     // Start MongoDB Memory Server
     mongoServer = await MongoMemoryServer.create({
       instance: {
         dbName: TEST_CONFIG.dbName,
       },
     });
-    
+
     const mongoUri = mongoServer.getUri();
-    
+
     // Connect to test database
     await mongoose.connect(mongoUri);
-    
+
     console.log('✅ Test database connected');
   } catch (error) {
     console.error('❌ Test setup failed:', error);
@@ -122,12 +122,12 @@ afterAll(async () => {
   try {
     // Close database connection
     await mongoose.connection.close();
-    
+
     // Stop MongoDB Memory Server
     if (mongoServer) {
       await mongoServer.stop();
     }
-    
+
     console.log('✅ Test cleanup completed');
   } catch (error) {
     console.error('❌ Test cleanup failed:', error);
@@ -141,12 +141,10 @@ beforeEach(async () => {
   try {
     // Get all collections
     const collections = mongoose.connection.collections;
-    
+
     // Clear all collections
-    const clearPromises = Object.values(collections).map(collection =>
-      collection.deleteMany({})
-    );
-    
+    const clearPromises = Object.values(collections).map(collection => collection.deleteMany({}));
+
     await Promise.all(clearPromises);
   } catch (error) {
     console.error('❌ Database cleanup failed:', error);
@@ -165,20 +163,18 @@ export const testUtils = {
     token: string;
   }> {
     const { User } = await import('../models/User');
-    
+
     const user = new User(userData);
     await user.save();
-    
+
     // Generate token manually (since we don't want to test auth here)
     const jwt = await import('jsonwebtoken');
     const { JWT_SECRET } = await import('../config/env');
-    
-    const token = jwt.sign(
-      { id: user._id.toString(), email: user.email },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-    
+
+    const token = jwt.sign({ id: (user as any)._id.toString()(), email: user.email }, JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
     return { user, token };
   },
 
@@ -187,12 +183,12 @@ export const testUtils = {
    */
   async createTestClient(userId: string, clientData = TEST_CLIENT_DATA): Promise<any> {
     const { Client } = await import('../models/Client');
-    
+
     const client = new Client({
       userId,
       ...clientData,
     });
-    
+
     await client.save();
     return client;
   },
@@ -206,13 +202,13 @@ export const testUtils = {
     invoiceData = TEST_INVOICE_DATA
   ): Promise<any> {
     const { Invoice } = await import('../models/Invoice');
-    
+
     const invoice = new Invoice({
       userId,
       clientId,
       ...invoiceData,
     });
-    
+
     await invoice.save();
     return invoice;
   },
@@ -231,7 +227,7 @@ export const testUtils = {
     expect(response.status).toBe(expectedStatus);
     expect(response.body).toHaveProperty('success');
     expect(response.body).toHaveProperty('requestId');
-    
+
     if (response.body.success) {
       expect(response.body).toHaveProperty('data');
     } else {
@@ -261,7 +257,7 @@ export const testUtils = {
     expect(response.status).toBe(422);
     expect(response.body.success).toBe(false);
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
-    
+
     if (fieldName) {
       expect(response.body.error.details).toEqual(
         expect.arrayContaining([
@@ -302,7 +298,9 @@ export const testUtils = {
    * Generate random test data
    */
   randomString(length = 10): string {
-    return Math.random().toString(36).substring(2, length + 2);
+    return Math.random()
+      .toString(36)
+      .substring(2, length + 2);
   },
 
   randomEmail(): string {

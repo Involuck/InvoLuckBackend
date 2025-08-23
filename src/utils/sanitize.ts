@@ -17,7 +17,7 @@ export const sanitizeObject = (obj: any): any => {
  */
 export const sanitizeString = (input: string): string => {
   if (typeof input !== 'string') return '';
-  
+
   return input
     .trim()
     .replace(/[<>]/g, '') // Remove potential XSS characters
@@ -29,11 +29,8 @@ export const sanitizeString = (input: string): string => {
  */
 export const sanitizeEmail = (email: string): string => {
   if (typeof email !== 'string') return '';
-  
-  return email
-    .toLowerCase()
-    .trim()
-    .substring(0, 254); // Email max length per RFC
+
+  return email.toLowerCase().trim().substring(0, 254); // Email max length per RFC
 };
 
 /**
@@ -41,14 +38,14 @@ export const sanitizeEmail = (email: string): string => {
  */
 export const sanitizeObjectId = (id: string): string | null => {
   if (typeof id !== 'string') return null;
-  
+
   const cleaned = id.trim();
-  
+
   // Check if it matches ObjectId pattern (24 hex characters)
   if (!/^[a-fA-F0-9]{24}$/.test(cleaned)) {
     return null;
   }
-  
+
   return cleaned;
 };
 
@@ -57,11 +54,11 @@ export const sanitizeObjectId = (id: string): string | null => {
  */
 export const sanitizeNumber = (input: any, defaultValue = 0): number => {
   const num = Number(input);
-  
+
   if (isNaN(num) || !isFinite(num)) {
     return defaultValue;
   }
-  
+
   return num;
 };
 
@@ -77,7 +74,7 @@ export const sanitizeBoolean = (input: any, defaultValue = false): boolean => {
   if (typeof input === 'number') {
     return input !== 0;
   }
-  
+
   return defaultValue;
 };
 
@@ -86,10 +83,8 @@ export const sanitizeBoolean = (input: any, defaultValue = false): boolean => {
  */
 export const sanitizeArray = (input: any, maxLength = 100): any[] => {
   if (!Array.isArray(input)) return [];
-  
-  return input
-    .slice(0, maxLength)
-    .map(item => sanitizeObject(item));
+
+  return input.slice(0, maxLength).map(item => sanitizeObject(item));
 };
 
 /**
@@ -97,7 +92,7 @@ export const sanitizeArray = (input: any, maxLength = 100): any[] => {
  */
 export const removeEmpty = (obj: Record<string, any>): Record<string, any> => {
   const cleaned: Record<string, any> = {};
-  
+
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined && value !== null && value !== '') {
       if (typeof value === 'object' && !Array.isArray(value)) {
@@ -110,7 +105,7 @@ export const removeEmpty = (obj: Record<string, any>): Record<string, any> => {
       }
     }
   }
-  
+
   return cleaned;
 };
 
@@ -119,7 +114,7 @@ export const removeEmpty = (obj: Record<string, any>): Record<string, any> => {
  */
 export const sanitizeFileName = (fileName: string): string => {
   if (typeof fileName !== 'string') return 'unnamed';
-  
+
   return fileName
     .trim()
     .replace(/[^a-zA-Z0-9.-_]/g, '_') // Replace invalid chars with underscore
@@ -132,15 +127,15 @@ export const sanitizeFileName = (fileName: string): string => {
  */
 export const sanitizeUrl = (url: string): string | null => {
   if (typeof url !== 'string') return null;
-  
+
   try {
     const parsed = new URL(url);
-    
+
     // Only allow http and https protocols
     if (!['http:', 'https:'].includes(parsed.protocol)) {
       return null;
     }
-    
+
     return parsed.toString();
   } catch {
     return null;
@@ -152,7 +147,7 @@ export const sanitizeUrl = (url: string): string | null => {
  */
 export const escapeHtml = (input: string): string => {
   if (typeof input !== 'string') return '';
-  
+
   const htmlEscapes: Record<string, string> = {
     '&': '&amp;',
     '<': '&lt;',
@@ -161,8 +156,8 @@ export const escapeHtml = (input: string): string => {
     "'": '&#x27;',
     '/': '&#x2F;',
   };
-  
-  return input.replace(/[&<>"'/]/g, (match) => htmlEscapes[match] || match);
+
+  return input.replace(/[&<>"'/]/g, match => htmlEscapes[match] || match);
 };
 
 /**
@@ -172,27 +167,27 @@ export const sanitizeInput = (input: any): any => {
   if (input === null || input === undefined) {
     return input;
   }
-  
+
   if (typeof input === 'string') {
     return sanitizeString(input);
   }
-  
+
   if (typeof input === 'number') {
     return sanitizeNumber(input);
   }
-  
+
   if (typeof input === 'boolean') {
     return input;
   }
-  
+
   if (Array.isArray(input)) {
     return sanitizeArray(input);
   }
-  
+
   if (typeof input === 'object') {
     return sanitizeObject(input);
   }
-  
+
   return input;
 };
 

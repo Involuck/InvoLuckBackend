@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Middleware to generate and attach unique request ID
- * 
+ *
  * The request ID is:
  * - Generated using UUID v4
  * - Attached to req.id for use in controllers and services
@@ -18,16 +18,16 @@ import { v4 as uuidv4 } from 'uuid';
 export const requestIdMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   // Check if request ID already exists in headers (from load balancer, etc.)
   const existingId = req.headers['x-request-id'] as string;
-  
+
   // Use existing ID or generate new one
   const requestId = existingId || uuidv4();
-  
+
   // Attach to request object
   req.id = requestId;
-  
+
   // Add to response headers
   res.setHeader('X-Request-ID', requestId);
-  
+
   next();
 };
 

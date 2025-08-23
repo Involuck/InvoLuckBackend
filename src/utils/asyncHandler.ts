@@ -13,10 +13,10 @@ type AsyncRequestHandler = (
 
 /**
  * Wraps async route handlers to catch errors and pass them to error middleware
- * 
+ *
  * @param fn - Async route handler function
  * @returns Express middleware function
- * 
+ *
  * @example
  * app.get('/users', asyncHandler(async (req, res) => {
  *   const users = await userService.getAll();

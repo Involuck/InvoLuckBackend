@@ -25,21 +25,13 @@ router.use(authMiddleware);
  * GET /api/v1/clients/search
  * Search clients by text (must be before /:id route)
  */
-router.get(
-  '/search',
-  lenientRateLimit,
-  clientsController.searchClients
-);
+router.get('/search', lenientRateLimit, clientsController.searchClients);
 
 /**
  * GET /api/v1/clients/stats
  * Get client statistics (must be before /:id route)
  */
-router.get(
-  '/stats',
-  lenientRateLimit,
-  clientsController.getClientStats
-);
+router.get('/stats', lenientRateLimit, clientsController.getClientStats);
 
 /**
  * POST /api/v1/clients

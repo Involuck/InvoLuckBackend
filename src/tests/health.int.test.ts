@@ -9,12 +9,10 @@ import { app, testUtils, TEST_CONFIG } from './setup';
 describe('Health Endpoints', () => {
   describe('GET /health', () => {
     it('should return 200 and basic health status', async () => {
-      const response = await request(app)
-        .get('/health')
-        .expect(200);
+      const response = await request(app).get('/health').expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         status: 'ok',
         timestamp: expect.any(String),
@@ -22,18 +20,16 @@ describe('Health Endpoints', () => {
         version: expect.any(String),
         uptime: expect.any(Number),
       });
-      
+
       // Validate timestamp format
       expect(new Date(response.body.data.timestamp)).toBeInstanceOf(Date);
-      
+
       // Validate uptime is positive
       expect(response.body.data.uptime).toBeGreaterThan(0);
     });
 
     it('should include requestId in response', async () => {
-      const response = await request(app)
-        .get('/health')
-        .expect(200);
+      const response = await request(app).get('/health').expect(200);
 
       expect(response.body.requestId).toBeDefined();
       expect(typeof response.body.requestId).toBe('string');
@@ -41,9 +37,7 @@ describe('Health Endpoints', () => {
     });
 
     it('should set proper response headers', async () => {
-      const response = await request(app)
-        .get('/health')
-        .expect(200);
+      const response = await request(app).get('/health').expect(200);
 
       expect(response.headers['content-type']).toMatch(/application\/json/);
       expect(response.headers['x-request-id']).toBeDefined();
@@ -52,12 +46,10 @@ describe('Health Endpoints', () => {
 
   describe('GET /api/v1/health', () => {
     it('should return basic health information', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/health`)
-        .expect(200);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/health`).expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         status: 'ok',
         timestamp: expect.any(String),
@@ -70,12 +62,10 @@ describe('Health Endpoints', () => {
 
   describe('GET /api/v1/health/detailed', () => {
     it('should return detailed health status with service checks', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/health/detailed`)
-        .expect(200);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/health/detailed`).expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         status: expect.stringMatching(/^(ok|degraded)$/),
         timestamp: expect.any(String),
@@ -110,18 +100,14 @@ describe('Health Endpoints', () => {
     });
 
     it('should have database status as ok in test environment', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/health/detailed`)
-        .expect(200);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/health/detailed`).expect(200);
 
       expect(response.body.data.services.database.status).toBe('ok');
       expect(response.body.data.services.database.connectionState).toBe('connected');
     });
 
     it('should measure response time', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/health/detailed`)
-        .expect(200);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/health/detailed`).expect(200);
 
       const responseTime = parseInt(response.body.data.responseTime.replace('ms', ''));
       expect(responseTime).toBeGreaterThan(0);
@@ -131,12 +117,10 @@ describe('Health Endpoints', () => {
 
   describe('GET /api/v1/health/ping', () => {
     it('should return simple pong response', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/health/ping`)
-        .expect(200);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/health/ping`).expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         message: 'pong',
         timestamp: expect.any(String),
@@ -145,10 +129,8 @@ describe('Health Endpoints', () => {
 
     it('should respond quickly for ping endpoint', async () => {
       const startTime = Date.now();
-      
-      await request(app)
-        .get(`${TEST_CONFIG.baseURL}/health/ping`)
-        .expect(200);
+
+      await request(app).get(`${TEST_CONFIG.baseURL}/health/ping`).expect(200);
 
       const responseTime = Date.now() - startTime;
       expect(responseTime).toBeLessThan(1000); // Should respond in under 1 second
@@ -157,12 +139,10 @@ describe('Health Endpoints', () => {
 
   describe('API Root Endpoint', () => {
     it('should return API information at root', async () => {
-      const response = await request(app)
-        .get('/')
-        .expect(200);
+      const response = await request(app).get('/').expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         message: 'InvoLuck Backend API',
         version: expect.any(String),
@@ -172,12 +152,10 @@ describe('Health Endpoints', () => {
     });
 
     it('should return API information at /api/v1', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}`)
-        .expect(200);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}`).expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         message: 'InvoLuck API v1',
         version: expect.any(String),
@@ -194,18 +172,14 @@ describe('Health Endpoints', () => {
 
   describe('Error Handling', () => {
     it('should return 404 for non-existent endpoints', async () => {
-      const response = await request(app)
-        .get('/non-existent-endpoint')
-        .expect(404);
+      const response = await request(app).get('/non-existent-endpoint').expect(404);
 
       testUtils.assertNotFoundError(response);
       expect(response.body.error.message).toContain('not found');
     });
 
     it('should return 404 for non-existent API endpoints', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/non-existent`)
-        .expect(404);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/non-existent`).expect(404);
 
       testUtils.assertNotFoundError(response);
     });
@@ -224,14 +198,14 @@ describe('Health Endpoints', () => {
   describe('Request Headers', () => {
     it('should handle custom headers properly', async () => {
       const customHeaderValue = 'test-client-v1.0';
-      
+
       const response = await request(app)
         .get(`${TEST_CONFIG.baseURL}/health/ping`)
         .set('User-Agent', customHeaderValue)
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       // Request should still succeed with custom headers
       expect(response.body.success).toBe(true);
     });

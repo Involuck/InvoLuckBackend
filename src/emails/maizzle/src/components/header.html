@@ -1,37 +1,44 @@
 <!-- Email Header Component -->
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
   <tr>
-    <td style="padding: 30px 40px; background-color: #ffffff; border-bottom: 1px solid #e2e8f0;">
-      
+    <td style="padding: 30px 40px; background-color: #ffffff; border-bottom: 1px solid #e2e8f0">
       <!-- Logo and branding -->
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
         <tr>
-          
           <!-- Logo -->
-          <td width="150" style="vertical-align: middle;">
-            <a href="{{ company.website || 'https://involuck.dev' }}" style="text-decoration: none;">
+          <td width="150" style="vertical-align: middle">
+            <a href="{{ company.website || 'https://involuck.dev' }}" style="text-decoration: none">
               <!-- Replace with actual logo when available -->
-              <div style="font-size: 24px; font-weight: bold; color: #2563eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <div
+                style="
+                  font-size: 24px;
+                  font-weight: bold;
+                  color: #2563eb;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                "
+              >
                 {{ company.name || 'InvoLuck' }}
               </div>
             </a>
           </td>
-          
+
           <!-- Spacer -->
           <td width="20"></td>
-          
+
           <!-- Header text/navigation (if needed) -->
-          <td style="text-align: right; vertical-align: middle; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <td
+            style="
+              text-align: right;
+              vertical-align: middle;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
             <if condition="headerText">
-              <div style="font-size: 14px; color: #64748b;">
-                {{ headerText }}
-              </div>
+              <div style="font-size: 14px; color: #64748b">{{ headerText }}</div>
             </if>
           </td>
-          
         </tr>
       </table>
-      
     </td>
   </tr>
 </table>
@@ -40,20 +47,24 @@
 <if condition="hero">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr>
-      <td style="background-color: {{ hero.backgroundColor || '#f8fafc' }}; padding: 40px; text-align: center;">
-        
+      <td
+        style="background-color: {{ hero.backgroundColor || '#f8fafc' }}; padding: 40px; text-align: center;"
+      >
         <if condition="hero.title">
-          <h1 style="margin: 0 0 20px; font-size: 28px; font-weight: 700; color: {{ hero.titleColor || '#1e293b' }}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.3;">
+          <h1
+            style="margin: 0 0 20px; font-size: 28px; font-weight: 700; color: {{ hero.titleColor || '#1e293b' }}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.3;"
+          >
             {{ hero.title }}
           </h1>
         </if>
-        
+
         <if condition="hero.subtitle">
-          <p style="margin: 0; font-size: 16px; color: {{ hero.subtitleColor || '#64748b' }}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+          <p
+            style="margin: 0; font-size: 16px; color: {{ hero.subtitleColor || '#64748b' }}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;"
+          >
             {{ hero.subtitle }}
           </p>
         </if>
-        
       </td>
     </tr>
   </table>

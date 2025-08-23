@@ -33,12 +33,7 @@ router.post(
  * POST /api/v1/auth/login
  * Authenticate user login
  */
-router.post(
-  '/login',
-  authRateLimit,
-  validate({ body: loginSchema }),
-  authController.login
-);
+router.post('/login', authRateLimit, validate({ body: loginSchema }), authController.login);
 
 /**
  * POST /api/v1/auth/forgot-password
@@ -55,11 +50,7 @@ router.post(
  * GET /api/v1/auth/profile
  * Get current user profile
  */
-router.get(
-  '/profile',
-  authMiddleware,
-  authController.getProfile
-);
+router.get('/profile', authMiddleware, authController.getProfile);
 
 /**
  * PATCH /api/v1/auth/profile
@@ -89,31 +80,18 @@ router.post(
  * POST /api/v1/auth/logout
  * Logout user (client-side token removal)
  */
-router.post(
-  '/logout',
-  authMiddleware,
-  authController.logout
-);
+router.post('/logout', authMiddleware, authController.logout);
 
 /**
  * DELETE /api/v1/auth/account
  * Deactivate user account
  */
-router.delete(
-  '/account',
-  authMiddleware,
-  authRateLimit,
-  authController.deactivateAccount
-);
+router.delete('/account', authMiddleware, authRateLimit, authController.deactivateAccount);
 
 /**
  * GET /api/v1/auth/stats
  * Get user statistics
  */
-router.get(
-  '/stats',
-  authMiddleware,
-  authController.getUserStats
-);
+router.get('/stats', authMiddleware, authController.getUserStats);
 
 export default router;

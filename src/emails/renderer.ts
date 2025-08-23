@@ -50,7 +50,10 @@ class EmailRenderer {
    * Render template in development mode
    * TODO: Implement Maizzle compilation
    */
-  private async renderDevelopmentTemplate(templateName: string, data: TemplateData): Promise<string> {
+  private async renderDevelopmentTemplate(
+    templateName: string,
+    data: TemplateData
+  ): Promise<string> {
     logger.debug({
       msg: 'Rendering development template (stub)',
       templateName,
@@ -71,20 +74,23 @@ class EmailRenderer {
   /**
    * Render pre-compiled template in production
    */
-  private async renderProductionTemplate(templateName: string, data: TemplateData): Promise<string> {
+  private async renderProductionTemplate(
+    templateName: string,
+    data: TemplateData
+  ): Promise<string> {
     const templatePath = path.join(this.compiledPath, `${templateName}.html`);
 
     try {
       // Check if compiled template exists
       await fs.access(templatePath);
-      
+
       // Read compiled template
       let html = await fs.readFile(templatePath, 'utf-8');
-      
+
       // Replace variables (simple string replacement for now)
       // TODO: Implement proper template variable replacement
       html = this.replaceVariables(html, data);
-      
+
       logger.debug({
         msg: 'Rendered production template',
         templateName,
@@ -98,7 +104,7 @@ class EmailRenderer {
         templateName,
         templatePath,
       });
-      
+
       // Fallback to development rendering or simple template
       return this.getFallbackTemplate(templateName, data);
     }
@@ -113,17 +119,17 @@ class EmailRenderer {
 
     // Replace simple variables like {{ variable }}
     const variableRegex = /\{\{\s*([^}]+)\s*\}\}/g;
-    
+
     result = result.replace(variableRegex, (match, variable) => {
       const trimmedVariable = variable.trim();
-      
+
       // Handle nested object access (e.g., user.name)
       const value = this.getNestedValue(data, trimmedVariable);
-      
+
       if (value !== undefined && value !== null) {
         return String(value);
       }
-      
+
       // Return empty string if variable not found
       return '';
     });
@@ -285,7 +291,7 @@ class EmailRenderer {
       const templatePath = isDevelopment()
         ? path.join(this.templatesPath, `${templateName}.html`)
         : path.join(this.compiledPath, `${templateName}.html`);
-      
+
       await fs.access(templatePath);
       return true;
     } catch {
@@ -300,10 +306,8 @@ class EmailRenderer {
     try {
       const basePath = isDevelopment() ? this.templatesPath : this.compiledPath;
       const files = await fs.readdir(basePath);
-      
-      return files
-        .filter(file => file.endsWith('.html'))
-        .map(file => file.replace('.html', ''));
+
+      return files.filter(file => file.endsWith('.html')).map(file => file.replace('.html', ''));
     } catch {
       return ['invitation', 'invoice-created']; // Fallback list
     }

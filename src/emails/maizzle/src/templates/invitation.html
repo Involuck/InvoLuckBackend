@@ -2,155 +2,321 @@
 title: "You're invited to join {{ companyName || 'InvoLuck' }}"
 previewText: "{{ name }}, you've been invited to join {{ companyName || 'InvoLuck' }} on InvoLuck"
 hero:
-  backgroundColor: "#eff6ff"
+  backgroundColor: '#eff6ff'
   title: "You're Invited!"
-  titleColor: "#1e40af"
+  titleColor: '#1e40af'
   subtitle: "Join {{ companyName || 'InvoLuck' }} on InvoLuck"
-  subtitleColor: "#64748b"
+  subtitleColor: '#64748b'
 ---
 
 <extends src="src/layouts/base.html">
   <block name="template">
-    
     <!-- Greeting -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding-bottom: 30px;">
-          
-          <h2 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.3;">
+        <td style="padding-bottom: 30px">
+          <h2
+            style="
+              margin: 0 0 20px;
+              font-size: 24px;
+              font-weight: 600;
+              color: #1e293b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.3;
+            "
+          >
             Hello {{ name }},
           </h2>
-          
-          <p style="margin: 0 0 20px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
-            You've been invited to join <strong>{{ companyName || 'InvoLuck' }}</strong> on InvoLuck, our professional invoice management platform.
+
+          <p
+            style="
+              margin: 0 0 20px;
+              font-size: 16px;
+              color: #374151;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.6;
+            "
+          >
+            You've been invited to join <strong>{{ companyName || 'InvoLuck' }}</strong> on
+            InvoLuck, our professional invoice management platform.
           </p>
-          
-          <p style="margin: 0 0 30px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
-            With InvoLuck, you'll be able to create professional invoices, track payments, manage clients, and streamline your billing process.
+
+          <p
+            style="
+              margin: 0 0 30px;
+              font-size: 16px;
+              color: #374151;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.6;
+            "
+          >
+            With InvoLuck, you'll be able to create professional invoices, track payments, manage
+            clients, and streamline your billing process.
           </p>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Call to Action -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="text-align: center; padding: 30px 0;">
-          
+        <td style="text-align: center; padding: 30px 0">
           <!-- CTA Button -->
-          <div style="margin-bottom: 20px;">
+          <div style="margin-bottom: 20px">
             <!--[if mso]>
-            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ inviteUrl }}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="10%" stroke="f" fillcolor="#2563eb">
-              <w:anchorlock/>
-              <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">Accept Invitation</center>
-            </v:roundrect>
+              <v:roundrect
+                xmlns:v="urn:schemas-microsoft-com:vml"
+                xmlns:w="urn:schemas-microsoft-com:office:word"
+                href="{{ inviteUrl }}"
+                style="height: 50px; v-text-anchor: middle; width: 200px"
+                arcsize="10%"
+                stroke="f"
+                fillcolor="#2563eb"
+              >
+                <w:anchorlock />
+                <center
+                  style="
+                    color: #ffffff;
+                    font-family: sans-serif;
+                    font-size: 16px;
+                    font-weight: bold;
+                  "
+                >
+                  Accept Invitation
+                </center>
+              </v:roundrect>
             <![endif]-->
-            
-            <a href="{{ inviteUrl }}" style="background-color: #2563eb; border: 0; border-radius: 6px; color: #ffffff; display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: 600; line-height: 50px; text-align: center; text-decoration: none; width: 200px; -webkit-text-size-adjust: none; mso-hide: all;">
+
+            <a
+              href="{{ inviteUrl }}"
+              style="
+                background-color: #2563eb;
+                border: 0;
+                border-radius: 6px;
+                color: #ffffff;
+                display: inline-block;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 50px;
+                text-align: center;
+                text-decoration: none;
+                width: 200px;
+                -webkit-text-size-adjust: none;
+                mso-hide: all;
+              "
+            >
               Accept Invitation
             </a>
           </div>
-          
-          <p style="margin: 0; font-size: 14px; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+
+          <p
+            style="
+              margin: 0;
+              font-size: 14px;
+              color: #64748b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
             This invitation will expire in <strong>{{ expiresIn || '7 days' }}</strong>
           </p>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Features Section -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px 0; border-top: 1px solid #e2e8f0;">
-          
-          <h3 style="margin: 0 0 20px; font-size: 18px; font-weight: 600; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <td style="padding: 30px 0; border-top: 1px solid #e2e8f0">
+          <h3
+            style="
+              margin: 0 0 20px;
+              font-size: 18px;
+              font-weight: 600;
+              color: #1e293b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
             What you can do with InvoLuck:
           </h3>
-          
+
           <!-- Features List -->
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-            
             <!-- Feature 1 -->
             <tr>
-              <td style="padding: 8px 0; vertical-align: top; width: 20px;">
-                <div style="width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; margin-top: 8px;"></div>
+              <td style="padding: 8px 0; vertical-align: top; width: 20px">
+                <div
+                  style="
+                    width: 6px;
+                    height: 6px;
+                    background-color: #22c55e;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                  "
+                ></div>
               </td>
-              <td style="padding: 8px 0 8px 15px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+              <td
+                style="
+                  padding: 8px 0 8px 15px;
+                  font-size: 16px;
+                  color: #374151;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.5;
+                "
+              >
                 Create and send professional invoices in minutes
               </td>
             </tr>
-            
+
             <!-- Feature 2 -->
             <tr>
-              <td style="padding: 8px 0; vertical-align: top; width: 20px;">
-                <div style="width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; margin-top: 8px;"></div>
+              <td style="padding: 8px 0; vertical-align: top; width: 20px">
+                <div
+                  style="
+                    width: 6px;
+                    height: 6px;
+                    background-color: #22c55e;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                  "
+                ></div>
               </td>
-              <td style="padding: 8px 0 8px 15px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+              <td
+                style="
+                  padding: 8px 0 8px 15px;
+                  font-size: 16px;
+                  color: #374151;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.5;
+                "
+              >
                 Track payment status and send automatic reminders
               </td>
             </tr>
-            
+
             <!-- Feature 3 -->
             <tr>
-              <td style="padding: 8px 0; vertical-align: top; width: 20px;">
-                <div style="width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; margin-top: 8px;"></div>
+              <td style="padding: 8px 0; vertical-align: top; width: 20px">
+                <div
+                  style="
+                    width: 6px;
+                    height: 6px;
+                    background-color: #22c55e;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                  "
+                ></div>
               </td>
-              <td style="padding: 8px 0 8px 15px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+              <td
+                style="
+                  padding: 8px 0 8px 15px;
+                  font-size: 16px;
+                  color: #374151;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.5;
+                "
+              >
                 Manage clients and organize your billing workflow
               </td>
             </tr>
-            
+
             <!-- Feature 4 -->
             <tr>
-              <td style="padding: 8px 0; vertical-align: top; width: 20px;">
-                <div style="width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; margin-top: 8px;"></div>
+              <td style="padding: 8px 0; vertical-align: top; width: 20px">
+                <div
+                  style="
+                    width: 6px;
+                    height: 6px;
+                    background-color: #22c55e;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                  "
+                ></div>
               </td>
-              <td style="padding: 8px 0 8px 15px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+              <td
+                style="
+                  padding: 8px 0 8px 15px;
+                  font-size: 16px;
+                  color: #374151;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.5;
+                "
+              >
                 Generate reports and insights on your revenue
               </td>
             </tr>
-            
           </table>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Support Section -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px 20px; background-color: #f8fafc; border-radius: 8px; text-align: center; border-top: 1px solid #e2e8f0;">
-          
-          <p style="margin: 0 0 15px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
+        <td
+          style="
+            padding: 30px 20px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+          "
+        >
+          <p
+            style="
+              margin: 0 0 15px;
+              font-size: 16px;
+              color: #374151;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.6;
+            "
+          >
             Have questions or need help getting started?
           </p>
-          
-          <p style="margin: 0; font-size: 14px; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            Our support team is here to help: 
-            <a href="mailto:{{ company.email || 'support@involuck.dev' }}" style="color: #2563eb; text-decoration: none;">
+
+          <p
+            style="
+              margin: 0;
+              font-size: 14px;
+              color: #64748b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
+            Our support team is here to help:
+            <a
+              href="mailto:{{ company.email || 'support@involuck.dev' }}"
+              style="color: #2563eb; text-decoration: none"
+            >
               {{ company.email || 'support@involuck.dev' }}
             </a>
           </p>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Manual Link -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px 0 0; text-align: center;">
-          
-          <p style="margin: 0; font-size: 12px; color: #94a3b8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
-            If you're having trouble with the button above, copy and paste this URL into your browser:<br>
-            <a href="{{ inviteUrl }}" style="color: #64748b; text-decoration: none; word-break: break-all;">{{ inviteUrl }}</a>
+        <td style="padding: 30px 0 0; text-align: center">
+          <p
+            style="
+              margin: 0;
+              font-size: 12px;
+              color: #94a3b8;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.5;
+            "
+          >
+            If you're having trouble with the button above, copy and paste this URL into your
+            browser:<br />
+            <a
+              href="{{ inviteUrl }}"
+              style="color: #64748b; text-decoration: none; word-break: break-all"
+              >{{ inviteUrl }}</a
+            >
           </p>
-          
         </td>
       </tr>
     </table>
-    
   </block>
 </extends>

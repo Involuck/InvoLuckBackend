@@ -40,20 +40,13 @@ const formatZodError = (error: ZodError): ErrorDetail[] => {
 /**
  * Validate specific part of request
  */
-const validateRequestPart = (
-  data: any,
-  schema: ZodSchema,
-  target: ValidationTarget
-): any => {
+const validateRequestPart = (data: any, schema: ZodSchema, target: ValidationTarget): any => {
   try {
     return schema.parse(data);
   } catch (error) {
     if (error instanceof ZodError) {
       const details = formatZodError(error);
-      throw ApiErrors.validation(
-        `Validation failed for ${target}`,
-        details
-      );
+      throw ApiErrors.validation(`Validation failed for ${target}`, details);
     }
     throw error;
   }
@@ -61,45 +54,45 @@ const validateRequestPart = (
 
 /**
  * Main validation middleware factory
- * 
+ *
  * @param schemas - Object containing schemas for different request parts
  * @returns Express middleware function
- * 
+ *
  * @example
  * app.post('/users', validate({ body: userCreateSchema }), createUser);
  */
 export const validate = (schemas: ValidationSchemas) => {
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const validationErrors: ErrorDetail[] = [];
-    
+
     try {
       // Validate body if schema provided
       if (schemas.body) {
         req.body = validateRequestPart(req.body, schemas.body, 'body');
       }
-      
+
       // Validate params if schema provided
       if (schemas.params) {
         req.params = validateRequestPart(req.params, schemas.params, 'params');
       }
-      
+
       // Validate query if schema provided
       if (schemas.query) {
         req.query = validateRequestPart(req.query, schemas.query, 'query');
       }
-      
+
       // Validate headers if schema provided
       if (schemas.headers) {
         req.headers = validateRequestPart(req.headers, schemas.headers, 'headers');
       }
-      
+
       logger.debug({
         msg: 'Request validation successful',
         requestId: req.id,
         path: req.path,
         method: req.method,
       });
-      
+
       next();
     } catch (error) {
       logger.warn({
@@ -109,7 +102,7 @@ export const validate = (schemas: ValidationSchemas) => {
         method: req.method,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
-      
+
       throw error;
     }
   });
@@ -148,31 +141,29 @@ export const validateFile = (options: {
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const file = req.file;
     const { required = false, maxSize = 5 * 1024 * 1024, allowedTypes = [] } = options;
-    
+
     // Check if file is required
     if (required && !file) {
       throw ApiErrors.badRequest('File is required');
     }
-    
+
     // If no file and not required, skip validation
     if (!file) {
       return next();
     }
-    
+
     // Check file size
     if (file.size > maxSize) {
-      throw ApiErrors.badRequest(
-        `File size too large. Maximum allowed: ${maxSize} bytes`
-      );
+      throw ApiErrors.badRequest(`File size too large. Maximum allowed: ${maxSize} bytes`);
     }
-    
+
     // Check file type
     if (allowedTypes.length > 0 && !allowedTypes.includes(file.mimetype)) {
       throw ApiErrors.badRequest(
         `File type not allowed. Allowed types: ${allowedTypes.join(', ')}`
       );
     }
-    
+
     logger.debug({
       msg: 'File validation successful',
       fileName: file.originalname,
@@ -180,7 +171,7 @@ export const validateFile = (options: {
       mimeType: file.mimetype,
       requestId: req.id,
     });
-    
+
     next();
   });
 };
@@ -193,7 +184,7 @@ export const commonSchemas = {
   objectIdParam: z.object({
     id: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid ObjectId format'),
   }),
-  
+
   // Pagination query
   paginationQuery: z.object({
     page: z.coerce.number().min(1).optional(),
@@ -201,7 +192,7 @@ export const commonSchemas = {
     sort: z.string().optional(),
     order: z.enum(['asc', 'desc']).optional(),
   }),
-  
+
   // Search query
   searchQuery: z.object({
     q: z.string().min(1).max(100).optional(),

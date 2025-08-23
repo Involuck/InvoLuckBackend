@@ -3,21 +3,21 @@ info:
   title: InvoLuck Backend API
   description: |
     Professional invoice management system API built with TypeScript, Express, and MongoDB.
-    
+
     ## Features
     - User authentication and authorization
     - Client management
     - Invoice creation and management
     - Email notifications
     - Analytics and reporting
-    
+
     ## Authentication
     Most endpoints require authentication using JWT tokens. Include the token in the Authorization header:
-    
+
     ```
     Authorization: Bearer <your-jwt-token>
     ```
-    
+
     ## Response Format
     All responses follow a consistent format with success/error indicators and request IDs for tracing.
   version: 1.0.0
@@ -143,7 +143,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-    
+
     patch:
       tags:
         - Authentication

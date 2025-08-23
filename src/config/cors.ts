@@ -10,7 +10,7 @@ import logger from './logger';
 // Parse allowed origins from environment
 const getAllowedOrigins = (): string[] => {
   const origins = CORS_ORIGIN.split(',').map(origin => origin.trim());
-  
+
   // In development, allow all localhost origins
   if (isDevelopment()) {
     const developmentOrigins = [
@@ -19,10 +19,10 @@ const getAllowedOrigins = (): string[] => {
       'http://127.0.0.1:3000',
       'http://127.0.0.1:3001',
     ];
-    
+
     return [...new Set([...origins, ...developmentOrigins])];
   }
-  
+
   return origins;
 };
 
@@ -53,9 +53,9 @@ const corsOptions: cors.CorsOptions = {
     const error = new Error(`Origin ${origin} not allowed by CORS policy`);
     callback(error, false);
   },
-  
+
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  
+
   allowedHeaders: [
     'Origin',
     'X-Requested-With',
@@ -65,18 +65,14 @@ const corsOptions: cors.CorsOptions = {
     'Cache-Control',
     'X-Request-ID',
   ],
-  
-  exposedHeaders: [
-    'X-Request-ID',
-    'X-Total-Count',
-    'X-Page-Count',
-  ],
-  
+
+  exposedHeaders: ['X-Request-ID', 'X-Total-Count', 'X-Page-Count'],
+
   credentials: true,
-  
+
   // Preflight cache time (24 hours)
   maxAge: 86400,
-  
+
   // Include successful OPTIONS requests in logs
   optionsSuccessStatus: 200,
 };

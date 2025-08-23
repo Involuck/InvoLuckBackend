@@ -16,14 +16,14 @@ export interface BaseEmailData {
     zip: string;
     country: string;
   };
-  
+
   // Social links
   social?: {
     twitter?: string;
     linkedin?: string;
     github?: string;
   };
-  
+
   // Email metadata
   unsubscribeUrl?: string;
   showUnsubscribeText?: boolean;
@@ -227,7 +227,7 @@ export interface EmailAnalytics {
 }
 
 // Union type for all email template data
-export type EmailTemplateData = 
+export type EmailTemplateData =
   | InvitationEmailData
   | InvoiceCreatedEmailData
   | InvoiceReminderEmailData

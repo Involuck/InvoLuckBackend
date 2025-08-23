@@ -23,12 +23,12 @@ export class ApiError extends Error {
     isOperational = true
   ) {
     super(message);
-    
+
     this.statusCode = statusCode;
     this.code = code || this.getDefaultCode(statusCode);
     this.details = details;
     this.isOperational = isOperational;
-    
+
     // Maintain proper stack trace
     Error.captureStackTrace(this, this.constructor);
   }
@@ -113,7 +113,12 @@ export class ApiErrors {
     return new ApiError(503, message, 'SERVICE_UNAVAILABLE');
   }
 
-  static custom(statusCode: number, message: string, code?: string, details?: ErrorDetail[]): ApiError {
+  static custom(
+    statusCode: number,
+    message: string,
+    code?: string,
+    details?: ErrorDetail[]
+  ): ApiError {
     return new ApiError(statusCode, message, code, details);
   }
 }

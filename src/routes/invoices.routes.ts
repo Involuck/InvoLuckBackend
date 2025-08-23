@@ -27,21 +27,13 @@ router.use(authMiddleware);
  * GET /api/v1/invoices/stats
  * Get invoice statistics (must be before /:id route)
  */
-router.get(
-  '/stats',
-  lenientRateLimit,
-  invoicesController.getInvoiceStats
-);
+router.get('/stats', lenientRateLimit, invoicesController.getInvoiceStats);
 
 /**
  * GET /api/v1/invoices/overdue
  * Get overdue invoices (must be before /:id route)
  */
-router.get(
-  '/overdue',
-  lenientRateLimit,
-  invoicesController.getOverdueInvoices
-);
+router.get('/overdue', lenientRateLimit, invoicesController.getOverdueInvoices);
 
 /**
  * POST /api/v1/invoices

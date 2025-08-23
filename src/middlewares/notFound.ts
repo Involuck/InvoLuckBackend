@@ -20,7 +20,7 @@ export const notFoundHandler = (req: Request, res: Response, next: NextFunction)
     ip: req.ip,
     requestId: req.id,
   });
-  
+
   const error = ApiErrors.notFound(`Route ${req.method} ${req.url} not found`);
   next(error);
 };

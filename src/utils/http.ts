@@ -14,7 +14,7 @@ export interface ApiResponse<T = any> {
     message: string;
     details?: any[];
   };
-  requestId: string;
+  requestId: number;
   timestamp?: string;
   pagination?: {
     page: number;
@@ -52,15 +52,11 @@ export const ok = <T>(
 /**
  * Send successful response for resource creation
  */
-export const created = <T>(
-  res: Response,
-  data: T,
-  location?: string
-): Response<ApiResponse<T>> => {
+export const created = <T>(res: Response, data: T, location?: string): Response<ApiResponse<T>> => {
   if (location) {
     res.location(location);
   }
-  
+
   return ok(res, data, 201);
 };
 
@@ -119,20 +115,14 @@ export const unauthorized = (
 /**
  * Send forbidden error (403)
  */
-export const forbidden = (
-  res: Response,
-  message = 'Access forbidden'
-): Response<ApiResponse> => {
+export const forbidden = (res: Response, message = 'Access forbidden'): Response<ApiResponse> => {
   return error(res, 403, 'FORBIDDEN', message);
 };
 
 /**
  * Send not found error (404)
  */
-export const notFound = (
-  res: Response,
-  message = 'Resource not found'
-): Response<ApiResponse> => {
+export const notFound = (res: Response, message = 'Resource not found'): Response<ApiResponse> => {
   return error(res, 404, 'NOT_FOUND', message);
 };
 

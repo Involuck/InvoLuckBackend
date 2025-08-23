@@ -41,14 +41,11 @@ class MailService {
   /**
    * Send invitation email to new team member
    */
-  async sendInvitationEmail(
-    to: string,
-    data: InvitationEmailData
-  ): Promise<void> {
+  async sendInvitationEmail(to: string, data: InvitationEmailData): Promise<void> {
     try {
       // TODO: Render template with Maizzle when templates are ready
       const html = this.renderInvitationTemplate(data);
-      
+
       await sendMail({
         to,
         subject: `You're invited to join ${data.companyName || 'InvoLuck'}`,
@@ -73,14 +70,11 @@ class MailService {
   /**
    * Send invoice created notification email
    */
-  async sendInvoiceCreatedEmail(
-    to: string,
-    data: InvoiceCreatedEmailData
-  ): Promise<void> {
+  async sendInvoiceCreatedEmail(to: string, data: InvoiceCreatedEmailData): Promise<void> {
     try {
       // TODO: Render template with Maizzle when templates are ready
       const html = this.renderInvoiceCreatedTemplate(data);
-      
+
       await sendMail({
         to,
         subject: `New Invoice ${data.invoiceNumber} - ${data.currency} ${data.amount}`,
@@ -108,13 +102,10 @@ class MailService {
   /**
    * Send password reset email
    */
-  async sendPasswordResetEmail(
-    to: string,
-    data: PasswordResetEmailData
-  ): Promise<void> {
+  async sendPasswordResetEmail(to: string, data: PasswordResetEmailData): Promise<void> {
     try {
       const html = this.renderPasswordResetTemplate(data);
-      
+
       await sendMail({
         to,
         subject: 'Reset your InvoLuck password',
@@ -139,13 +130,10 @@ class MailService {
   /**
    * Send welcome email to new user
    */
-  async sendWelcomeEmail(
-    to: string,
-    data: WelcomeEmailData
-  ): Promise<void> {
+  async sendWelcomeEmail(to: string, data: WelcomeEmailData): Promise<void> {
     try {
       const html = this.renderWelcomeTemplate(data);
-      
+
       await sendMail({
         to,
         subject: 'Welcome to InvoLuck!',
@@ -178,10 +166,10 @@ class MailService {
     try {
       const html = this.renderInvoiceReminderTemplate(data);
       const isOverdue = data.daysOverdue && data.daysOverdue > 0;
-      const subject = isOverdue 
+      const subject = isOverdue
         ? `Overdue Invoice ${data.invoiceNumber} - ${data.currency} ${data.amount}`
         : `Payment Reminder: Invoice ${data.invoiceNumber}`;
-      
+
       await sendMail({
         to,
         subject,
@@ -376,9 +364,11 @@ class MailService {
   /**
    * Render invoice reminder email template
    */
-  private renderInvoiceReminderTemplate(data: InvoiceCreatedEmailData & { daysOverdue?: number }): string {
+  private renderInvoiceReminderTemplate(
+    data: InvoiceCreatedEmailData & { daysOverdue?: number }
+  ): string {
     const isOverdue = data.daysOverdue && data.daysOverdue > 0;
-    
+
     return `
       <!DOCTYPE html>
       <html>
@@ -399,9 +389,10 @@ class MailService {
           <div class="container">
             <h2>${isOverdue ? 'Overdue Payment' : 'Payment Reminder'}</h2>
             <p>Dear ${data.clientName},</p>
-            ${isOverdue 
-              ? `<div class="overdue"><strong>This invoice is ${data.daysOverdue} days overdue.</strong> Please arrange payment as soon as possible.</div>`
-              : '<p>This is a friendly reminder that the following invoice is due soon:</p>'
+            ${
+              isOverdue
+                ? `<div class="overdue"><strong>This invoice is ${data.daysOverdue} days overdue.</strong> Please arrange payment as soon as possible.</div>`
+                : '<p>This is a friendly reminder that the following invoice is due soon:</p>'
             }
             <div class="invoice-details">
               <p><strong>Invoice Number:</strong> ${data.invoiceNumber}</p>

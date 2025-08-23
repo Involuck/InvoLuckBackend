@@ -1,225 +1,455 @@
 ---
 title: "Invoice {{ invoiceNumber }} from {{ companyName || 'InvoLuck' }}"
-previewText: "New invoice {{ invoiceNumber }} for {{ currency }} {{ amount }} - Due {{ dueDate }}"
+previewText: 'New invoice {{ invoiceNumber }} for {{ currency }} {{ amount }} - Due {{ dueDate }}'
 hero:
-  backgroundColor: "#f0fdf4"
-  title: "New Invoice"
-  titleColor: "#166534"
-  subtitle: "Invoice {{ invoiceNumber }}"
-  subtitleColor: "#64748b"
+  backgroundColor: '#f0fdf4'
+  title: 'New Invoice'
+  titleColor: '#166534'
+  subtitle: 'Invoice {{ invoiceNumber }}'
+  subtitleColor: '#64748b'
 ---
 
 <extends src="src/layouts/base.html">
   <block name="template">
-    
     <!-- Greeting -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding-bottom: 30px;">
-          
-          <h2 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.3;">
+        <td style="padding-bottom: 30px">
+          <h2
+            style="
+              margin: 0 0 20px;
+              font-size: 24px;
+              font-weight: 600;
+              color: #1e293b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.3;
+            "
+          >
             Dear {{ clientName }},
           </h2>
-          
-          <p style="margin: 0 0 20px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
-            Thank you for your business! A new invoice has been created for you by <strong>{{ companyName || 'InvoLuck' }}</strong>.
+
+          <p
+            style="
+              margin: 0 0 20px;
+              font-size: 16px;
+              color: #374151;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.6;
+            "
+          >
+            Thank you for your business! A new invoice has been created for you by
+            <strong>{{ companyName || 'InvoLuck' }}</strong>.
           </p>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Invoice Details -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
-          
-          <h3 style="margin: 0 0 20px; font-size: 18px; font-weight: 600; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <td
+          style="
+            padding: 30px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+          "
+        >
+          <h3
+            style="
+              margin: 0 0 20px;
+              font-size: 18px;
+              font-weight: 600;
+              color: #1e293b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
             Invoice Details
           </h3>
-          
+
           <!-- Invoice info table -->
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-            
             <!-- Invoice Number -->
             <tr>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; vertical-align: top; width: 40%;">
-                <div style="font-size: 14px; font-weight: 600; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <td
+                style="
+                  padding: 12px 0;
+                  border-bottom: 1px solid #e2e8f0;
+                  vertical-align: top;
+                  width: 40%;
+                "
+              >
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #64748b;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  "
+                >
                   Invoice Number:
                 </div>
               </td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; vertical-align: top;">
-                <div style="font-size: 16px; font-weight: 600; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; vertical-align: top">
+                <div
+                  style="
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #1e293b;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  "
+                >
                   {{ invoiceNumber }}
                 </div>
               </td>
             </tr>
-            
+
             <!-- Amount -->
             <tr>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; vertical-align: top; width: 40%;">
-                <div style="font-size: 14px; font-weight: 600; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <td
+                style="
+                  padding: 12px 0;
+                  border-bottom: 1px solid #e2e8f0;
+                  vertical-align: top;
+                  width: 40%;
+                "
+              >
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #64748b;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  "
+                >
                   Amount Due:
                 </div>
               </td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; vertical-align: top;">
-                <div style="font-size: 24px; font-weight: 700; color: #166534; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; vertical-align: top">
+                <div
+                  style="
+                    font-size: 24px;
+                    font-weight: 700;
+                    color: #166534;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  "
+                >
                   {{ currency }} {{ amount }}
                 </div>
               </td>
             </tr>
-            
+
             <!-- Due Date -->
             <tr>
-              <td style="padding: 12px 0; vertical-align: top; width: 40%;">
-                <div style="font-size: 14px; font-weight: 600; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <td style="padding: 12px 0; vertical-align: top; width: 40%">
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #64748b;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  "
+                >
                   Due Date:
                 </div>
               </td>
-              <td style="padding: 12px 0; vertical-align: top;">
-                <div style="font-size: 16px; font-weight: 600; color: #dc2626; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              <td style="padding: 12px 0; vertical-align: top">
+                <div
+                  style="
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #dc2626;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  "
+                >
                   {{ dueDate }}
                 </div>
               </td>
             </tr>
-            
           </table>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Call to Action -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="text-align: center; padding: 40px 0 30px;">
-          
+        <td style="text-align: center; padding: 40px 0 30px">
           <!-- CTA Button -->
-          <div style="margin-bottom: 20px;">
+          <div style="margin-bottom: 20px">
             <!--[if mso]>
-            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ invoiceUrl }}" style="height:50px;v-text-anchor:middle;width:220px;" arcsize="10%" stroke="f" fillcolor="#16a34a">
-              <w:anchorlock/>
-              <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">View & Pay Invoice</center>
-            </v:roundrect>
+              <v:roundrect
+                xmlns:v="urn:schemas-microsoft-com:vml"
+                xmlns:w="urn:schemas-microsoft-com:office:word"
+                href="{{ invoiceUrl }}"
+                style="height: 50px; v-text-anchor: middle; width: 220px"
+                arcsize="10%"
+                stroke="f"
+                fillcolor="#16a34a"
+              >
+                <w:anchorlock />
+                <center
+                  style="
+                    color: #ffffff;
+                    font-family: sans-serif;
+                    font-size: 16px;
+                    font-weight: bold;
+                  "
+                >
+                  View & Pay Invoice
+                </center>
+              </v:roundrect>
             <![endif]-->
-            
-            <a href="{{ invoiceUrl }}" style="background-color: #16a34a; border: 0; border-radius: 6px; color: #ffffff; display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: 600; line-height: 50px; text-align: center; text-decoration: none; width: 220px; -webkit-text-size-adjust: none; mso-hide: all;">
+
+            <a
+              href="{{ invoiceUrl }}"
+              style="
+                background-color: #16a34a;
+                border: 0;
+                border-radius: 6px;
+                color: #ffffff;
+                display: inline-block;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 50px;
+                text-align: center;
+                text-decoration: none;
+                width: 220px;
+                -webkit-text-size-adjust: none;
+                mso-hide: all;
+              "
+            >
               View &amp; Pay Invoice
             </a>
           </div>
-          
-          <p style="margin: 0; font-size: 14px; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+
+          <p
+            style="
+              margin: 0;
+              font-size: 14px;
+              color: #64748b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
             Click the button above to view your invoice and make a payment
           </p>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Payment Information -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px 0; border-top: 1px solid #e2e8f0;">
-          
-          <h3 style="margin: 0 0 20px; font-size: 18px; font-weight: 600; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <td style="padding: 30px 0; border-top: 1px solid #e2e8f0">
+          <h3
+            style="
+              margin: 0 0 20px;
+              font-size: 18px;
+              font-weight: 600;
+              color: #1e293b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
             Payment Information
           </h3>
-          
-          <p style="margin: 0 0 15px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
-            You can pay this invoice securely online using the link above. We accept the following payment methods:
+
+          <p
+            style="
+              margin: 0 0 15px;
+              font-size: 16px;
+              color: #374151;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.6;
+            "
+          >
+            You can pay this invoice securely online using the link above. We accept the following
+            payment methods:
           </p>
-          
+
           <!-- Payment methods -->
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-            
             <!-- Method 1 -->
             <tr>
-              <td style="padding: 5px 0; vertical-align: top; width: 20px;">
-                <div style="width: 6px; height: 6px; background-color: #3b82f6; border-radius: 50%; margin-top: 8px;"></div>
+              <td style="padding: 5px 0; vertical-align: top; width: 20px">
+                <div
+                  style="
+                    width: 6px;
+                    height: 6px;
+                    background-color: #3b82f6;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                  "
+                ></div>
               </td>
-              <td style="padding: 5px 0 5px 15px; font-size: 15px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+              <td
+                style="
+                  padding: 5px 0 5px 15px;
+                  font-size: 15px;
+                  color: #374151;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.5;
+                "
+              >
                 Credit & Debit Cards (Visa, MasterCard, American Express)
               </td>
             </tr>
-            
+
             <!-- Method 2 -->
             <tr>
-              <td style="padding: 5px 0; vertical-align: top; width: 20px;">
-                <div style="width: 6px; height: 6px; background-color: #3b82f6; border-radius: 50%; margin-top: 8px;"></div>
+              <td style="padding: 5px 0; vertical-align: top; width: 20px">
+                <div
+                  style="
+                    width: 6px;
+                    height: 6px;
+                    background-color: #3b82f6;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                  "
+                ></div>
               </td>
-              <td style="padding: 5px 0 5px 15px; font-size: 15px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+              <td
+                style="
+                  padding: 5px 0 5px 15px;
+                  font-size: 15px;
+                  color: #374151;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.5;
+                "
+              >
                 Bank Transfer (ACH)
               </td>
             </tr>
-            
+
             <!-- Method 3 -->
             <tr>
-              <td style="padding: 5px 0; vertical-align: top; width: 20px;">
-                <div style="width: 6px; height: 6px; background-color: #3b82f6; border-radius: 50%; margin-top: 8px;"></div>
+              <td style="padding: 5px 0; vertical-align: top; width: 20px">
+                <div
+                  style="
+                    width: 6px;
+                    height: 6px;
+                    background-color: #3b82f6;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                  "
+                ></div>
               </td>
-              <td style="padding: 5px 0 5px 15px; font-size: 15px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
+              <td
+                style="
+                  padding: 5px 0 5px 15px;
+                  font-size: 15px;
+                  color: #374151;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.5;
+                "
+              >
                 PayPal
               </td>
             </tr>
-            
           </table>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Important Notes -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 20px; background-color: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
-          
-          <h4 style="margin: 0 0 10px; font-size: 16px; font-weight: 600; color: #92400e; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <td
+          style="
+            padding: 20px;
+            background-color: #fef3c7;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+          "
+        >
+          <h4
+            style="
+              margin: 0 0 10px;
+              font-size: 16px;
+              font-weight: 600;
+              color: #92400e;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
             Important Reminders
           </h4>
-          
-          <p style="margin: 0 0 10px; font-size: 14px; color: #92400e; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
-            • Please ensure payment is made by the due date to avoid any late fees<br>
-            • Keep this email for your records<br>
+
+          <p
+            style="
+              margin: 0 0 10px;
+              font-size: 14px;
+              color: #92400e;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.5;
+            "
+          >
+            • Please ensure payment is made by the due date to avoid any late fees<br />
+            • Keep this email for your records<br />
             • Contact us if you have any questions about this invoice
           </p>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Support Section -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px 0 0; text-align: center;">
-          
-          <p style="margin: 0 0 10px; font-size: 16px; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
+        <td style="padding: 30px 0 0; text-align: center">
+          <p
+            style="
+              margin: 0 0 10px;
+              font-size: 16px;
+              color: #374151;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.6;
+            "
+          >
             Questions about this invoice?
           </p>
-          
-          <p style="margin: 0; font-size: 14px; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            Contact us at 
-            <a href="mailto:{{ company.email || 'support@involuck.dev' }}" style="color: #2563eb; text-decoration: none;">
+
+          <p
+            style="
+              margin: 0;
+              font-size: 14px;
+              color: #64748b;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            "
+          >
+            Contact us at
+            <a
+              href="mailto:{{ company.email || 'support@involuck.dev' }}"
+              style="color: #2563eb; text-decoration: none"
+            >
               {{ company.email || 'support@involuck.dev' }}
             </a>
           </p>
-          
         </td>
       </tr>
     </table>
-    
+
     <!-- Manual Link -->
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px 0 0; text-align: center;">
-          
-          <p style="margin: 0; font-size: 12px; color: #94a3b8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5;">
-            If you're having trouble with the button above, copy and paste this URL into your browser:<br>
-            <a href="{{ invoiceUrl }}" style="color: #64748b; text-decoration: none; word-break: break-all;">{{ invoiceUrl }}</a>
+        <td style="padding: 30px 0 0; text-align: center">
+          <p
+            style="
+              margin: 0;
+              font-size: 12px;
+              color: #94a3b8;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.5;
+            "
+          >
+            If you're having trouble with the button above, copy and paste this URL into your
+            browser:<br />
+            <a
+              href="{{ invoiceUrl }}"
+              style="color: #64748b; text-decoration: none; word-break: break-all"
+              >{{ invoiceUrl }}</a
+            >
           </p>
-          
         </td>
       </tr>
     </table>
-    
   </block>
 </extends>

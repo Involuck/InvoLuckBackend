@@ -19,7 +19,7 @@ const handleZodError = (error: ZodError): ApiError => {
     message: issue.message,
     code: issue.code,
   }));
-  
+
   return ApiErrors.validation('Validation failed', details);
 };
 
@@ -38,7 +38,7 @@ const handleDuplicateKeyError = (error: any): ApiError => {
   const field = Object.keys(error.keyValue)[0];
   const value = error.keyValue[field];
   const message = `${field} '${value}' already exists`;
-  
+
   return ApiErrors.conflict(message);
 };
 
@@ -51,7 +51,7 @@ const handleValidationError = (error: any): ApiError => {
     message: err.message,
     code: err.kind,
   }));
-  
+
   return ApiErrors.validation('Validation failed', details);
 };
 
@@ -77,34 +77,34 @@ const handleError = (error: any): ApiError => {
   if (error instanceof ApiError) {
     return error;
   }
-  
+
   // Zod validation error
   if (error instanceof ZodError) {
     return handleZodError(error);
   }
-  
+
   // Mongoose errors
   if (error instanceof CastError) {
     return handleCastError(error);
   }
-  
+
   if (error.code === 11000) {
     return handleDuplicateKeyError(error);
   }
-  
+
   if (error.name === 'ValidationError') {
     return handleValidationError(error);
   }
-  
+
   // JWT errors
   if (error.name === 'JsonWebTokenError') {
     return handleJWTError();
   }
-  
+
   if (error.name === 'TokenExpiredError') {
     return handleJWTExpiredError();
   }
-  
+
   // Default to internal server error
   return ApiErrors.internal();
 };
@@ -131,7 +131,7 @@ const logError = (error: ApiError, req: Request): void => {
       userId: req.user?.id,
     },
   };
-  
+
   // Use appropriate log level based on status code
   if (error.statusCode >= 500) {
     logger.error(logData);
@@ -146,18 +146,13 @@ const logError = (error: ApiError, req: Request): void => {
  * Main error handling middleware
  * Must be the last middleware in the chain
  */
-export const errorHandler = (
-  error: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+export const errorHandler = (error: any, req: Request, res: Response, next: NextFunction): void => {
   // Convert error to ApiError
   const apiError = handleError(error);
-  
+
   // Log error
   logError(apiError, req);
-  
+
   // Send error response
   res.status(apiError.statusCode).json({
     success: false,
@@ -181,7 +176,7 @@ export const handleAsyncError = (error: any): void => {
     error: error.message,
     stack: error.stack,
   });
-  
+
   // Graceful shutdown
   process.exit(1);
 };
@@ -195,7 +190,7 @@ export const handleUncaughtException = (error: any): void => {
     error: error.message,
     stack: error.stack,
   });
-  
+
   // Graceful shutdown
   process.exit(1);
 };

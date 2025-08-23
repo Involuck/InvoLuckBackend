@@ -32,7 +32,7 @@ export interface IUser extends Document {
   };
   createdAt: Date;
   updatedAt: Date;
-  
+
   // Instance methods
   comparePassword(candidatePassword: string): Promise<boolean>;
   generatePasswordResetToken(): string;
@@ -50,7 +50,7 @@ const userSchema = new Schema<IUser>(
       minlength: [2, 'Name must be at least 2 characters'],
       maxlength: [50, 'Name cannot exceed 50 characters'],
     },
-    
+
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -59,53 +59,53 @@ const userSchema = new Schema<IUser>(
       trim: true,
       match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'],
     },
-    
+
     password: {
       type: String,
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters'],
       select: false, // Don't include password in queries by default
     },
-    
+
     role: {
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
     },
-    
+
     isEmailVerified: {
       type: Boolean,
       default: false,
     },
-    
+
     emailVerificationToken: {
       type: String,
       select: false,
     },
-    
+
     passwordResetToken: {
       type: String,
       select: false,
     },
-    
+
     passwordResetExpires: {
       type: Date,
       select: false,
     },
-    
+
     lastLoginAt: {
       type: Date,
     },
-    
+
     isActive: {
       type: Boolean,
       default: true,
     },
-    
+
     avatar: {
       type: String,
     },
-    
+
     preferences: {
       currency: {
         type: String,
@@ -159,7 +159,7 @@ userSchema.index({ passwordResetToken: 1 });
 userSchema.pre('save', async function (next) {
   // Only hash password if it's been modified (or is new)
   if (!this.isModified('password')) return next();
-  
+
   try {
     // Hash password with cost of 12
     const salt = await bcrypt.genSalt(12);
@@ -186,40 +186,37 @@ userSchema.methods.comparePassword = async function (candidatePassword: string):
 // Generate password reset token
 userSchema.methods.generatePasswordResetToken = function (): string {
   const resetToken = require('crypto').randomBytes(32).toString('hex');
-  
-  this.passwordResetToken = require('crypto')
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
-  
+
+  this.passwordResetToken = require('crypto').createHash('sha256').update(resetToken).digest('hex');
+
   this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-  
+
   return resetToken;
 };
 
 // Generate email verification token
 userSchema.methods.generateEmailVerificationToken = function (): string {
   const verificationToken = require('crypto').randomBytes(32).toString('hex');
-  
+
   this.emailVerificationToken = require('crypto')
     .createHash('sha256')
     .update(verificationToken)
     .digest('hex');
-  
+
   return verificationToken;
 };
 
 // Override toJSON to exclude sensitive fields
 userSchema.methods.toJSON = function () {
   const userObject = this.toObject();
-  
+
   // Remove sensitive fields
   delete userObject.password;
   delete userObject.passwordResetToken;
   delete userObject.passwordResetExpires;
   delete userObject.emailVerificationToken;
   delete userObject.__v;
-  
+
   return userObject;
 };
 

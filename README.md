@@ -144,6 +144,7 @@ http://localhost:5000/api/v1
 ### Main Endpoints
 
 #### Authentication
+
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - User login
 - `GET /auth/profile` - Get user profile
@@ -151,6 +152,7 @@ http://localhost:5000/api/v1
 - `POST /auth/logout` - User logout
 
 #### Clients
+
 - `GET /clients` - List clients (paginated)
 - `POST /clients` - Create new client
 - `GET /clients/:id` - Get client by ID
@@ -160,6 +162,7 @@ http://localhost:5000/api/v1
 - `GET /clients/stats` - Client statistics
 
 #### Invoices
+
 - `GET /invoices` - List invoices (paginated)
 - `POST /invoices` - Create new invoice
 - `GET /invoices/:id` - Get invoice by ID
@@ -169,6 +172,7 @@ http://localhost:5000/api/v1
 - `PATCH /invoices/:id/status` - Update invoice status
 
 #### Health
+
 - `GET /health` - Basic health check
 - `GET /health/detailed` - Detailed system health
 - `GET /health/ping` - Simple ping endpoint
@@ -331,17 +335,17 @@ Make sure to set these environment variables in production:
 
 ## 📝 Scripts Reference
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server with hot reload |
-| `npm run build` | Build TypeScript to JavaScript |
-| `npm run start` | Start production server |
-| `npm test` | Run test suite |
-| `npm run lint` | Lint code with ESLint |
-| `npm run format` | Format code with Prettier |
-| `npm run email:dev` | Start Maizzle development server |
-| `npm run email:build` | Build email templates |
-| `npm run seed` | Seed database with sample data |
+| Script                | Description                              |
+| --------------------- | ---------------------------------------- |
+| `npm run dev`         | Start development server with hot reload |
+| `npm run build`       | Build TypeScript to JavaScript           |
+| `npm run start`       | Start production server                  |
+| `npm test`            | Run test suite                           |
+| `npm run lint`        | Lint code with ESLint                    |
+| `npm run format`      | Format code with Prettier                |
+| `npm run email:dev`   | Start Maizzle development server         |
+| `npm run email:build` | Build email templates                    |
+| `npm run seed`        | Seed database with sample data           |
 
 ## 🤝 Contributing
 

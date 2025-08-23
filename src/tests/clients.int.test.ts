@@ -13,7 +13,7 @@ describe('Clients Endpoints', () => {
   beforeEach(async () => {
     const { user, token } = await testUtils.createAuthenticatedUser();
     authToken = token;
-    userId = user._id.toString();
+    userId = (user as any)._id.toString()();
   });
 
   describe('POST /api/v1/clients', () => {
@@ -30,7 +30,7 @@ describe('Clients Endpoints', () => {
         .expect(201);
 
       testUtils.assertApiResponse(response, 201);
-      
+
       expect(response.body.data).toMatchObject({
         _id: expect.any(String),
         userId,
@@ -124,7 +124,7 @@ describe('Clients Endpoints', () => {
         name: 'Client A',
         email: 'clienta@example.com',
       });
-      
+
       await testUtils.createTestClient(userId, {
         ...TEST_CLIENT_DATA,
         name: 'Client B',
@@ -141,7 +141,7 @@ describe('Clients Endpoints', () => {
 
       testUtils.assertApiResponse(response, 200);
       testUtils.assertPaginationResponse(response);
-      
+
       expect(Array.isArray(response.body.data)).toBe(true);
       expect(response.body.data.length).toBe(2);
       expect(response.body.pagination.total).toBe(2);
@@ -154,7 +154,7 @@ describe('Clients Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data.length).toBe(1);
       expect(response.body.data[0].status).toBe('active');
     });
@@ -166,7 +166,7 @@ describe('Clients Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data.length).toBe(1);
       expect(response.body.data[0].name).toBe('Client A');
     });
@@ -179,7 +179,7 @@ describe('Clients Endpoints', () => {
 
       testUtils.assertApiResponse(response, 200);
       testUtils.assertPaginationResponse(response);
-      
+
       expect(response.body.data.length).toBe(1);
       expect(response.body.pagination.page).toBe(1);
       expect(response.body.pagination.limit).toBe(1);
@@ -196,7 +196,7 @@ describe('Clients Endpoints', () => {
       });
 
       const otherUserId = 'other-user-id'; // This would be the real user ID
-      
+
       // Request should only return current user's clients
       const response = await request(app)
         .get(`${TEST_CONFIG.baseURL}/clients`)
@@ -211,9 +211,7 @@ describe('Clients Endpoints', () => {
     });
 
     it('should require authentication', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/clients`)
-        .expect(401);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/clients`).expect(401);
 
       testUtils.assertUnauthorizedError(response);
     });
@@ -224,7 +222,7 @@ describe('Clients Endpoints', () => {
 
     beforeEach(async () => {
       const client = await testUtils.createTestClient(userId);
-      clientId = client._id.toString();
+      clientId = (client._id as Types.ObjectId).toString();
     });
 
     it('should return client by ID', async () => {
@@ -234,7 +232,7 @@ describe('Clients Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         _id: clientId,
         userId,
@@ -245,7 +243,7 @@ describe('Clients Endpoints', () => {
 
     it('should return 404 for non-existent client', async () => {
       const fakeId = '507f1f77bcf86cd799439011';
-      
+
       const response = await request(app)
         .get(`${TEST_CONFIG.baseURL}/clients/${fakeId}`)
         .set(testUtils.getAuthHeader(authToken))
@@ -277,7 +275,7 @@ describe('Clients Endpoints', () => {
 
     beforeEach(async () => {
       const client = await testUtils.createTestClient(userId);
-      clientId = client._id.toString();
+      clientId = (client._id as Types.ObjectId).toString();
     });
 
     it('should update client successfully', async () => {
@@ -293,7 +291,7 @@ describe('Clients Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         _id: clientId,
         name: updateData.name,
@@ -305,7 +303,7 @@ describe('Clients Endpoints', () => {
     it('should return 404 for non-existent client', async () => {
       const fakeId = '507f1f77bcf86cd799439011';
       const updateData = { name: 'Updated Name' };
-      
+
       const response = await request(app)
         .patch(`${TEST_CONFIG.baseURL}/clients/${fakeId}`)
         .set(testUtils.getAuthHeader(authToken))
@@ -340,7 +338,7 @@ describe('Clients Endpoints', () => {
 
     beforeEach(async () => {
       const client = await testUtils.createTestClient(userId);
-      clientId = client._id.toString();
+      clientId = (client._id as Types.ObjectId).toString();
     });
 
     it('should delete client successfully', async () => {
@@ -354,7 +352,7 @@ describe('Clients Endpoints', () => {
 
     it('should return 404 for non-existent client', async () => {
       const fakeId = '507f1f77bcf86cd799439011';
-      
+
       const response = await request(app)
         .delete(`${TEST_CONFIG.baseURL}/clients/${fakeId}`)
         .set(testUtils.getAuthHeader(authToken))
@@ -388,7 +386,7 @@ describe('Clients Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(Array.isArray(response.body.data)).toBe(true);
       expect(response.body.data.length).toBeGreaterThan(0);
     });
@@ -424,7 +422,7 @@ describe('Clients Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         totalClients: expect.any(Number),
         activeClients: expect.any(Number),
@@ -438,9 +436,7 @@ describe('Clients Endpoints', () => {
     });
 
     it('should require authentication', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/clients/stats`)
-        .expect(401);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/clients/stats`).expect(401);
 
       testUtils.assertUnauthorizedError(response);
     });

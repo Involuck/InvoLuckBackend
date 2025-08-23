@@ -8,154 +8,131 @@ import { z } from 'zod';
 /**
  * User registration schema
  */
-export const registerSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(50, 'Name must not exceed 50 characters')
-    .trim(),
-  
-  email: z
-    .string()
-    .email('Invalid email format')
-    .toLowerCase()
-    .trim(),
-  
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(100, 'Password must not exceed 100 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one lowercase letter, one uppercase letter, and one number'
-    ),
-  
-  confirmPassword: z.string(),
-}).refine(data => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-});
+export const registerSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, 'Name must be at least 2 characters')
+      .max(50, 'Name must not exceed 50 characters')
+      .trim(),
+
+    email: z.string().email('Invalid email format').toLowerCase().trim(),
+
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(100, 'Password must not exceed 100 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Password must contain at least one lowercase letter, one uppercase letter, and one number'
+      ),
+
+    confirmPassword: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 /**
  * User login schema
  */
 export const loginSchema = z.object({
-  email: z
-    .string()
-    .email('Invalid email format')
-    .toLowerCase()
-    .trim(),
-  
-  password: z
-    .string()
-    .min(1, 'Password is required'),
+  email: z.string().email('Invalid email format').toLowerCase().trim(),
+
+  password: z.string().min(1, 'Password is required'),
 });
 
 /**
  * Password reset request schema
  */
 export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .email('Invalid email format')
-    .toLowerCase()
-    .trim(),
+  email: z.string().email('Invalid email format').toLowerCase().trim(),
 });
 
 /**
  * Password reset schema
  */
-export const resetPasswordSchema = z.object({
-  token: z
-    .string()
-    .min(1, 'Reset token is required'),
-  
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(100, 'Password must not exceed 100 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one lowercase letter, one uppercase letter, and one number'
-    ),
-  
-  confirmPassword: z.string(),
-}).refine(data => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-});
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, 'Reset token is required'),
+
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(100, 'Password must not exceed 100 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Password must contain at least one lowercase letter, one uppercase letter, and one number'
+      ),
+
+    confirmPassword: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 /**
  * Change password schema (for authenticated users)
  */
-export const changePasswordSchema = z.object({
-  currentPassword: z
-    .string()
-    .min(1, 'Current password is required'),
-  
-  newPassword: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(100, 'Password must not exceed 100 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one lowercase letter, one uppercase letter, and one number'
-    ),
-  
-  confirmNewPassword: z.string(),
-}).refine(data => data.newPassword === data.confirmNewPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmNewPassword'],
-});
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Current password is required'),
+
+    newPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(100, 'Password must not exceed 100 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Password must contain at least one lowercase letter, one uppercase letter, and one number'
+      ),
+
+    confirmNewPassword: z.string(),
+  })
+  .refine(data => data.newPassword === data.confirmNewPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmNewPassword'],
+  });
 
 /**
  * Refresh token schema
  */
 export const refreshTokenSchema = z.object({
-  refreshToken: z
-    .string()
-    .min(1, 'Refresh token is required'),
+  refreshToken: z.string().min(1, 'Refresh token is required'),
 });
 
 /**
  * Update profile schema
  */
-export const updateProfileSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(50, 'Name must not exceed 50 characters')
-    .trim()
-    .optional(),
-  
-  email: z
-    .string()
-    .email('Invalid email format')
-    .toLowerCase()
-    .trim()
-    .optional(),
-}).refine(data => Object.keys(data).length > 0, {
-  message: 'At least one field must be provided',
-});
+export const updateProfileSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, 'Name must be at least 2 characters')
+      .max(50, 'Name must not exceed 50 characters')
+      .trim()
+      .optional(),
+
+    email: z.string().email('Invalid email format').toLowerCase().trim().optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  });
 
 /**
  * Email verification schema
  */
 export const verifyEmailSchema = z.object({
-  token: z
-    .string()
-    .min(1, 'Verification token is required'),
+  token: z.string().min(1, 'Verification token is required'),
 });
 
 /**
  * Resend verification email schema
  */
 export const resendVerificationSchema = z.object({
-  email: z
-    .string()
-    .email('Invalid email format')
-    .toLowerCase()
-    .trim(),
+  email: z.string().email('Invalid email format').toLowerCase().trim(),
 });
 
 // Export types for TypeScript

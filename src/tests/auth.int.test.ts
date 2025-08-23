@@ -22,7 +22,7 @@ describe('Authentication Endpoints', () => {
         .expect(201);
 
       testUtils.assertApiResponse(response, 201);
-      
+
       expect(response.body.data).toMatchObject({
         user: {
           id: expect.any(String),
@@ -49,15 +49,12 @@ describe('Authentication Endpoints', () => {
         confirmPassword: 'Password123!',
       };
 
-      await request(app)
-        .post(`${TEST_CONFIG.baseURL}/auth/register`)
-        .send(userData)
-        .expect(201);
+      await request(app).post(`${TEST_CONFIG.baseURL}/auth/register`).send(userData).expect(201);
 
       // Check user in database
       const { User } = await import('../models/User');
       const user = await User.findOne({ email: userData.email }).select('+password');
-      
+
       expect(user).toBeTruthy();
       expect(user!.password).not.toBe(userData.password);
       expect(user!.password.length).toBeGreaterThan(50); // Hashed password length
@@ -120,10 +117,7 @@ describe('Authentication Endpoints', () => {
       };
 
       // Register first user
-      await request(app)
-        .post(`${TEST_CONFIG.baseURL}/auth/register`)
-        .send(userData)
-        .expect(201);
+      await request(app).post(`${TEST_CONFIG.baseURL}/auth/register`).send(userData).expect(201);
 
       // Try to register with same email
       const response = await request(app)
@@ -156,7 +150,7 @@ describe('Authentication Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         user: {
           id: expect.any(String),
@@ -179,10 +173,7 @@ describe('Authentication Endpoints', () => {
       const userBefore = await User.findOne({ email: loginData.email });
       const lastLoginBefore = userBefore!.lastLoginAt;
 
-      await request(app)
-        .post(`${TEST_CONFIG.baseURL}/auth/login`)
-        .send(loginData)
-        .expect(200);
+      await request(app).post(`${TEST_CONFIG.baseURL}/auth/login`).send(loginData).expect(200);
 
       const userAfter = await User.findOne({ email: loginData.email });
       expect(userAfter!.lastLoginAt).not.toBe(lastLoginBefore);
@@ -238,7 +229,7 @@ describe('Authentication Endpoints', () => {
     beforeEach(async () => {
       const { user, token } = await testUtils.createAuthenticatedUser();
       authToken = token;
-      userId = user._id.toString();
+      userId = (user as any)._id.toString()();
     });
 
     it('should return user profile with valid token', async () => {
@@ -248,7 +239,7 @@ describe('Authentication Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         id: userId,
         name: expect.any(String),
@@ -263,9 +254,7 @@ describe('Authentication Endpoints', () => {
     });
 
     it('should return error without authentication token', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/auth/profile`)
-        .expect(401);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/auth/profile`).expect(401);
 
       testUtils.assertUnauthorizedError(response);
     });
@@ -287,7 +276,7 @@ describe('Authentication Endpoints', () => {
     beforeEach(async () => {
       const { user, token } = await testUtils.createAuthenticatedUser();
       authToken = token;
-      userId = user._id.toString();
+      userId = (user as any)._id.toString()();
     });
 
     it('should update user profile with valid data', async () => {
@@ -302,7 +291,7 @@ describe('Authentication Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data.name).toBe(updateData.name);
       expect(response.body.data.id).toBe(userId);
     });
@@ -363,9 +352,7 @@ describe('Authentication Endpoints', () => {
     });
 
     it('should return error without authentication', async () => {
-      const response = await request(app)
-        .post(`${TEST_CONFIG.baseURL}/auth/logout`)
-        .expect(401);
+      const response = await request(app).post(`${TEST_CONFIG.baseURL}/auth/logout`).expect(401);
 
       testUtils.assertUnauthorizedError(response);
     });
@@ -386,7 +373,7 @@ describe('Authentication Endpoints', () => {
         .expect(200);
 
       testUtils.assertApiResponse(response, 200);
-      
+
       expect(response.body.data).toMatchObject({
         totalClients: expect.any(Number),
         totalInvoices: expect.any(Number),
@@ -396,9 +383,7 @@ describe('Authentication Endpoints', () => {
     });
 
     it('should return error without authentication', async () => {
-      const response = await request(app)
-        .get(`${TEST_CONFIG.baseURL}/auth/stats`)
-        .expect(401);
+      const response = await request(app).get(`${TEST_CONFIG.baseURL}/auth/stats`).expect(401);
 
       testUtils.assertUnauthorizedError(response);
     });
@@ -414,22 +399,24 @@ describe('Authentication Endpoints', () => {
       };
 
       // Make multiple rapid requests (this test might be flaky in CI)
-      const requests = Array(6).fill(null).map(() =>
-        request(app)
-          .post(`${TEST_CONFIG.baseURL}/auth/register`)
-          .send({
-            ...userData,
-            email: `${testUtils.randomString()}@example.com`, // Unique email each time
-          })
-      );
+      const requests = Array(6)
+        .fill(null)
+        .map(() =>
+          request(app)
+            .post(`${TEST_CONFIG.baseURL}/auth/register`)
+            .send({
+              ...userData,
+              email: `${testUtils.randomString()}@example.com`, // Unique email each time
+            })
+        );
 
       const responses = await Promise.allSettled(requests);
-      
+
       // At least some should succeed (we can't guarantee rate limit will kick in)
       const successfulResponses = responses.filter(
         result => result.status === 'fulfilled' && result.value.status === 201
       );
-      
+
       expect(successfulResponses.length).toBeGreaterThan(0);
     });
   });

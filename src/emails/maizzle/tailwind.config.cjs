@@ -5,12 +5,12 @@
 
 module.exports = {
   content: ['./src/**/*.html'],
-  
+
   theme: {
     extend: {
       // Email-safe fonts
       fontFamily: {
-        'sans': [
+        sans: [
           'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -21,20 +21,10 @@ module.exports = {
           'Cantarell',
           'sans-serif',
         ],
-        'serif': [
-          'Georgia',
-          'Times New Roman',
-          'serif',
-        ],
-        'mono': [
-          'Monaco',
-          'Consolas',
-          'Liberation Mono',
-          'Courier New',
-          'monospace',
-        ],
+        serif: ['Georgia', 'Times New Roman', 'serif'],
+        mono: ['Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
       },
-      
+
       // Brand colors
       colors: {
         primary: {
@@ -98,51 +88,51 @@ module.exports = {
           900: '#78350f',
         },
       },
-      
+
       // Email-safe spacing
       spacing: {
-        '0': '0',
-        '1': '4px',
-        '2': '8px',
-        '3': '12px',
-        '4': '16px',
-        '5': '20px',
-        '6': '24px',
-        '8': '32px',
-        '10': '40px',
-        '12': '48px',
-        '16': '64px',
-        '20': '80px',
-        '24': '96px',
-        '32': '128px',
+        0: '0',
+        1: '4px',
+        2: '8px',
+        3: '12px',
+        4: '16px',
+        5: '20px',
+        6: '24px',
+        8: '32px',
+        10: '40px',
+        12: '48px',
+        16: '64px',
+        20: '80px',
+        24: '96px',
+        32: '128px',
       },
-      
+
       // Email-safe border radius
       borderRadius: {
-        'none': '0',
-        'sm': '2px',
-        'DEFAULT': '4px',
-        'md': '6px',
-        'lg': '8px',
-        'xl': '12px',
+        none: '0',
+        sm: '2px',
+        DEFAULT: '4px',
+        md: '6px',
+        lg: '8px',
+        xl: '12px',
         '2xl': '16px',
-        'full': '9999px',
+        full: '9999px',
       },
-      
+
       // Email-safe shadows (use sparingly)
       boxShadow: {
-        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'DEFAULT': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       },
     },
   },
-  
+
   // Plugins for additional utilities
   plugins: [
     // Add custom utilities for email
-    function({ addUtilities, theme }) {
+    function ({ addUtilities, theme }) {
       const emailUtilities = {
         // Email-safe table utilities
         '.table-fixed-layout': {
@@ -151,40 +141,40 @@ module.exports = {
         '.table-auto-layout': {
           'table-layout': 'auto',
         },
-        
+
         // MSO specific utilities
         '.mso-hide': {
           'mso-hide': 'all',
-          'display': 'none',
+          display: 'none',
         },
-        
-        // Outlook specific utilities  
+
+        // Outlook specific utilities
         '.outlook-hide': {
-          'display': 'none',
+          display: 'none',
           'mso-hide': 'all',
         },
-        
+
         // Email client compatibility
         '.email-body': {
-          'margin': '0',
-          'padding': '0',
-          'width': '100%',
+          margin: '0',
+          padding: '0',
+          width: '100%',
           'background-color': '#f4f4f4',
           'font-family': theme('fontFamily.sans').join(', '),
         },
-        
+
         '.email-container': {
           'max-width': '600px',
-          'margin': '0 auto',
+          margin: '0 auto',
           'background-color': '#ffffff',
         },
-        
+
         // Button styles optimized for email
         '.email-button': {
-          'display': 'inline-block',
-          'padding': '12px 24px',
+          display: 'inline-block',
+          padding: '12px 24px',
           'background-color': theme('colors.primary.600'),
-          'color': '#ffffff',
+          color: '#ffffff',
           'text-decoration': 'none',
           'border-radius': theme('borderRadius.md'),
           'font-weight': '600',
@@ -192,18 +182,18 @@ module.exports = {
           'mso-padding-alt': '0',
           'mso-text-raise': '15px',
         },
-        
+
         // Responsive utilities for email
         '.email-responsive': {
-          'width': '100%',
+          width: '100%',
           'max-width': '600px',
         },
       };
-      
+
       addUtilities(emailUtilities);
     },
   ],
-  
+
   // Purge configuration
   purge: {
     // Don't purge these classes as they might be used dynamically
@@ -225,13 +215,13 @@ module.exports = {
       'border-warning-500',
     ],
   },
-  
+
   // Important for email client specificity
   important: true,
-  
+
   // Prefix for CSS classes (if needed)
   prefix: '',
-  
+
   // Dark mode configuration (limited support in email)
   darkMode: false,
 };

@@ -15,22 +15,22 @@ module.exports = {
         path: path.resolve(__dirname, '../compiled'),
       },
     },
-    
+
     // Layout options
     layouts: {
       source: path.resolve(__dirname, 'src/layouts'),
     },
-    
+
     // Components
     components: {
       source: path.resolve(__dirname, 'src/components'),
     },
-    
+
     // Tailwind CSS configuration
     tailwind: {
       css: path.resolve(__dirname, 'tailwind.config.cjs'),
     },
-    
+
     // PostCSS configuration
     postcss: {
       config: path.resolve(__dirname, 'postcss.config.cjs'),
@@ -44,18 +44,18 @@ module.exports = {
       build: {
         // Watch for changes
         watch: ['src/**/*'],
-        
+
         // Serve files for development
         serve: {
           port: 3001,
           host: 'localhost',
         },
       },
-      
+
       // Disable minification for development
       minify: false,
       prettify: true,
-      
+
       // CSS inlining options
       inlineCSS: {
         enabled: true,
@@ -64,7 +64,7 @@ module.exports = {
           height: ['TABLE', 'TD', 'TH', 'IMG', 'VIDEO'],
         },
       },
-      
+
       // Remove unused CSS
       removeUnusedCSS: {
         enabled: false, // Disabled for development
@@ -76,7 +76,7 @@ module.exports = {
       // Enable all optimizations for production
       minify: true,
       prettify: false,
-      
+
       // CSS inlining for email clients
       inlineCSS: {
         enabled: true,
@@ -86,22 +86,17 @@ module.exports = {
           height: ['TABLE', 'TD', 'TH', 'IMG', 'VIDEO'],
         },
       },
-      
+
       // Remove unused CSS for smaller file sizes
       removeUnusedCSS: {
         enabled: true,
         removeCSSComments: true,
-        doNotRemoveCSS: [
-          '.button',
-          '.footer',
-          '.container',
-          '[class*="col-"]',
-        ],
+        doNotRemoveCSS: ['.button', '.footer', '.container', '[class*="col-"]'],
       },
-      
+
       // Transform for email clients
       applyTransformers: true,
-      
+
       // Optimize for email clients
       cleanup: {
         removeEmptyElements: true,
@@ -125,14 +120,14 @@ module.exports = {
         country: 'United States',
       },
     },
-    
+
     // Social links
     social: {
       twitter: 'https://twitter.com/involuck',
       linkedin: 'https://linkedin.com/company/involuck',
       github: 'https://github.com/involuck',
     },
-    
+
     // Brand colors
     colors: {
       primary: '#007bff',
@@ -144,7 +139,7 @@ module.exports = {
       light: '#f8f9fa',
       dark: '#343a40',
     },
-    
+
     // Common strings
     strings: {
       unsubscribe: 'If you no longer wish to receive these emails, you can unsubscribe here.',
@@ -157,7 +152,7 @@ module.exports = {
   transformers: {
     // Ensure compatibility with email clients
     ensureHtmlStructure: true,
-    
+
     // Add missing attributes
     addAttributes: {
       table: {
@@ -169,7 +164,7 @@ module.exports = {
         alt: '',
       },
     },
-    
+
     // Outlook specific transformations
     outlook: {
       tag: 'o:outlook',
@@ -213,9 +208,5 @@ module.exports = {
   },
 
   // Skip these files/folders during build
-  skip: [
-    'node_modules/**',
-    'src/assets/**',
-    '*.DS_Store',
-  ],
+  skip: ['node_modules/**', 'src/assets/**', '*.DS_Store'],
 };

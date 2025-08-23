@@ -6,7 +6,12 @@
 import { Types } from 'mongoose';
 import { Client, IClient } from '../models/Client';
 import { ApiErrors } from '../utils/ApiError';
-import { parsePagination, createPaginatedResponse, createSortObject, CommonSortFields } from '../utils/pagination';
+import {
+  parsePagination,
+  createPaginatedResponse,
+  createSortObject,
+  CommonSortFields,
+} from '../utils/pagination';
 import logger from '../config/logger';
 import {
   CreateClientInput,
@@ -39,7 +44,7 @@ class ClientsService {
 
       logger.info({
         msg: 'Client created successfully',
-        clientId: client._id.toString(),
+        clientId: (client._id as Types.ObjectId).toString(),
         userId,
         clientEmail: client.email,
       });
@@ -62,7 +67,7 @@ class ClientsService {
   async getClients(userId: string, query: ClientQueryInput) {
     try {
       const pagination = parsePagination({ query } as any);
-      
+
       // Build filter
       const filter: any = { userId: new Types.ObjectId(userId) };
 
@@ -109,11 +114,7 @@ class ClientsService {
 
       // Execute queries
       const [clients, total] = await Promise.all([
-        Client.find(filter)
-          .sort(sort)
-          .skip(pagination.skip)
-          .limit(pagination.limit)
-          .lean(),
+        Client.find(filter).sort(sort).skip(pagination.skip).limit(pagination.limit).lean(),
         Client.countDocuments(filter),
       ]);
 
@@ -191,7 +192,7 @@ class ClientsService {
 
       logger.info({
         msg: 'Client updated successfully',
-        clientId: client._id.toString(),
+        clientId: (client._id as Types.ObjectId).toString(),
         userId,
         updatedFields: Object.keys(updateData),
       });
@@ -235,7 +236,7 @@ class ClientsService {
 
       logger.info({
         msg: 'Client deleted successfully',
-        clientId: client._id.toString(),
+        clientId: (client._id as Types.ObjectId).toString(),
         userId,
         clientEmail: client.email,
       });

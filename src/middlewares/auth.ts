@@ -23,17 +23,17 @@ interface JwtPayload {
  */
 const extractToken = (req: Request): string | null => {
   const authHeader = req.headers.authorization;
-  
+
   if (!authHeader) {
     return null;
   }
-  
+
   // Check for Bearer token format
   const parts = authHeader.split(' ');
   if (parts.length !== 2 || parts[0] !== 'Bearer') {
     return null;
   }
-  
+
   return parts[1];
 };
 
@@ -59,83 +59,87 @@ const verifyToken = (token: string): JwtPayload => {
  * Main authentication middleware
  * Verifies JWT token and attaches user to request
  */
-export const authMiddleware = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  // Extract token from header
-  const token = extractToken(req);
-  
-  if (!token) {
-    throw ApiErrors.unauthorized('No token provided');
-  }
-  
-  // Verify token
-  const decoded = verifyToken(token);
-  
-  // Find user in database
-  const user = await User.findById(decoded.id).select('-password');
-  
-  if (!user) {
-    logger.warn({
-      msg: 'Token valid but user not found',
-      userId: decoded.id,
+export const authMiddleware = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Extract token from header
+    const token = extractToken(req);
+
+    if (!token) {
+      throw ApiErrors.unauthorized('No token provided');
+    }
+
+    // Verify token
+    const decoded = verifyToken(token);
+
+    // Find user in database
+    const user = await User.findById(decoded.id).select('-password');
+
+    if (!user) {
+      logger.warn({
+        msg: 'Token valid but user not found',
+        userId: decoded.id,
+        requestId: req.id,
+      });
+      throw ApiErrors.unauthorized('User not found');
+    }
+
+    // Attach user to request
+    req.user = {
+      id: (user as any)._id.toString()(),
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    };
+
+    logger.debug({
+      msg: 'User authenticated',
+      userId: (user as any)._id.toString()(),
+      email: user.email,
       requestId: req.id,
     });
-    throw ApiErrors.unauthorized('User not found');
+
+    next();
   }
-  
-  // Attach user to request
-  req.user = {
-    id: user._id.toString(),
-    _id: user._id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-  };
-  
-  logger.debug({
-    msg: 'User authenticated',
-    userId: user._id.toString(),
-    email: user.email,
-    requestId: req.id,
-  });
-  
-  next();
-});
+);
 
 /**
  * Optional authentication middleware
  * Similar to authMiddleware but doesn't throw error if no token
  */
-export const optionalAuthMiddleware = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const token = extractToken(req);
-  
-  if (!token) {
-    return next();
-  }
-  
-  try {
-    const decoded = verifyToken(token);
-    const user = await User.findById(decoded.id).select('-password');
-    
-    if (user) {
-      req.user = {
-        id: user._id.toString(),
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      };
+export const optionalAuthMiddleware = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = extractToken(req);
+
+    if (!token) {
+      return next();
     }
-  } catch (error) {
-    // Log error but don't throw - this is optional auth
-    logger.debug({
-      msg: 'Optional auth failed',
-      error: error instanceof Error ? error.message : 'Unknown error',
-      requestId: req.id,
-    });
+
+    try {
+      const decoded = verifyToken(token);
+      const user = await User.findById(decoded.id).select('-password');
+
+      if (user) {
+        req.user = {
+          id: (user as any)._id.toString()(),
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        };
+      }
+    } catch (error) {
+      // Log error but don't throw - this is optional auth
+      logger.debug({
+        msg: 'Optional auth failed',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        requestId: req.id,
+      });
+    }
+
+    next();
   }
-  
-  next();
-});
+);
 
 /**
  * Role-based authorization middleware factory
@@ -145,9 +149,9 @@ export const requireRole = (allowedRoles: string[]) => {
     if (!req.user) {
       throw ApiErrors.unauthorized('Authentication required');
     }
-    
+
     const userRole = req.user.role || 'user';
-    
+
     if (!allowedRoles.includes(userRole)) {
       logger.warn({
         msg: 'Access denied - insufficient role',
@@ -158,7 +162,7 @@ export const requireRole = (allowedRoles: string[]) => {
       });
       throw ApiErrors.forbidden('Insufficient permissions');
     }
-    
+
     next();
   });
 };
@@ -171,18 +175,18 @@ export const requireOwnershipOrAdmin = (resourceIdField = 'userId') => {
     if (!req.user) {
       throw ApiErrors.unauthorized('Authentication required');
     }
-    
+
     const userRole = req.user.role || 'user';
     const userId = req.user.id;
-    
+
     // Admin can access any resource
     if (userRole === 'admin') {
       return next();
     }
-    
+
     // Check resource ownership
     const resourceUserId = req.params[resourceIdField] || req.body[resourceIdField];
-    
+
     if (resourceUserId !== userId) {
       logger.warn({
         msg: 'Access denied - resource ownership check failed',
@@ -192,7 +196,7 @@ export const requireOwnershipOrAdmin = (resourceIdField = 'userId') => {
       });
       throw ApiErrors.forbidden('Access denied - you can only access your own resources');
     }
-    
+
     next();
   });
 };

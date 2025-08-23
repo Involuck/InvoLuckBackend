@@ -47,71 +47,77 @@ export interface IClient extends Document {
   invoiceCount: number;
   createdAt: Date;
   updatedAt: Date;
-  
+
   // Instance methods
   updateFinancials(): Promise<void>;
   toJSON(): any;
 }
 
 // Address schema
-const addressSchema = new Schema<IAddress>({
-  street: {
-    type: String,
-    required: [true, 'Street is required'],
-    trim: true,
-    maxlength: [100, 'Street cannot exceed 100 characters'],
+const addressSchema = new Schema<IAddress>(
+  {
+    street: {
+      type: String,
+      required: [true, 'Street is required'],
+      trim: true,
+      maxlength: [100, 'Street cannot exceed 100 characters'],
+    },
+    city: {
+      type: String,
+      required: [true, 'City is required'],
+      trim: true,
+      maxlength: [50, 'City cannot exceed 50 characters'],
+    },
+    state: {
+      type: String,
+      required: [true, 'State is required'],
+      trim: true,
+      maxlength: [50, 'State cannot exceed 50 characters'],
+    },
+    postalCode: {
+      type: String,
+      required: [true, 'Postal code is required'],
+      trim: true,
+      maxlength: [20, 'Postal code cannot exceed 20 characters'],
+    },
+    country: {
+      type: String,
+      required: [true, 'Country is required'],
+      trim: true,
+      maxlength: [50, 'Country cannot exceed 50 characters'],
+    },
   },
-  city: {
-    type: String,
-    required: [true, 'City is required'],
-    trim: true,
-    maxlength: [50, 'City cannot exceed 50 characters'],
-  },
-  state: {
-    type: String,
-    required: [true, 'State is required'],
-    trim: true,
-    maxlength: [50, 'State cannot exceed 50 characters'],
-  },
-  postalCode: {
-    type: String,
-    required: [true, 'Postal code is required'],
-    trim: true,
-    maxlength: [20, 'Postal code cannot exceed 20 characters'],
-  },
-  country: {
-    type: String,
-    required: [true, 'Country is required'],
-    trim: true,
-    maxlength: [50, 'Country cannot exceed 50 characters'],
-  },
-}, { _id: false });
+  { _id: false }
+);
 
 // Contact person schema
-const contactPersonSchema = new Schema<IContactPerson>({
-  name: {
-    type: String,
-    required: [true, 'Contact name is required'],
-    trim: true,
-    maxlength: [50, 'Contact name cannot exceed 50 characters'],
+const contactPersonSchema = new Schema<IContactPerson>(
+  {
+    name: {
+      type: String,
+      required: [true, 'Contact name is required'],
+      trim: true,
+      maxlength: [50, 'Contact name cannot exceed 50 characters'],
+    },
+    email: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'],
+    },
+    phone: {
+      type: String,
+      trim: true,
+      maxlength: [20, 'Phone number cannot exceed 20 characters'],
+    },
+    position: {
+      type: String,
+      trim: true,
+      maxlength: [50, 'Position cannot exceed 50 characters'],
+    },
   },
-  email: {
-    type: String,
-    lowercase: true,
-    trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'],
-  },
-  phone: {
-    type: String,
-    trim: true,
-    maxlength: [20, 'Phone number cannot exceed 20 characters'],
-  },
-  position: {
-    type: String,
-    trim: true,
-    maxlength: [50, 'Position cannot exceed 50 characters'],
-  },
-}, { _id: false });
+  { _id: false }
+);
 
 // Client schema definition
 const clientSchema = new Schema<IClient>(
@@ -121,14 +127,14 @@ const clientSchema = new Schema<IClient>(
       ref: 'User',
       required: [true, 'User ID is required'],
     },
-    
+
     name: {
       type: String,
       required: [true, 'Client name is required'],
       trim: true,
       maxlength: [100, 'Client name cannot exceed 100 characters'],
     },
-    
+
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -136,25 +142,25 @@ const clientSchema = new Schema<IClient>(
       trim: true,
       match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'],
     },
-    
+
     phone: {
       type: String,
       trim: true,
       maxlength: [20, 'Phone number cannot exceed 20 characters'],
     },
-    
+
     company: {
       type: String,
       trim: true,
       maxlength: [100, 'Company name cannot exceed 100 characters'],
     },
-    
+
     taxId: {
       type: String,
       trim: true,
       maxlength: [50, 'Tax ID cannot exceed 50 characters'],
     },
-    
+
     website: {
       type: String,
       trim: true,
@@ -166,32 +172,32 @@ const clientSchema = new Schema<IClient>(
         message: 'Website must be a valid URL',
       },
     },
-    
+
     notes: {
       type: String,
       trim: true,
       maxlength: [500, 'Notes cannot exceed 500 characters'],
     },
-    
+
     status: {
       type: String,
       enum: ['active', 'inactive', 'suspended'],
       default: 'active',
     },
-    
+
     billingAddress: addressSchema,
-    
+
     shippingAddress: addressSchema,
-    
+
     contactPerson: contactPersonSchema,
-    
+
     paymentTerms: {
       type: Number,
       min: [0, 'Payment terms cannot be negative'],
       max: [365, 'Payment terms cannot exceed 365 days'],
       default: 30,
     },
-    
+
     currency: {
       type: String,
       required: [true, 'Currency is required'],
@@ -199,7 +205,7 @@ const clientSchema = new Schema<IClient>(
       length: [3, 'Currency must be a 3-letter code'],
       default: 'USD',
     },
-    
+
     tags: {
       type: [String],
       validate: {
@@ -210,33 +216,33 @@ const clientSchema = new Schema<IClient>(
       },
       default: [],
     },
-    
+
     metadata: {
       type: Schema.Types.Mixed,
       default: {},
     },
-    
+
     lastInvoiceDate: {
       type: Date,
     },
-    
+
     totalInvoiced: {
       type: Number,
       min: [0, 'Total invoiced cannot be negative'],
       default: 0,
     },
-    
+
     totalPaid: {
       type: Number,
       min: [0, 'Total paid cannot be negative'],
       default: 0,
     },
-    
+
     outstandingBalance: {
       type: Number,
       default: 0,
     },
-    
+
     invoiceCount: {
       type: Number,
       min: [0, 'Invoice count cannot be negative'],
@@ -260,20 +266,23 @@ clientSchema.index({ userId: 1, createdAt: -1 });
 clientSchema.index({ userId: 1, lastInvoiceDate: -1 });
 
 // Text search index
-clientSchema.index({
-  name: 'text',
-  email: 'text',
-  company: 'text',
-  'contactPerson.name': 'text',
-}, {
-  weights: {
-    name: 10,
-    email: 5,
-    company: 8,
-    'contactPerson.name': 3,
+clientSchema.index(
+  {
+    name: 'text',
+    email: 'text',
+    company: 'text',
+    'contactPerson.name': 'text',
   },
-  name: 'client_text_index',
-});
+  {
+    weights: {
+      name: 10,
+      email: 5,
+      company: 8,
+      'contactPerson.name': 3,
+    },
+    name: 'client_text_index',
+  }
+);
 
 // Virtual for client display name
 clientSchema.virtual('displayName').get(function () {
@@ -303,7 +312,7 @@ clientSchema.pre('save', function (next) {
 // Instance method to update financial data
 clientSchema.methods.updateFinancials = async function (): Promise<void> {
   const Invoice = mongoose.model('Invoice');
-  
+
   const stats = await Invoice.aggregate([
     { $match: { clientId: this._id } },
     {
@@ -316,7 +325,7 @@ clientSchema.methods.updateFinancials = async function (): Promise<void> {
       },
     },
   ]);
-  
+
   if (stats.length > 0) {
     const stat = stats[0];
     this.totalInvoiced = stat.totalInvoiced || 0;
@@ -331,17 +340,17 @@ clientSchema.methods.updateFinancials = async function (): Promise<void> {
     this.lastInvoiceDate = undefined;
     this.outstandingBalance = 0;
   }
-  
+
   await this.save();
 };
 
 // Override toJSON to format output
 clientSchema.methods.toJSON = function () {
   const clientObject = this.toObject();
-  
+
   // Remove internal fields
   delete clientObject.__v;
-  
+
   return clientObject;
 };
 

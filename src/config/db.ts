@@ -13,7 +13,7 @@ const connectionOptions: mongoose.ConnectOptions = {
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
   bufferCommands: false,
-  bufferMaxEntries: 0,
+  /* bufferMaxEntries: 0, */
 };
 
 // Database connection class
@@ -29,7 +29,7 @@ class DatabaseConnection {
     try {
       // Set mongoose options
       mongoose.set('strictQuery', true);
-      
+
       // Enable debug mode in development
       if (isDevelopment()) {
         mongoose.set('debug', true);
@@ -37,7 +37,7 @@ class DatabaseConnection {
 
       // Connect to database
       await mongoose.connect(MONGODB_URI, connectionOptions);
-      
+
       logger.info({
         msg: 'Connected to MongoDB',
         uri: this.getRedactedUri(MONGODB_URI),
@@ -106,7 +106,7 @@ class DatabaseConnection {
       logger.info('Mongoose connected to MongoDB');
     });
 
-    db.on('error', (error) => {
+    db.on('error', error => {
       logger.error({
         msg: 'Mongoose connection error',
         error: error.message,

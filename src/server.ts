@@ -46,7 +46,7 @@ async function startServer(): Promise<void> {
     // Graceful shutdown handlers
     const gracefulShutdown = (signal: string) => {
       logger.info(`Received ${signal}, shutting down gracefully`);
-      
+
       server.close(() => {
         logger.info('HTTP server closed');
         process.exit(0);
@@ -61,7 +61,6 @@ async function startServer(): Promise<void> {
 
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
   } catch (error) {
     logger.fatal({
       msg: 'Server startup failed',
@@ -73,7 +72,7 @@ async function startServer(): Promise<void> {
 }
 
 // Start the server
-startServer().catch((error) => {
+startServer().catch(error => {
   logger.fatal({
     msg: 'Failed to start server',
     error: error.message,

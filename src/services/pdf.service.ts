@@ -1,7 +1,7 @@
 /**
  * PDF service for InvoLuck Backend
  * Stub implementation for future PDF generation functionality
- * 
+ *
  * NOTE: This is a stub service as the MVP uses React-PDF in the frontend.
  * This service can be expanded later for server-side PDF generation.
  */
@@ -31,7 +31,7 @@ class PdfService {
   /**
    * Generate PDF from invoice data
    * TODO: Implement with libraries like puppeteer, jsPDF, or PDFKit
-   * 
+   *
    * @param invoiceData - Invoice data to generate PDF from
    * @param options - PDF generation options
    * @returns Promise<PdfGenerationResult>
@@ -94,24 +94,14 @@ class PdfService {
     return pdf;
     */
 
-    throw ApiErrors.serviceUnavailable(
-      'HTML to PDF conversion is not yet implemented'
-    );
+    throw ApiErrors.serviceUnavailable('HTML to PDF conversion is not yet implemented');
   }
 
   /**
    * Validate PDF generation data
    */
   validateInvoiceData(invoiceData: any): boolean {
-    const requiredFields = [
-      'id',
-      'number',
-      'clientId',
-      'items',
-      'total',
-      'issueDate',
-      'dueDate',
-    ];
+    const requiredFields = ['id', 'number', 'clientId', 'items', 'total', 'issueDate', 'dueDate'];
 
     for (const field of requiredFields) {
       if (!invoiceData[field]) {
@@ -172,9 +162,7 @@ class PdfService {
     });
 
     // TODO: Implement when PDF generation is ready
-    throw ApiErrors.serviceUnavailable(
-      'Invoice attachment generation is not yet implemented'
-    );
+    throw ApiErrors.serviceUnavailable('Invoice attachment generation is not yet implemented');
   }
 
   /**
@@ -187,9 +175,7 @@ class PdfService {
     });
 
     // TODO: Implement batch processing
-    throw ApiErrors.serviceUnavailable(
-      'Batch PDF generation is not yet implemented'
-    );
+    throw ApiErrors.serviceUnavailable('Batch PDF generation is not yet implemented');
   }
 }
 

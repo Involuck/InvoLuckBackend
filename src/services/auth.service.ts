@@ -8,7 +8,12 @@ import { User, IUser } from '../models/User';
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env';
 import { ApiErrors } from '../utils/ApiError';
 import logger from '../config/logger';
-import { RegisterInput, LoginInput, ChangePasswordInput, UpdateProfileInput } from '../validators/auth.schema';
+import {
+  RegisterInput,
+  LoginInput,
+  ChangePasswordInput,
+  UpdateProfileInput,
+} from '../validators/auth.schema';
 
 // Auth response interface
 export interface AuthResponse {
@@ -43,22 +48,18 @@ class AuthService {
    * Generate JWT token for user
    */
   private generateToken(userId: string, email: string): string {
-    return jwt.sign(
-      { id: userId, email },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
-    );
+    return jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
   }
 
   /**
    * Create auth response object
    */
   private createAuthResponse(user: IUser): AuthResponse {
-    const token = this.generateToken(user._id.toString(), user.email);
-    
+    const token = this.generateToken((user as any)._id.toString()(), user.email);
+
     return {
       user: {
-        id: user._id.toString(),
+        id: (user as any)._id.toString()(),
         name: user.name,
         email: user.email,
         role: user.role,
@@ -93,7 +94,7 @@ class AuthService {
 
       logger.info({
         msg: 'User registered successfully',
-        userId: user._id.toString(),
+        userId: (user as any)._id.toString()(),
         email: user.email,
       });
 
@@ -114,8 +115,9 @@ class AuthService {
   async login(credentials: LoginInput): Promise<AuthResponse> {
     try {
       // Find user with password
-      const user = await User.findOne({ email: credentials.email, isActive: true })
-        .select('+password');
+      const user = await User.findOne({ email: credentials.email, isActive: true }).select(
+        '+password'
+      );
 
       if (!user) {
         throw ApiErrors.unauthorized('Invalid email or password');
@@ -133,7 +135,7 @@ class AuthService {
 
       logger.info({
         msg: 'User logged in successfully',
-        userId: user._id.toString(),
+        userId: (user as any)._id.toString()(),
         email: user.email,
       });
 
@@ -154,13 +156,13 @@ class AuthService {
   async getProfile(userId: string): Promise<UserProfile> {
     try {
       const user = await User.findById(userId);
-      
+
       if (!user) {
         throw ApiErrors.notFound('User not found');
       }
 
       return {
-        id: user._id.toString(),
+        id: (user as any)._id.toString()(),
         name: user.name,
         email: user.email,
         role: user.role,
@@ -191,17 +193,16 @@ class AuthService {
           email: updateData.email,
           _id: { $ne: userId },
         });
-        
+
         if (existingUser) {
           throw ApiErrors.conflict('Email is already taken');
         }
       }
 
-      const user = await User.findByIdAndUpdate(
-        userId,
-        updateData,
-        { new: true, runValidators: true }
-      );
+      const user = await User.findByIdAndUpdate(userId, updateData, {
+        new: true,
+        runValidators: true,
+      });
 
       if (!user) {
         throw ApiErrors.notFound('User not found');
@@ -209,12 +210,12 @@ class AuthService {
 
       logger.info({
         msg: 'User profile updated',
-        userId: user._id.toString(),
+        userId: (user as any)._id.toString()(),
         updatedFields: Object.keys(updateData),
       });
 
       return {
-        id: user._id.toString(),
+        id: (user as any)._id.toString()(),
         name: user.name,
         email: user.email,
         role: user.role,
@@ -240,7 +241,7 @@ class AuthService {
   async changePassword(userId: string, passwordData: ChangePasswordInput): Promise<void> {
     try {
       const user = await User.findById(userId).select('+password');
-      
+
       if (!user) {
         throw ApiErrors.notFound('User not found');
       }
@@ -257,7 +258,7 @@ class AuthService {
 
       logger.info({
         msg: 'Password changed successfully',
-        userId: user._id.toString(),
+        userId: (user as any)._id.toString()(),
       });
     } catch (error) {
       logger.error({
@@ -275,7 +276,7 @@ class AuthService {
   async verifyToken(token: string): Promise<IUser> {
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as { id: string; email: string };
-      
+
       const user = await User.findById(decoded.id);
       if (!user || !user.isActive) {
         throw ApiErrors.unauthorized('Invalid token - user not found');
@@ -299,7 +300,7 @@ class AuthService {
   async requestPasswordReset(email: string): Promise<void> {
     try {
       const user = await User.findOne({ email, isActive: true });
-      
+
       if (!user) {
         // Don't reveal if email exists
         logger.warn({
@@ -315,11 +316,10 @@ class AuthService {
 
       logger.info({
         msg: 'Password reset token generated',
-        userId: user._id.toString(),
+        userId: (user as any)._id.toString(),
         email: user.email,
       });
 
-      // TODO: Send password reset email
       // await mailService.sendPasswordResetEmail(user.email, resetToken);
     } catch (error) {
       logger.error({
@@ -336,11 +336,7 @@ class AuthService {
    */
   async deactivateAccount(userId: string): Promise<void> {
     try {
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { isActive: false },
-        { new: true }
-      );
+      const user = await User.findByIdAndUpdate(userId, { isActive: false }, { new: true });
 
       if (!user) {
         throw ApiErrors.notFound('User not found');
@@ -348,7 +344,7 @@ class AuthService {
 
       logger.info({
         msg: 'User account deactivated',
-        userId: user._id.toString(),
+        userId: (user as any)._id.toString()(),
         email: user.email,
       });
     } catch (error) {
@@ -375,7 +371,7 @@ class AuthService {
         // TODO: Import Client model when available
         // Client.countDocuments({ userId }),
         Promise.resolve(0),
-        // TODO: Import Invoice model when available  
+        // TODO: Import Invoice model when available
         // Invoice.aggregate([...])
         Promise.resolve({
           totalInvoices: 0,

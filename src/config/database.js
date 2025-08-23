@@ -16,7 +16,7 @@ export function getConnectionStatus() {
     status: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     readyState: mongoose.connection.readyState,
     host: mongoose.connection.host || 'unknown',
-    attempts: connectionAttempts
+    attempts: connectionAttempts,
   };
 }
 
@@ -49,7 +49,7 @@ export function retryConnection() {
       dbEvents.emit('disconnected', {
         attempts: connectionAttempts,
         error: 'Max connection attempts reached',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       return;
     }
@@ -65,13 +65,15 @@ export function retryConnection() {
         dbEvents.emit('disconnected', {
           attempts: connectionAttempts,
           error: error.message,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         return;
       }
 
       const delay = Math.min(baseDelay * Math.pow(2, connectionAttempts - 1), 20000);
-      console.log(`🔄 Retrying connection in ${delay}ms... (attempt ${connectionAttempts}/${maxAttempts})`);
+      console.log(
+        `🔄 Retrying connection in ${delay}ms... (attempt ${connectionAttempts}/${maxAttempts})`
+      );
       retryTimeoutId = setTimeout(attemptConnection, delay);
     }
   }
@@ -79,18 +81,17 @@ export function retryConnection() {
   attemptConnection();
 }
 
-
 // setup database connection and event handlers
 export function setupDatabase() {
   retryConnection();
 
   // database event handlers
-  dbEvents.on("disconnected", async ({ attempts, error, timestamp }) => {
-    console.log("📧 Sending DB error email after retries failed...");
+  dbEvents.on('disconnected', async ({ attempts, error, timestamp }) => {
+    console.log('📧 Sending DB error email after retries failed...');
 
     const dbInfo = getConnectionStatus();
 
-    if (previousDbStatus !== "disconnected") {
+    if (previousDbStatus !== 'disconnected') {
       await emailService.sendDatabaseErrorEmail(error, {
         ...dbInfo,
         attempts,
@@ -98,19 +99,19 @@ export function setupDatabase() {
       });
     }
 
-    previousDbStatus = "disconnected";
+    previousDbStatus = 'disconnected';
   });
 
-  dbEvents.on("connected", async ({ attempts }) => {
-    if (previousDbStatus === "disconnected") {
+  dbEvents.on('connected', async ({ attempts }) => {
+    if (previousDbStatus === 'disconnected') {
       await emailService.sendRecoveryEmail({
         message: `Database connection restored after ${attempts || 0} attempts`,
-        service: "Database",
+        service: 'Database',
         timestamp: new Date().toISOString(),
       });
     }
 
-    previousDbStatus = "connected";
+    previousDbStatus = 'connected';
   });
 
   // mongoose connection events
@@ -123,7 +124,7 @@ export function setupDatabase() {
     }
   });
 
-  mongoose.connection.on('error', (err) => {
+  mongoose.connection.on('error', err => {
     console.error('❌ MongoDB error:', err);
     isConnected = false;
   });

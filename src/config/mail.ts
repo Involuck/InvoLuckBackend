@@ -29,7 +29,7 @@ const createTransporter = (): nodemailer.Transporter => {
     config.logger = true;
   }
 
-  return nodemailer.createTransporter(config);
+  return nodemailer.createTransport(config);
 };
 
 // Create transporter instance
@@ -60,7 +60,11 @@ export const sendMail = async (options: EmailOptions): Promise<void> => {
       from: options.from || SMTP_FROM,
       to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
       cc: options.cc ? (Array.isArray(options.cc) ? options.cc.join(', ') : options.cc) : undefined,
-      bcc: options.bcc ? (Array.isArray(options.bcc) ? options.bcc.join(', ') : options.bcc) : undefined,
+      bcc: options.bcc
+        ? Array.isArray(options.bcc)
+          ? options.bcc.join(', ')
+          : options.bcc
+        : undefined,
       subject: options.subject,
       html: options.html,
       text: options.text,

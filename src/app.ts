@@ -30,17 +30,19 @@ app.set('trust proxy', 1);
 
 // Security middleware
 if (SECURITY_HEADERS) {
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "https:"],
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
       },
-    },
-    crossOriginEmbedderPolicy: false,
-  }));
+      crossOriginEmbedderPolicy: false,
+    })
+  );
 }
 
 // Request ID middleware (before logging)
@@ -56,18 +58,22 @@ app.use(corsMiddleware);
 app.use(generalRateLimit);
 
 // Body parsing middleware
-app.use(express.json({
-  limit: '10mb',
-  verify: (req, res, buf) => {
-    // Store raw body for webhook verification if needed
-    (req as any).rawBody = buf;
-  },
-}));
+app.use(
+  express.json({
+    limit: '10mb',
+    verify: (req, _res, buf) => {
+      // Store raw body for webhook verification if needed
+      (req as any).rawBody = buf;
+    },
+  })
+);
 
-app.use(express.urlencoded({ 
-  extended: true,
-  limit: '10mb',
-}));
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: '10mb',
+  })
+);
 
 // Data sanitization
 app.use(mongoSanitize());
@@ -75,7 +81,7 @@ app.use(mongoSanitize());
 // Development middleware
 if (isDevelopment()) {
   // Additional development middleware can go here
-  app.use((req, res, next) => {
+  app.use((_req, res, next) => {
     res.header('X-Development-Mode', 'true');
     next();
   });
