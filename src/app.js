@@ -2,12 +2,16 @@ import express from 'express';
 import cors from "cors";
 import path from 'path';
 import { fileURLToPath } from 'url';
-import connectDB, { getConnectionStatus } from './config/database.js';
+import { connectDB,  getConnectionStatus ,} from './config/database.js';
 import securityMiddleware from './middleware/security.js';
 import errorHandler from './middleware/errorHandler.js';
 import rateLimiter from './middleware/rateLimiter.js';
-import routes from './routes/index.js';
+import routes from './routes/api.js';
 import authRoute from './routes/authRoutes.js';
+import { config } from 'dotenv';
+import { setupHealthRoutes } from './routes/health.js';
+import { setupDevelopmentRoutes} from './routes/development.js';
+
 
 const app = express();
 
