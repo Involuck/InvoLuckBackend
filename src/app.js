@@ -1,30 +1,40 @@
 import express from 'express';
+import cors from "cors";
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-import { config } from './config/environment.js';
-import corsConfig from './config/cors.js';
-import { setupDatabase } from './config/database.js';
-import { setupHealthRoutes } from './routes/health.js';
-import { setupDevelopmentRoutes } from './routes/development.js';
-
+import { connectDB,  getConnectionStatus ,} from './config/database.js';
 import securityMiddleware from './middleware/security.js';
 import errorHandler from './middleware/errorHandler.js';
 import rateLimiter from './middleware/rateLimiter.js';
-
 import routes from './routes/api.js';
+import authRoute from './routes/authRoutes.js';
+import { config } from 'dotenv';
+import { setupHealthRoutes } from './routes/health.js';
+import { setupDevelopmentRoutes} from './routes/development.js';
+
 
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(corsConfig);
+app.use(cors({
+  origin: process.env.CORS_ORIGINS.split(","),
+  credentials: true
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use("/auth", authRoute);
 
-setupDatabase();
+
+try {
+    await connectDB();
+} catch (error) {
+    console.error('❌ Failed to connect to database on startup:', error.message);
+    // the app may continue to work, it will attempt to reconnect automatically.
+}
 
 // log requests in development
 if (config.nodeEnv !== 'production') {
@@ -60,6 +70,13 @@ app.use('/api',
     securityMiddleware,
     routes
 );
+
+// CORS configuration
+// app.use(cors({
+//     origin: process.env.CORS_ORIGINS.split(","),
+//     credentials: true
+// }));
+
 
 // not found handler
 app.use((req, res) => {
