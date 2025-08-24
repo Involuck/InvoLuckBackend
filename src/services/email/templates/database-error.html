@@ -1,269 +1,550 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Database Connection Error - InvoLuck</title>
-</head>
+  </head>
 
-<body
-    style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    "
+  >
+    <table
+      role="presentation"
+      style="width: 100%; border-spacing: 0; border-collapse: collapse; margin: 0 auto"
+    >
+      <tr>
+        <td style="text-align: center">
+          <table
+            role="presentation"
+            style="
+              width: 100%;
+              max-width: 600px;
+              margin: 0 auto;
+              border-spacing: 0;
+              border-collapse: collapse;
+              background: #ffffff;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+              overflow: hidden;
+              border: 1px solid #e5e7eb;
+            "
+          >
+            <tr>
+              <td
+                style="
+                  text-align: center;
+                  background: #916ee4;
+                  padding: 20px;
+                  border-top: 1px solid #e5e7eb;
+                "
+              >
+                <table role="presentation" width="100%" style="border-collapse: collapse">
+                  <tr>
+                    <td style="text-align: center">
+                      <div
+                        style="
+                          width: 48px;
+                          height: 48px;
+                          display: inline-block;
+                          background: #6b46c1;
+                          color: #ffffff;
+                          border-radius: 12px;
+                          margin-bottom: 16px;
+                          font-size: 32px;
+                          font-weight: bold;
+                        "
+                      >
+                        IL
+                      </div>
 
-    <table role="presentation" style="width:100%; border-spacing:0; border-collapse:collapse; margin:0 auto;">
-        <tr>
-            <td style="text-align:center;">
-                <table role="presentation"
-                    style="width:100%; max-width:600px; margin:0 auto; border-spacing:0; border-collapse:collapse; background:#ffffff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); overflow:hidden; border:1px solid #e5e7eb;">
-                    <tr>
-                        <td style="text-align:center; background:#916ee4; padding:20px; border-top:1px solid #e5e7eb;">
-                            <table role="presentation" width="100%" style="border-collapse: collapse;">
-                                <tr>
-                                    <td style="text-align: center;">
-                                        <div
-                                            style="width:48px; height:48px; display: inline-block; background:#6b46c1; color:#ffffff; border-radius: 12px; margin-bottom: 16px; font-size:32px; font-weight:bold;">
-                                            IL
-                                        </div>
+                      <h1
+                        style="
+                          margin: 0;
+                          color: #ffffff;
+                          font-size: 28px;
+                          font-weight: 700;
+                          line-height: 1.2;
+                        "
+                      >
+                        INVOLUCK API
+                      </h1>
 
-                                        <h1
-                                            style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; line-height: 1.2;">
-                                            INVOLUCK API
-                                        </h1>
-
-                                        <p
-                                            style="margin: 8px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 16px; font-weight: 500;">
-                                            Monitoring System – Automatic Notification
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="padding:30px">
-                            <table border="0" width="100%" style="margin-bottom:20px;">
-                                <tr>
-                                    <td style="font-size:20px; font-weight:600; color:#1f2937; text-align:left;">
-                                        Dear System Administrator
-                                    </td>
-                                    <td style="text-align:right;">
-                                        <span
-                                            style="display:inline-block; background:#dc2626; color:#ffffff; font-size:12px; font-weight:600; padding:4px 12px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px;">
-                                            High Priority
-                                        </span>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <table border="0" width="100%"
-                                style="margin:20px 0; border:1px solid #fca5a5; border-radius:8px; background:#fef2f2;">
-                                <tr>
-                                    <td style="padding:16px; font-size:14px; color:#374151;">
-                                        <table border="0" width="100%">
-                                            <tr>
-                                                <td valign="top" style="text-align: left;">
-                                                    <p
-                                                        style="margin:0; font-size:15px; font-weight:bold; color:#dc2626;">
-                                                        Database Connection Failure Detected
-                                                    </p>
-                                                    <p
-                                                        style="margin:6px 0 0 0; font-size:14px; line-height:1.4; color:#374151;">
-                                                        A critical interruption in connectivity to the main database has
-                                                        been detected.
-                                                        The system attempted to reconnect automatically but failed.
-                                                        Immediate intervention is required.
-                                                    </p>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <div style="margin-bottom: 32px;">
-                                <h3
-                                    style="margin: 0 0 20px 0; color: #1f2937; font-size: 18px; font-weight: 600;  text-align: left;">
-                                    Error Details
-                                </h3>
-
-                                <div
-                                    style="background: #fcfeff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
-                                    <table role="presentation" width="100%" style="border-collapse: collapse;">
-                                        <tr style="background: #f1f5f9;">
-                                            <td
-                                                style="padding: 12px 20px; border-bottom: 1px solid #e5e7eb; color: #374151; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">
-                                                Parameter
-                                            </td>
-                                            <td
-                                                style="padding: 12px 20px; border-bottom: 1px solid #e5e7eb; color: #374151; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">
-                                                Value
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-size: 14px; font-weight: 500;
-                                            text-align: left;">
-                                                Connection Status
-                                            </td>
-                                            <td
-                                                style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; text-align: right;">
-                                                <span
-                                                    style="background: #fecaca; color: #dc2626; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; font-family: 'Monaco', 'Menlo', monospace;">
-                                                    {{status}}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td
-                                                style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-size: 14px; font-weight: 500; text-align: left;">
-                                                Database Host</td>
-                                            <td
-                                                style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; color: #6b7280; font-size: 13px; font-family: 'Monaco', 'Menlo', monospace; text-align: right;">
-                                                {{host}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td
-                                                style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-size: 14px; font-weight: 500; text-align: left;">
-                                                Connection State
-                                            </td>
-                                            <td
-                                                style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; color: #6b7280; font-size: 13px; font-family: 'Monaco', 'Menlo', monospace; text-align: right;">
-                                                {{readyState}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td
-                                                style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-size: 14px; font-weight: 500; text-align: left;">
-                                                Error Details
-                                            </td>
-                                            <td
-                                                style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; text-align: right; ">
-                                                <span
-                                                    style="background: #fed7d7; color: #c53030; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; font-family: 'Monaco', 'Menlo', monospace; max-width: 300px; display: inline-block; word-break: break-all;">
-                                                    {{error}}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td
-                                                style="padding: 16px 20px; color: #4b5563; font-size: 14px; font-weight: 500; text-align: left;">
-                                                Timestamp (UTC)
-                                            </td>
-                                            <td
-                                                style="padding: 16px 20px; color: #6b7280; font-size: 13px; font-family: 'Monaco', 'Menlo', monospace; text-align: right;">
-                                                {{timestamp}}
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <table role="presentation" width="100%" border="0" style="margin-top:20px;">
-                                <h3
-                                    style="margin: 0 0 20px 0; color: #1f2937; font-size: 18px; font-weight: 600;  text-align: left;">
-                                    Immediate Actions Required
-                                </h3>
-                                <tr>
-                                    <td style="padding-bottom:16px;">
-                                        <table role="presentation" border="0" width="100%">
-                                            <tr>
-                                                <td align="center" width="50%" style="padding-right:4px;">
-                                                    <a href="https://vercel.com/involucks-projects/invo-luck-backend"
-                                                        target="_blank"
-                                                        style="display:block; width:100%; background:#6366F1; color:#ffffff; font-size:14px; font-weight:600; text-decoration:none; padding:12px 0; border-radius:8px; text-align:center;">
-                                                        Open Dashboard
-                                                    </a>
-                                                </td>
-                                                <td align="center" width="50%" style="padding-left:4px;">
-                                                    <a href="https://vercel.com/involucks-projects/invo-luck-backend/logs"
-                                                        target="_blank"
-                                                        style="display:block; width:100%; background:#F3F4F6; color:#111827; font-size:14px; font-weight:600; text-decoration:none; padding:12px 0; border-radius:8px; text-align:center;">
-                                                        Review Full Logs
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td
-                                        style="border:1px solid #E5E7EB; border-radius:12px; padding:16px; background:#ffffff;">
-                                        <p
-                                            style="margin:0 0 12px 0; font-size:16px; font-weight:600; color:#111827; text-align:left;">
-                                            Resolution Protocol:
-                                        </p>
-
-                                        <table role="presentation" border="0" width="100%"
-                                            style="font-size:14px; color:#374151; line-height:22px;">
-                                            <tr>
-                                                <td valign="top" width="20">
-                                                    <span
-                                                        style="display:inline-block; width:8px; height:8px; background:#6366F1; border-radius:50%; margin-top:7px;"></span>
-                                                </td>
-                                                <td style="text-align:left; padding-left:10px;">
-                                                    <strong>Verify credentials:</strong> Make sure database credentials
-                                                    are valid and have not expired.
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td valign="top" width="20">
-                                                    <span
-                                                        style="display:inline-block; width:8px; height:8px; background:#6366F1; border-radius:50%; margin-top:7px;"></span>
-                                                </td>
-                                                <td style="text-align:left; padding-left:10px;">
-                                                    <strong>Check connectivity:</strong> Verify the application is
-                                                    running correctly in the Vercel deployment.
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td valign="top" width="20">
-                                                    <span
-                                                        style="display:inline-block; width:8px; height:8px; background:#6366F1; border-radius:50%; margin-top:7px;"></span>
-                                                </td>
-                                                <td style="text-align:left; padding-left:10px;">
-                                                    <strong>Analyze logs:</strong> Review Vercel deployment logs to
-                                                    identify the root cause.
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td valign="top" width="20">
-                                                    <span
-                                                        style="display:inline-block; width:8px; height:8px; background:#6366F1; border-radius:50%; margin-top:7px;"></span>
-                                                </td>
-                                                <td style="text-align:left; padding-left:10px;">
-                                                    <strong>Escalate if unresolved:</strong> Contact the DevOps team if
-                                                    the issue persists after 15 minutes.
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-
-                            </table>
-
-
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="text-align:center; padding:25px; border-top:1px solid #e5e7eb;">
-                            <p style="margin:0; font-size:14px; color:#6b7280;">
-                                <strong style="color:#6366F1;">InvoLuck API</strong> – Automated Monitoring System
-                            </p>
-                            <p style="margin:16px 0 0 0; font-size:12px; color:#6b7280; line-height:18px;">
-                                This is an automated message sent by <strong>InvoLuck Monitoring System</strong>.
-                                Please do not reply directly. If you received this email in error, contact your system
-                                administrator.
-                            </p>
-                            <p style="margin-top:12px; font-size:12px; color:#6b7280;">&copy; 2025 InvoLuck API. All
-                                rights reserved.</p>
-                        </td>
-                    </tr>
-
+                      <p
+                        style="
+                          margin: 8px 0 0 0;
+                          color: rgba(255, 255, 255, 0.9);
+                          font-size: 16px;
+                          font-weight: 500;
+                        "
+                      >
+                        Monitoring System – Automatic Notification
+                      </p>
+                    </td>
+                  </tr>
                 </table>
-            </td>
-        </tr>
-    </table>
-</body>
+              </td>
+            </tr>
 
+            <tr>
+              <td style="padding: 30px">
+                <table border="0" width="100%" style="margin-bottom: 20px">
+                  <tr>
+                    <td style="font-size: 20px; font-weight: 600; color: #1f2937; text-align: left">
+                      Dear System Administrator
+                    </td>
+                    <td style="text-align: right">
+                      <span
+                        style="
+                          display: inline-block;
+                          background: #dc2626;
+                          color: #ffffff;
+                          font-size: 12px;
+                          font-weight: 600;
+                          padding: 4px 12px;
+                          border-radius: 12px;
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                        "
+                      >
+                        High Priority
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+
+                <table
+                  border="0"
+                  width="100%"
+                  style="
+                    margin: 20px 0;
+                    border: 1px solid #fca5a5;
+                    border-radius: 8px;
+                    background: #fef2f2;
+                  "
+                >
+                  <tr>
+                    <td style="padding: 16px; font-size: 14px; color: #374151">
+                      <table border="0" width="100%">
+                        <tr>
+                          <td valign="top" style="text-align: left">
+                            <p
+                              style="margin: 0; font-size: 15px; font-weight: bold; color: #dc2626"
+                            >
+                              Database Connection Failure Detected
+                            </p>
+                            <p
+                              style="
+                                margin: 6px 0 0 0;
+                                font-size: 14px;
+                                line-height: 1.4;
+                                color: #374151;
+                              "
+                            >
+                              A critical interruption in connectivity to the main database has been
+                              detected. The system attempted to reconnect automatically but failed.
+                              Immediate intervention is required.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                <div style="margin-bottom: 32px">
+                  <h3
+                    style="
+                      margin: 0 0 20px 0;
+                      color: #1f2937;
+                      font-size: 18px;
+                      font-weight: 600;
+                      text-align: left;
+                    "
+                  >
+                    Error Details
+                  </h3>
+
+                  <div
+                    style="
+                      background: #fcfeff;
+                      border: 1px solid #e5e7eb;
+                      border-radius: 12px;
+                      overflow: hidden;
+                    "
+                  >
+                    <table role="presentation" width="100%" style="border-collapse: collapse">
+                      <tr style="background: #f1f5f9">
+                        <td
+                          style="
+                            padding: 12px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #374151;
+                            font-weight: 600;
+                            font-size: 13px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            text-align: left;
+                          "
+                        >
+                          Parameter
+                        </td>
+                        <td
+                          style="
+                            padding: 12px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #374151;
+                            font-weight: 600;
+                            font-size: 13px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            text-align: right;
+                          "
+                        >
+                          Value
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #4b5563;
+                            font-size: 14px;
+                            font-weight: 500;
+                            text-align: left;
+                          "
+                        >
+                          Connection Status
+                        </td>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            text-align: right;
+                          "
+                        >
+                          <span
+                            style="
+                              background: #fecaca;
+                              color: #dc2626;
+                              padding: 4px 12px;
+                              border-radius: 6px;
+                              font-size: 12px;
+                              font-weight: 600;
+                              font-family: 'Monaco', 'Menlo', monospace;
+                            "
+                          >
+                            {{status}}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #4b5563;
+                            font-size: 14px;
+                            font-weight: 500;
+                            text-align: left;
+                          "
+                        >
+                          Database Host
+                        </td>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #6b7280;
+                            font-size: 13px;
+                            font-family: 'Monaco', 'Menlo', monospace;
+                            text-align: right;
+                          "
+                        >
+                          {{host}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #4b5563;
+                            font-size: 14px;
+                            font-weight: 500;
+                            text-align: left;
+                          "
+                        >
+                          Connection State
+                        </td>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #6b7280;
+                            font-size: 13px;
+                            font-family: 'Monaco', 'Menlo', monospace;
+                            text-align: right;
+                          "
+                        >
+                          {{readyState}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            color: #4b5563;
+                            font-size: 14px;
+                            font-weight: 500;
+                            text-align: left;
+                          "
+                        >
+                          Error Details
+                        </td>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            border-bottom: 1px solid #e5e7eb;
+                            text-align: right;
+                          "
+                        >
+                          <span
+                            style="
+                              background: #fed7d7;
+                              color: #c53030;
+                              padding: 6px 12px;
+                              border-radius: 6px;
+                              font-size: 12px;
+                              font-weight: 600;
+                              font-family: 'Monaco', 'Menlo', monospace;
+                              max-width: 300px;
+                              display: inline-block;
+                              word-break: break-all;
+                            "
+                          >
+                            {{error}}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            color: #4b5563;
+                            font-size: 14px;
+                            font-weight: 500;
+                            text-align: left;
+                          "
+                        >
+                          Timestamp (UTC)
+                        </td>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            color: #6b7280;
+                            font-size: 13px;
+                            font-family: 'Monaco', 'Menlo', monospace;
+                            text-align: right;
+                          "
+                        >
+                          {{timestamp}}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <table role="presentation" width="100%" border="0" style="margin-top: 20px">
+                  <h3
+                    style="
+                      margin: 0 0 20px 0;
+                      color: #1f2937;
+                      font-size: 18px;
+                      font-weight: 600;
+                      text-align: left;
+                    "
+                  >
+                    Immediate Actions Required
+                  </h3>
+                  <tr>
+                    <td style="padding-bottom: 16px">
+                      <table role="presentation" border="0" width="100%">
+                        <tr>
+                          <td align="center" width="50%" style="padding-right: 4px">
+                            <a
+                              href="https://vercel.com/involucks-projects/invo-luck-backend"
+                              target="_blank"
+                              style="
+                                display: block;
+                                width: 100%;
+                                background: #6366f1;
+                                color: #ffffff;
+                                font-size: 14px;
+                                font-weight: 600;
+                                text-decoration: none;
+                                padding: 12px 0;
+                                border-radius: 8px;
+                                text-align: center;
+                              "
+                            >
+                              Open Dashboard
+                            </a>
+                          </td>
+                          <td align="center" width="50%" style="padding-left: 4px">
+                            <a
+                              href="https://vercel.com/involucks-projects/invo-luck-backend/logs"
+                              target="_blank"
+                              style="
+                                display: block;
+                                width: 100%;
+                                background: #f3f4f6;
+                                color: #111827;
+                                font-size: 14px;
+                                font-weight: 600;
+                                text-decoration: none;
+                                padding: 12px 0;
+                                border-radius: 8px;
+                                text-align: center;
+                              "
+                            >
+                              Review Full Logs
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      style="
+                        border: 1px solid #e5e7eb;
+                        border-radius: 12px;
+                        padding: 16px;
+                        background: #ffffff;
+                      "
+                    >
+                      <p
+                        style="
+                          margin: 0 0 12px 0;
+                          font-size: 16px;
+                          font-weight: 600;
+                          color: #111827;
+                          text-align: left;
+                        "
+                      >
+                        Resolution Protocol:
+                      </p>
+
+                      <table
+                        role="presentation"
+                        border="0"
+                        width="100%"
+                        style="font-size: 14px; color: #374151; line-height: 22px"
+                      >
+                        <tr>
+                          <td valign="top" width="20">
+                            <span
+                              style="
+                                display: inline-block;
+                                width: 8px;
+                                height: 8px;
+                                background: #6366f1;
+                                border-radius: 50%;
+                                margin-top: 7px;
+                              "
+                            ></span>
+                          </td>
+                          <td style="text-align: left; padding-left: 10px">
+                            <strong>Verify credentials:</strong> Make sure database credentials are
+                            valid and have not expired.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" width="20">
+                            <span
+                              style="
+                                display: inline-block;
+                                width: 8px;
+                                height: 8px;
+                                background: #6366f1;
+                                border-radius: 50%;
+                                margin-top: 7px;
+                              "
+                            ></span>
+                          </td>
+                          <td style="text-align: left; padding-left: 10px">
+                            <strong>Check connectivity:</strong> Verify the application is running
+                            correctly in the Vercel deployment.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" width="20">
+                            <span
+                              style="
+                                display: inline-block;
+                                width: 8px;
+                                height: 8px;
+                                background: #6366f1;
+                                border-radius: 50%;
+                                margin-top: 7px;
+                              "
+                            ></span>
+                          </td>
+                          <td style="text-align: left; padding-left: 10px">
+                            <strong>Analyze logs:</strong> Review Vercel deployment logs to identify
+                            the root cause.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" width="20">
+                            <span
+                              style="
+                                display: inline-block;
+                                width: 8px;
+                                height: 8px;
+                                background: #6366f1;
+                                border-radius: 50%;
+                                margin-top: 7px;
+                              "
+                            ></span>
+                          </td>
+                          <td style="text-align: left; padding-left: 10px">
+                            <strong>Escalate if unresolved:</strong> Contact the DevOps team if the
+                            issue persists after 15 minutes.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align: center; padding: 25px; border-top: 1px solid #e5e7eb">
+                <p style="margin: 0; font-size: 14px; color: #6b7280">
+                  <strong style="color: #6366f1">InvoLuck API</strong> – Automated Monitoring System
+                </p>
+                <p style="margin: 16px 0 0 0; font-size: 12px; color: #6b7280; line-height: 18px">
+                  This is an automated message sent by <strong>InvoLuck Monitoring System</strong>.
+                  Please do not reply directly. If you received this email in error, contact your
+                  system administrator.
+                </p>
+                <p style="margin-top: 12px; font-size: 12px; color: #6b7280">
+                  &copy; 2025 InvoLuck API. All rights reserved.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

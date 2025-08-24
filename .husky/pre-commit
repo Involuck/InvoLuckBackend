@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# InvoLuck Backend Pre-commit Hook
+# Runs linting and formatting checks before allowing commits
+
+echo "🔍 Running pre-commit checks..."
+
+# Run lint-staged to check only staged files
+npx lint-staged
+
+echo "✅ Pre-commit checks completed!"
