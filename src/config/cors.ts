@@ -87,5 +87,7 @@ logger.info({
   isDevelopment: isDevelopment(),
 });
 
-export { corsMiddleware, allowedOrigins };
+// Export both named and default exports
+export { allowedOrigins };
+export { corsMiddleware };
 export default corsMiddleware;

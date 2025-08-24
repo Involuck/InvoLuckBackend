@@ -12,7 +12,7 @@ import { fileURLToPath } from 'url';
 
 // Import configuration
 import { isDevelopment, SECURITY_HEADERS } from './config/env.js';
-import { corsMiddleware } from './config/cors.js';
+import corsMiddleware from './config/cors.js';
 import { generalRateLimit } from './config/rateLimit.js';
 import { httpLoggerConfig } from './config/logger.js';
 
