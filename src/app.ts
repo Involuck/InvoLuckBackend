@@ -7,6 +7,8 @@ import express from 'express';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import pinoHttp from 'pino-http';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import configuration
 import { isDevelopment, SECURITY_HEADERS } from './config/env';
@@ -24,6 +26,13 @@ import routes from './routes';
 
 // Create Express application
 const app = express();
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Trust proxy (for reverse proxies like nginx, AWS ALB, etc.)
 app.set('trust proxy', 1);
@@ -106,6 +115,14 @@ app.get('/health', (req, res) => {
 
 // Basic root endpoint
 app.get('/', (req, res) => {
+  const acceptHeader = req.headers.accept || '';
+
+  // Si el cliente acepta HTML y no está solicitando específicamente JSON
+  if (acceptHeader.includes('text/html') && !acceptHeader.includes('application/json')) {
+    return res.sendFile(path.join(__dirname, '../public/index.html'));
+  }
+
+  // Para solicitudes de API, devolver JSON
   res.json({
     success: true,
     data: {

@@ -126,12 +126,22 @@
       const badge = document.getElementById("apiStatusBadge");
 
       try {
-        const res = await fetch('/health-check');
+        const res = await fetch('/health');
         if (res.ok) {
           badge.innerHTML = '<i class="fas fa-check-circle badge-success"></i> API Funcionando';
           badge.className = "api-badge status-online";
         } else throw new Error('No OK');
       } catch (error) {
+        // Intentar una vez más con la ruta completa
+        try {
+          const res = await fetch('/api/v1/health');
+          if (res.ok) {
+            badge.innerHTML = '<i class="fas fa-check-circle badge-success"></i> API Funcionando';
+            badge.className = "api-badge status-online";
+            return;
+          }
+        } catch {}
+        
         badge.innerHTML = '<i class="fas fa-exclamation-triangle badge-error"></i> API No Disponible';
         badge.className = "api-badge status-offline";
       }
