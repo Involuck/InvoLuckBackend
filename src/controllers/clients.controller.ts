@@ -4,10 +4,10 @@
  */
 
 import { Request, Response } from 'express';
-import { asyncHandler } from '../utils/asyncHandler';
-import { ok, created, noContent } from '../utils/http';
-import clientsService from '../services/clients.service';
-import logger from '../config/logger';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { ok, created, noContent } from '../utils/http.js';
+import clientsService from '../services/clients.service.js';
+import logger from '../config/logger.js';
 
 class ClientsController {
   /**

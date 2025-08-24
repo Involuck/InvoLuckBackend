@@ -7,9 +7,9 @@ import { Request, Response, NextFunction } from 'express';
 import { z, ZodError } from 'zod';
 
 type ZodSchema = z.ZodSchema;
-import { ApiErrors, ErrorDetail } from '../utils/ApiError';
-import { asyncHandler } from '../utils/asyncHandler';
-import logger from '../config/logger';
+import { ApiErrors, ErrorDetail } from '../utils/ApiError.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import logger from '../config/logger.js';
 
 /**
  * Request parts that can be validated

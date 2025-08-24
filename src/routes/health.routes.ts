@@ -4,11 +4,11 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { asyncHandler } from '../utils/asyncHandler';
-import { ok } from '../utils/http';
-import { db } from '../config/db';
-import { verifyMailConfig } from '../config/mail';
-import logger from '../config/logger';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { ok } from '../utils/http.js';
+import { db } from '../config/db.js';
+import { verifyMailConfig } from '../config/mail.js';
+import logger from '../config/logger.js';
 
 const router = Router();
 

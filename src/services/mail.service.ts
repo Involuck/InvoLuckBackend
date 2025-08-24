@@ -3,9 +3,9 @@
  * Handles email template rendering and sending using Maizzle + Nodemailer
  */
 
-import { sendMail } from '../config/mail';
-import logger from '../config/logger';
-import { ApiErrors } from '../utils/ApiError';
+import { sendMail } from '../config/mail.js';
+import logger from '../config/logger.js';
+import { ApiErrors } from '../utils/ApiError.js';
 
 // Email template data interfaces
 export interface InvitationEmailData {

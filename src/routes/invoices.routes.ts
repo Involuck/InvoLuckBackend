@@ -4,18 +4,18 @@
  */
 
 import { Router } from 'express';
-import { authMiddleware } from '../middlewares/auth';
-import { moderateRateLimit, lenientRateLimit } from '../config/rateLimit';
-import { validate } from '../middlewares/validate';
+import { authMiddleware } from '../middlewares/auth.js';
+import { moderateRateLimit, lenientRateLimit } from '../config/rateLimit.js';
+import { validate } from '../middlewares/validate.js';
 import {
   createInvoiceSchema,
   updateInvoiceSchema,
   updateInvoiceStatusSchema,
   invoiceQuerySchema,
   sendInvoiceSchema,
-} from '../validators/invoice.schema';
-import { commonSchemas } from '../middlewares/validate';
-import invoicesController from '../controllers/invoices.controller';
+} from '../validators/invoice.schema.js';
+import { commonSchemas } from '../middlewares/validate.js';
+import invoicesController from '../controllers/invoices.controller.js';
 
 const router = Router();
 

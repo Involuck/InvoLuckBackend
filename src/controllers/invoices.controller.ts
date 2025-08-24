@@ -4,10 +4,10 @@
  */
 
 import { Request, Response } from 'express';
-import { asyncHandler } from '../utils/asyncHandler';
-import { ok, created, noContent } from '../utils/http';
-import logger from '../config/logger';
-/* import { ApiErrors } from '../utils/ApiError'; */
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { ok, created, noContent } from '../utils/http.js';
+import logger from '../config/logger.js';
+/* import { ApiErrors } from '../utils/ApiError.js'; */
 
 class InvoicesController {
   /**

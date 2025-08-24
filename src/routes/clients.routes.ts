@@ -4,16 +4,16 @@
  */
 
 import { Router } from 'express';
-import { authMiddleware } from '../middlewares/auth';
-import { moderateRateLimit, lenientRateLimit } from '../config/rateLimit';
-import { validate } from '../middlewares/validate';
+import { authMiddleware } from '../middlewares/auth.js';
+import { moderateRateLimit, lenientRateLimit } from '../config/rateLimit.js';
+import { validate } from '../middlewares/validate.js';
 import {
   createClientSchema,
   updateClientSchema,
   clientQuerySchema,
-} from '../validators/client.schema';
-import { commonSchemas } from '../middlewares/validate';
-import clientsController from '../controllers/clients.controller';
+} from '../validators/client.schema.js';
+import { commonSchemas } from '../middlewares/validate.js';
+import clientsController from '../controllers/clients.controller.js';
 
 const router = Router();
 

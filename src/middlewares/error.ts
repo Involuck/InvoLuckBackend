@@ -6,9 +6,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { Error as MongooseError } from 'mongoose';
-import { ApiError, ApiErrors } from '../utils/ApiError';
-import { isProduction } from '../config/env';
-import logger from '../config/logger';
+import { ApiError, ApiErrors } from '../utils/ApiError.js';
+import { isProduction } from '../config/env.js';
+import logger from '../config/logger.js';
 
 /**
  * Handle Zod validation errors

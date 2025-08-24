@@ -4,7 +4,7 @@
  */
 
 import pino from 'pino';
-import { LOG_LEVEL, isDevelopment } from './env';
+import { LOG_LEVEL, isDevelopment } from './env.js';
 
 // Base logger configuration
 const loggerConfig: pino.LoggerOptions = {

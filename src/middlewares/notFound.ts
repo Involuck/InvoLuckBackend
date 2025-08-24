@@ -4,8 +4,8 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { ApiErrors } from '../utils/ApiError';
-import logger from '../config/logger';
+import { ApiErrors } from '../utils/ApiError.js';
+import logger from '../config/logger.js';
 
 /**
  * 404 Not Found middleware

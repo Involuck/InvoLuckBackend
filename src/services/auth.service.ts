@@ -4,16 +4,16 @@
  */
 
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import { User, IUser } from '../models/User';
-import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env';
-import { ApiErrors } from '../utils/ApiError';
-import logger from '../config/logger';
+import { User, IUser } from '../models/User.js';
+import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env.js';
+import { ApiErrors } from '../utils/ApiError.js';
+import logger from '../config/logger.js';
 import {
   RegisterInput,
   LoginInput,
   ChangePasswordInput,
   UpdateProfileInput,
-} from '../validators/auth.schema';
+} from '../validators/auth.schema.js';
 
 // Auth response interface
 export interface AuthResponse {

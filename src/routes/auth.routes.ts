@@ -4,17 +4,17 @@
  */
 
 import { Router } from 'express';
-import { authRateLimit, moderateRateLimit } from '../config/rateLimit';
-import { validate } from '../middlewares/validate';
-import { authMiddleware } from '../middlewares/auth';
+import { authRateLimit, moderateRateLimit } from '../config/rateLimit.js';
+import { validate } from '../middlewares/validate.js';
+import { authMiddleware } from '../middlewares/auth.js';
 import {
   registerSchema,
   loginSchema,
   changePasswordSchema,
   updateProfileSchema,
   forgotPasswordSchema,
-} from '../validators/auth.schema';
-import authController from '../controllers/auth.controller';
+} from '../validators/auth.schema.js';
+import authController from '../controllers/auth.controller.js';
 
 const router = Router();
 

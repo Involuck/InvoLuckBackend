@@ -4,15 +4,15 @@
  */
 
 import { Types } from 'mongoose';
-import { Client, IClient } from '../models/Client';
-import { ApiErrors } from '../utils/ApiError';
-import { parsePagination, createPaginatedResponse, createSortObject } from '../utils/pagination';
-import logger from '../config/logger';
+import { Client, IClient } from '../models/Client.js';
+import { ApiErrors } from '../utils/ApiError.js';
+import { parsePagination, createPaginatedResponse, createSortObject } from '../utils/pagination.js';
+import logger from '../config/logger.js';
 import {
   CreateClientInput,
   UpdateClientInput,
   ClientQueryInput,
-} from '../validators/client.schema';
+} from '../validators/client.schema.js';
 
 class ClientsService {
   /**

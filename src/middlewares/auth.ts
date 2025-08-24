@@ -5,12 +5,12 @@
 
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 import { Types } from 'mongoose';
-import { JWT_SECRET } from '../config/env';
-import { ApiErrors } from '../utils/ApiError';
-import { asyncHandler } from '../utils/asyncHandler';
-import logger from '../config/logger';
+import { JWT_SECRET } from '../config/env.js';
+import { ApiErrors } from '../utils/ApiError.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import logger from '../config/logger.js';
 
 interface JwtPayload {
   id: string;

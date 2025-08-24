@@ -6,8 +6,8 @@
  * This service can be expanded later for server-side PDF generation.
  */
 
-import logger from '../config/logger';
-import { ApiErrors } from '../utils/ApiError';
+import logger from '../config/logger.js';
+import { ApiErrors } from '../utils/ApiError.js';
 
 // PDF generation options interface
 export interface PdfGenerationOptions {

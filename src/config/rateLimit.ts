@@ -5,8 +5,8 @@
 
 import rateLimit from 'express-rate-limit';
 import { Request, Response } from 'express';
-import { RATE_LIMIT_WINDOW_MS, RATE_LIMIT_MAX, isDevelopment } from './env';
-import logger from './logger';
+import { RATE_LIMIT_WINDOW_MS, RATE_LIMIT_MAX, isDevelopment } from './env.js';
+import logger from './logger.js';
 
 // Custom rate limit handler
 const rateLimitHandler = (req: any, res: any): void => {

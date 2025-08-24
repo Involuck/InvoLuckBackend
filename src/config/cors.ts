@@ -4,8 +4,8 @@
  */
 
 import cors from 'cors';
-import { CORS_ORIGIN, isDevelopment } from './env';
-import logger from './logger';
+import { CORS_ORIGIN, isDevelopment } from './env.js';
+import logger from './logger.js';
 
 // Parse allowed origins from environment
 const getAllowedOrigins = (): string[] => {

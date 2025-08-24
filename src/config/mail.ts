@@ -4,8 +4,8 @@
  */
 
 import nodemailer from 'nodemailer';
-import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, isDevelopment } from './env';
-import logger from './logger';
+import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, isDevelopment } from './env.js';
+import logger from './logger.js';
 
 // Email transporter configuration
 const createTransporter = (): nodemailer.Transporter => {

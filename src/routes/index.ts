@@ -6,10 +6,10 @@
 import { Router } from 'express';
 
 // Import route modules
-import authRoutes from './auth.routes';
-import clientsRoutes from './clients.routes';
-import invoicesRoutes from './invoices.routes';
-import healthRoutes from './health.routes';
+import authRoutes from './auth.routes.js';
+import clientsRoutes from './clients.routes.js';
+import invoicesRoutes from './invoices.routes.js';
+import healthRoutes from './health.routes.js';
 
 // Create main router
 const router = Router();

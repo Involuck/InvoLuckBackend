@@ -4,10 +4,10 @@
  */
 
 import { Request, Response } from 'express';
-import { asyncHandler } from '../utils/asyncHandler';
-import { ok, created } from '../utils/http';
-import authService from '../services/auth.service';
-import logger from '../config/logger';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { ok, created } from '../utils/http.js';
+import authService from '../services/auth.service.js';
+import logger from '../config/logger.js';
 
 class AuthController {
   /**

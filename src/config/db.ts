@@ -4,8 +4,8 @@
  */
 
 import mongoose from 'mongoose';
-import { MONGODB_URI, isDevelopment, isTest } from './env';
-import logger from './logger';
+import { MONGODB_URI, isDevelopment, isTest } from './env.js';
+import logger from './logger.js';
 
 // Connection options
 const connectionOptions: mongoose.ConnectOptions = {
