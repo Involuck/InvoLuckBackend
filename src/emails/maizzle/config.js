@@ -5,7 +5,7 @@
 
 const path = require('path');
 
-module.exports = {
+export default {
   // Build configuration
   build: {
     // Templates source directory

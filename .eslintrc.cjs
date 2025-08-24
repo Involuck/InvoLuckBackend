@@ -3,7 +3,7 @@
  * Enforces TypeScript best practices and code quality standards
  */
 
-module.exports = {
+export default {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2022,

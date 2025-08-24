@@ -3,7 +3,7 @@
  * Processes CSS for email client compatibility
  */
 
-module.exports = {
+export default {
   plugins: [
     // Tailwind CSS processing
     require('tailwindcss')('./src/emails/maizzle/tailwind.config.cjs'),

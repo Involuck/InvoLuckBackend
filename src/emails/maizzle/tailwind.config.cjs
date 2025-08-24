@@ -3,7 +3,7 @@
  * Optimized for email client compatibility
  */
 
-module.exports = {
+export default {
   content: ['./src/**/*.html'],
 
   theme: {
