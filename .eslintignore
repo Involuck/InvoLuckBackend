@@ -1,0 +1,36 @@
+# ESLint ignore patterns for InvoLuck Backend
+
+# Build outputs
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Email templates (compiled)
+src/emails/compiled/
+
+# Maizzle configuration files
+src/emails/maizzle/config.js
+src/emails/maizzle/postcss.config.cjs
+src/emails/maizzle/tailwind.config.cjs
+
+# Coverage reports
+coverage/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

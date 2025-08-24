@@ -1,0 +1,30 @@
+# Prettier ignore patterns for InvoLuck Backend
+
+# Build outputs
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Email templates (compiled)
+src/emails/compiled/
+
+# Coverage reports
+coverage/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+
+# Package lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+*.d.ts
