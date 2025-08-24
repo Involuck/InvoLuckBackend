@@ -18,7 +18,7 @@ const paginationSchema = z.object({
 export interface PaginationOptions {
   page: number;
   limit: number;
-  sort?: string;
+  sort: string | undefined;
   order: 'asc' | 'desc';
   skip: number;
 }

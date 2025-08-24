@@ -120,7 +120,7 @@ class EmailRenderer {
     // Replace simple variables like {{ variable }}
     const variableRegex = /\{\{\s*([^}]+)\s*\}\}/g;
 
-    result = result.replace(variableRegex, (match, variable) => {
+    result = result.replace(variableRegex, (_match, variable) => {
       const trimmedVariable = variable.trim();
 
       // Handle nested object access (e.g., user.name)

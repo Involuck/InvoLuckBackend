@@ -6,12 +6,7 @@
 import { Types } from 'mongoose';
 import { Client, IClient } from '../models/Client';
 import { ApiErrors } from '../utils/ApiError';
-import {
-  parsePagination,
-  createPaginatedResponse,
-  createSortObject,
-  CommonSortFields,
-} from '../utils/pagination';
+import { parsePagination, createPaginatedResponse, createSortObject } from '../utils/pagination';
 import logger from '../config/logger';
 import {
   CreateClientInput,

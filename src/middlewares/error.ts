@@ -5,7 +5,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import { CastError } from 'mongoose';
+import { Error as MongooseError } from 'mongoose';
 import { ApiError, ApiErrors } from '../utils/ApiError';
 import { isProduction } from '../config/env';
 import logger from '../config/logger';
@@ -26,7 +26,7 @@ const handleZodError = (error: ZodError): ApiError => {
 /**
  * Handle Mongoose cast errors (invalid ObjectId, etc.)
  */
-const handleCastError = (error: CastError): ApiError => {
+const handleCastError = (error: MongooseError.CastError): ApiError => {
   const message = `Invalid ${error.path}: ${error.value}`;
   return ApiErrors.badRequest(message);
 };
@@ -84,7 +84,7 @@ const handleError = (error: any): ApiError => {
   }
 
   // Mongoose errors
-  if (error instanceof CastError) {
+  if (error instanceof MongooseError.CastError) {
     return handleCastError(error);
   }
 
@@ -146,7 +146,12 @@ const logError = (error: ApiError, req: Request): void => {
  * Main error handling middleware
  * Must be the last middleware in the chain
  */
-export const errorHandler = (error: any, req: Request, res: Response, next: NextFunction): void => {
+export const errorHandler = (
+  error: any,
+  req: Request,
+  res: Response,
+  _next: NextFunction
+): void => {
   // Convert error to ApiError
   const apiError = handleError(error);
 

@@ -62,9 +62,7 @@ const validateRequestPart = (data: any, schema: ZodSchema, target: ValidationTar
  * app.post('/users', validate({ body: userCreateSchema }), createUser);
  */
 export const validate = (schemas: ValidationSchemas) => {
-  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const validationErrors: ErrorDetail[] = [];
-
+  return asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
     try {
       // Validate body if schema provided
       if (schemas.body) {
@@ -138,7 +136,7 @@ export const validateFile = (options: {
   maxSize?: number;
   allowedTypes?: string[];
 }) => {
-  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  return asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
     const file = req.file;
     const { required = false, maxSize = 5 * 1024 * 1024, allowedTypes = [] } = options;
 

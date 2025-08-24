@@ -3,7 +3,7 @@
  * Handles user registration, login, and token management
  */
 
-import jwt from 'jsonwebtoken';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { User, IUser } from '../models/User';
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env';
 import { ApiErrors } from '../utils/ApiError';
@@ -48,7 +48,11 @@ class AuthService {
    * Generate JWT token for user
    */
   private generateToken(userId: string, email: string): string {
-    return jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    return jwt.sign(
+      { id: userId, email },
+      JWT_SECRET as Secret,
+      { expiresIn: JWT_EXPIRES_IN } as SignOptions
+    );
   }
 
   /**
@@ -168,7 +172,7 @@ class AuthService {
         role: user.role,
         isEmailVerified: user.isEmailVerified,
         preferences: user.preferences,
-        avatarUrl: user.avatarUrl,
+        avatarUrl: user.avatar || '',
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       };
@@ -221,7 +225,7 @@ class AuthService {
         role: user.role,
         isEmailVerified: user.isEmailVerified,
         preferences: user.preferences,
-        avatarUrl: user.avatarUrl,
+        avatarUrl: user.avatar || '',
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       };
@@ -311,7 +315,7 @@ class AuthService {
       }
 
       // Generate reset token
-      const resetToken = user.generatePasswordResetToken();
+      user.generatePasswordResetToken();
       await user.save();
 
       logger.info({

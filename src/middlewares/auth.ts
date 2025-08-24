@@ -6,6 +6,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
+import { Types } from 'mongoose';
 import { JWT_SECRET } from '../config/env';
 import { ApiErrors } from '../utils/ApiError';
 import { asyncHandler } from '../utils/asyncHandler';
@@ -60,7 +61,7 @@ const verifyToken = (token: string): JwtPayload => {
  * Verifies JWT token and attaches user to request
  */
 export const authMiddleware = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, _res: Response, next: NextFunction) => {
     // Extract token from header
     const token = extractToken(req);
 
@@ -72,7 +73,9 @@ export const authMiddleware = asyncHandler(
     const decoded = verifyToken(token);
 
     // Find user in database
-    const user = await User.findById(decoded.id).select('-password');
+    const user = await User.findById(decoded.id).select(
+      '_id email name role isEmailVerified preferences createdAt'
+    );
 
     if (!user) {
       logger.warn({
@@ -86,7 +89,7 @@ export const authMiddleware = asyncHandler(
     // Attach user to request
     req.user = {
       id: (user as any)._id.toString(),
-      _id: user._id,
+      _id: user._id as Types.ObjectId,
       email: user.email,
       name: user.name,
       role: user.role,
@@ -108,7 +111,7 @@ export const authMiddleware = asyncHandler(
  * Similar to authMiddleware but doesn't throw error if no token
  */
 export const optionalAuthMiddleware = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, _res: Response, next: NextFunction) => {
     const token = extractToken(req);
 
     if (!token) {
@@ -117,12 +120,14 @@ export const optionalAuthMiddleware = asyncHandler(
 
     try {
       const decoded = verifyToken(token);
-      const user = await User.findById(decoded.id).select('-password');
+      const user = await User.findById(decoded.id).select(
+        '_id email name role isEmailVerified preferences createdAt'
+      );
 
       if (user) {
         req.user = {
           id: (user as any)._id.toString(),
-          _id: user._id,
+          _id: user._id as Types.ObjectId,
           email: user.email,
           name: user.name,
           role: user.role,
@@ -145,7 +150,7 @@ export const optionalAuthMiddleware = asyncHandler(
  * Role-based authorization middleware factory
  */
 export const requireRole = (allowedRoles: string[]) => {
-  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  return asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
     if (!req.user) {
       throw ApiErrors.unauthorized('Authentication required');
     }
@@ -171,7 +176,7 @@ export const requireRole = (allowedRoles: string[]) => {
  * Check if user owns resource or is admin
  */
 export const requireOwnershipOrAdmin = (resourceIdField = 'userId') => {
-  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  return asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
     if (!req.user) {
       throw ApiErrors.unauthorized('Authentication required');
     }

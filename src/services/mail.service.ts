@@ -3,7 +3,7 @@
  * Handles email template rendering and sending using Maizzle + Nodemailer
  */
 
-import { sendMail, EmailOptions } from '../config/mail';
+import { sendMail } from '../config/mail';
 import logger from '../config/logger';
 import { ApiErrors } from '../utils/ApiError';
 

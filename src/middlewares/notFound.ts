@@ -11,7 +11,7 @@ import logger from '../config/logger';
  * 404 Not Found middleware
  * Should be placed after all route definitions but before error handler
  */
-export const notFoundHandler = (req: Request, res: Response, next: NextFunction): void => {
+export const notFoundHandler = (req: Request, _res: Response, next: NextFunction): void => {
   logger.warn({
     msg: 'Route not found',
     method: req.method,

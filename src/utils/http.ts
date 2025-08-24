@@ -12,9 +12,9 @@ export interface ApiResponse<T = any> {
   error?: {
     code: string;
     message: string;
-    details?: any[];
+    details: any[];
   };
-  requestId: number;
+  requestId: string;
   timestamp?: string;
   pagination?: {
     page: number;
@@ -38,7 +38,7 @@ export const ok = <T>(
   const response: ApiResponse<T> = {
     success: true,
     data,
-    requestId: res.req.id,
+    requestId: res.req.id.toString(),
     timestamp: new Date().toISOString(),
   };
 
@@ -75,7 +75,7 @@ export const error = (
   statusCode: number,
   code: string,
   message: string,
-  details?: any[]
+  details: any[] = []
 ): Response<ApiResponse> => {
   const response: ApiResponse = {
     success: false,
@@ -84,7 +84,7 @@ export const error = (
       message,
       details,
     },
-    requestId: res.req.id,
+    requestId: res.req.id.toString(),
     timestamp: new Date().toISOString(),
   };
 
@@ -97,7 +97,7 @@ export const error = (
 export const badRequest = (
   res: Response,
   message = 'Bad request',
-  details?: any[]
+  details: any[] = []
 ): Response<ApiResponse> => {
   return error(res, 400, 'BAD_REQUEST', message, details);
 };
@@ -132,7 +132,7 @@ export const notFound = (res: Response, message = 'Resource not found'): Respons
 export const validationError = (
   res: Response,
   message = 'Validation failed',
-  details?: any[]
+  details: any[] = []
 ): Response<ApiResponse> => {
   return error(res, 422, 'VALIDATION_ERROR', message, details);
 };

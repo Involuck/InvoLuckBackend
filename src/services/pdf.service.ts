@@ -63,7 +63,7 @@ class PdfService {
    * TODO: Implement with puppeteer or similar
    */
   async generatePdfFromHtml(
-    html: string,
+    _html: string,
     options: {
       format?: 'A4' | 'Letter';
       orientation?: 'portrait' | 'landscape';

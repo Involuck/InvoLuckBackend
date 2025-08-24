@@ -10,7 +10,6 @@ import { validate } from '../middlewares/validate';
 import {
   createClientSchema,
   updateClientSchema,
-  clientParamsSchema,
   clientQuerySchema,
 } from '../validators/client.schema';
 import { commonSchemas } from '../middlewares/validate';

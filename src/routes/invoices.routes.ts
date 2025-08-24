@@ -11,7 +11,6 @@ import {
   createInvoiceSchema,
   updateInvoiceSchema,
   updateInvoiceStatusSchema,
-  invoiceParamsSchema,
   invoiceQuerySchema,
   sendInvoiceSchema,
 } from '../validators/invoice.schema';

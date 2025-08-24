@@ -18,7 +18,7 @@ const router = Router();
  */
 router.get(
   '/',
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (_req: Request, res: Response) => {
     const healthData = {
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -37,7 +37,7 @@ router.get(
  */
 router.get(
   '/detailed',
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (_req: Request, res: Response) => {
     const startTime = Date.now();
 
     // Check database connection
@@ -94,7 +94,7 @@ router.get(
  */
 router.get(
   '/ping',
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (_req: Request, res: Response) => {
     return ok(res, {
       message: 'pong',
       timestamp: new Date().toISOString(),

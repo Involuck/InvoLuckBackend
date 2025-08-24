@@ -72,7 +72,7 @@ async function seedClientsData(userIdMap: Map<string, string>): Promise<Map<stri
 
       await client.save();
 
-      clientIdMap.set(clientData.email, (client._id as Types.ObjectId).toString());
+      clientIdMap.set(clientData.email, (client as any)._id.toString());
 
       logger.info(`✅ Created client: ${clientData.name} (${clientData.email})`);
     } catch (error) {

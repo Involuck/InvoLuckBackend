@@ -282,16 +282,5 @@ export interface EmailProviderConfig {
 }
 
 export default {
-  InvitationEmailData,
-  InvoiceCreatedEmailData,
-  InvoiceReminderEmailData,
-  PasswordResetEmailData,
-  WelcomeEmailData,
-  EmailVerificationData,
-  PaymentReceivedEmailData,
-  TeamInviteAcceptedEmailData,
-  SubscriptionEmailData,
-  ReportEmailData,
-  NewsletterEmailData,
   EmailTemplate,
 };

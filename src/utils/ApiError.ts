@@ -12,7 +12,7 @@ export interface ErrorDetail {
 export class ApiError extends Error {
   public readonly statusCode: number;
   public readonly code: string;
-  public readonly details?: ErrorDetail[];
+  public readonly details: ErrorDetail[] = [];
   public readonly isOperational: boolean;
 
   constructor(
@@ -26,7 +26,7 @@ export class ApiError extends Error {
 
     this.statusCode = statusCode;
     this.code = code || this.getDefaultCode(statusCode);
-    this.details = details;
+    this.details = details || [];
     this.isOperational = isOperational;
 
     // Maintain proper stack trace
