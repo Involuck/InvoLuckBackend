@@ -5,8 +5,8 @@
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import app from '../app';
-import logger from '../config/logger';
+import app from '../app.js';
+import logger from '../config/logger.js';
 
 // Global test variables
 let mongoServer: MongoMemoryServer;
@@ -162,14 +162,14 @@ export const testUtils = {
     user: any;
     token: string;
   }> {
-    const { User } = await import('../models/User');
+    const { User } = await import('../models/User.js');
 
     const user = new User(userData);
     await user.save();
 
     // Generate token manually (since we don't want to test auth here)
     const jwt = await import('jsonwebtoken');
-    const { JWT_SECRET } = await import('../config/env');
+    const { JWT_SECRET } = await import('../config/env.js');
 
     const token = jwt.sign({ id: (user as any)._id.toString(), email: user.email }, JWT_SECRET, {
       expiresIn: '1h',
@@ -182,7 +182,7 @@ export const testUtils = {
    * Create a test client for a user
    */
   async createTestClient(userId: string, clientData = TEST_CLIENT_DATA): Promise<any> {
-    const { Client } = await import('../models/Client');
+    const { Client } = await import('../models/Client.js');
 
     const client = new Client({
       userId,
@@ -201,7 +201,7 @@ export const testUtils = {
     clientId: string,
     invoiceData = TEST_INVOICE_DATA
   ): Promise<any> {
-    const { Invoice } = await import('../models/Invoice');
+    const { Invoice } = await import('../models/Invoice.js');
 
     const invoice = new Invoice({
       userId,

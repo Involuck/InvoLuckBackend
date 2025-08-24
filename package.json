@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc && npm run copy-public",
+    "build": "tsc --skipLibCheck && npm run copy-public",
     "copy-public": "cp -r public dist/",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",

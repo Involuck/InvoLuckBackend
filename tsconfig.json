@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node", "jest"],
     "target": "ES2022",
     "lib": ["ES2022"],
     "module": "ES2022",
@@ -50,7 +51,8 @@
     "dist",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
-    "src/emails/compiled/**/*"
+    "src/emails/compiled/**/*",
+    "src/tests/**/*"
   ],
   "ts-node": {
     "require": ["tsconfig-paths/register"]

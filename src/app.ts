@@ -11,18 +11,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Import configuration
-import { isDevelopment, SECURITY_HEADERS } from './config/env';
-import { corsMiddleware } from './config/cors';
-import { generalRateLimit } from './config/rateLimit';
-import { httpLoggerConfig } from './config/logger';
+import { isDevelopment, SECURITY_HEADERS } from './config/env.js';
+import { corsMiddleware } from './config/cors.js';
+import { generalRateLimit } from './config/rateLimit.js';
+import { httpLoggerConfig } from './config/logger.js';
 
 // Import middleware
-import { requestIdMiddleware } from './middlewares/requestId';
-import { errorHandler } from './middlewares/error';
-import { notFoundHandler } from './middlewares/notFound';
+import { requestIdMiddleware } from './middlewares/requestId.js';
+import { errorHandler } from './middlewares/error.js';
+import { notFoundHandler } from './middlewares/notFound.js';
 
 // Import routes
-import routes from './routes';
+import routes from './routes/index.js';
 
 // Create Express application
 const app = express();

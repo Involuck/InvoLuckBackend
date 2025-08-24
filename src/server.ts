@@ -3,12 +3,12 @@
  * Starts the Express application and connects to database
  */
 
-import app from './app';
-import { PORT, NODE_ENV } from './config/env';
-import { connectDatabase } from './config/db';
-import { verifyMailConfig } from './config/mail';
-import { handleAsyncError, handleUncaughtException } from './middlewares/error';
-import logger from './config/logger';
+import app from './app.js';
+import { PORT, NODE_ENV } from './config/env.js';
+import { connectDatabase } from './config/db.js';
+import { verifyMailConfig } from './config/mail.js';
+import { handleAsyncError, handleUncaughtException } from './middlewares/error.js';
+import logger from './config/logger.js';
 
 // Handle uncaught exceptions
 process.on('uncaughtException', handleUncaughtException);
