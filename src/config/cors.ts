@@ -78,7 +78,7 @@ const corsOptions: cors.CorsOptions = {
 };
 
 // Create CORS middleware
-export const corsMiddleware = cors(corsOptions);
+const corsMiddleware = cors(corsOptions);
 
 // Log CORS configuration on startup
 logger.info({
@@ -87,5 +87,5 @@ logger.info({
   isDevelopment: isDevelopment(),
 });
 
-export { allowedOrigins };
+export { corsMiddleware, allowedOrigins };
 export default corsMiddleware;

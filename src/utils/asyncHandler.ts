@@ -23,10 +23,11 @@ type AsyncRequestHandler = (
  *   res.json({ success: true, data: users });
  * }));
  */
-export const asyncHandler = (fn: AsyncRequestHandler) => {
+const asyncHandler = (fn: AsyncRequestHandler) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
+export { asyncHandler };
 export default asyncHandler;

@@ -61,7 +61,7 @@ const validateRequestPart = (data: any, schema: ZodSchema, target: ValidationTar
  * @example
  * app.post('/users', validate({ body: userCreateSchema }), createUser);
  */
-export const validate = (schemas: ValidationSchemas) => {
+const validate = (schemas: ValidationSchemas) => {
   return asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
     try {
       // Validate body if schema provided
@@ -197,4 +197,5 @@ export const commonSchemas = {
   }),
 };
 
+export { validate };
 export default validate;

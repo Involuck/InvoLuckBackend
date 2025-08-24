@@ -146,12 +146,7 @@ const logError = (error: ApiError, req: Request): void => {
  * Main error handling middleware
  * Must be the last middleware in the chain
  */
-export const errorHandler = (
-  error: any,
-  req: Request,
-  res: Response,
-  _next: NextFunction
-): void => {
+const errorHandler = (error: any, req: Request, res: Response, _next: NextFunction): void => {
   // Convert error to ApiError
   const apiError = handleError(error);
 
@@ -200,4 +195,5 @@ export const handleUncaughtException = (error: any): void => {
   process.exit(1);
 };
 
+export { errorHandler };
 export default errorHandler;

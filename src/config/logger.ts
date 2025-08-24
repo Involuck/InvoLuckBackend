@@ -34,7 +34,7 @@ if (isDevelopment()) {
 }
 
 // Create logger instance
-export const logger = pino(loggerConfig);
+const logger = pino(loggerConfig);
 
 // Create child logger with context
 export const createChildLogger = (context: Record<string, unknown>): pino.Logger => {
@@ -72,4 +72,5 @@ export const httpLoggerConfig = {
   },
 };
 
+export { logger };
 export default logger;

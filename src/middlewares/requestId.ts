@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
  * - Added to response headers for client-side tracing
  * - Used in logging for request correlation
  */
-export const requestIdMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+const requestIdMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   // Check if request ID already exists in headers (from load balancer, etc.)
   const existingId = req.headers['x-request-id'] as string;
 
@@ -31,4 +31,5 @@ export const requestIdMiddleware = (req: Request, res: Response, next: NextFunct
   next();
 };
 
+export { requestIdMiddleware };
 export default requestIdMiddleware;

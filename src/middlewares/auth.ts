@@ -60,51 +60,49 @@ const verifyToken = (token: string): JwtPayload => {
  * Main authentication middleware
  * Verifies JWT token and attaches user to request
  */
-export const authMiddleware = asyncHandler(
-  async (req: Request, _res: Response, next: NextFunction) => {
-    // Extract token from header
-    const token = extractToken(req);
+const authMiddleware = asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
+  // Extract token from header
+  const token = extractToken(req);
 
-    if (!token) {
-      throw ApiErrors.unauthorized('No token provided');
-    }
+  if (!token) {
+    throw ApiErrors.unauthorized('No token provided');
+  }
 
-    // Verify token
-    const decoded = verifyToken(token);
+  // Verify token
+  const decoded = verifyToken(token);
 
-    // Find user in database
-    const user = await User.findById(decoded.id).select(
-      '_id email name role isEmailVerified preferences createdAt'
-    );
+  // Find user in database
+  const user = await User.findById(decoded.id).select(
+    '_id email name role isEmailVerified preferences createdAt'
+  );
 
-    if (!user) {
-      logger.warn({
-        msg: 'Token valid but user not found',
-        userId: decoded.id,
-        requestId: req.id,
-      });
-      throw ApiErrors.unauthorized('User not found');
-    }
-
-    // Attach user to request
-    req.user = {
-      id: (user as any)._id.toString(),
-      _id: user._id as Types.ObjectId,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    };
-
-    logger.debug({
-      msg: 'User authenticated',
-      userId: (user as any)._id.toString(),
-      email: user.email,
+  if (!user) {
+    logger.warn({
+      msg: 'Token valid but user not found',
+      userId: decoded.id,
       requestId: req.id,
     });
-
-    next();
+    throw ApiErrors.unauthorized('User not found');
   }
-);
+
+  // Attach user to request
+  req.user = {
+    id: (user as any)._id.toString(),
+    _id: user._id as Types.ObjectId,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+  };
+
+  logger.debug({
+    msg: 'User authenticated',
+    userId: (user as any)._id.toString(),
+    email: user.email,
+    requestId: req.id,
+  });
+
+  next();
+});
 
 /**
  * Optional authentication middleware
@@ -206,4 +204,5 @@ export const requireOwnershipOrAdmin = (resourceIdField = 'userId') => {
   });
 };
 
+export { authMiddleware };
 export default authMiddleware;

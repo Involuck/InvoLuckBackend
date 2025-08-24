@@ -41,7 +41,7 @@ const skipRateLimit = (req: any): boolean => {
 };
 
 // General rate limiter configuration
-export const generalRateLimit = rateLimit({
+const generalRateLimit = rateLimit({
   windowMs: RATE_LIMIT_WINDOW_MS,
   max: RATE_LIMIT_MAX,
   handler: rateLimitHandler,
@@ -109,4 +109,5 @@ logger.info({
   isDevelopment: isDevelopment(),
 });
 
+export { generalRateLimit };
 export default generalRateLimit;

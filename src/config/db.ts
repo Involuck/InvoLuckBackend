@@ -172,7 +172,7 @@ class DatabaseConnection {
 }
 
 // Export singleton instance
-export const db = new DatabaseConnection();
+const db = new DatabaseConnection();
 
 // Export connection function for convenience
 export const connectDatabase = async (): Promise<void> => {
@@ -180,4 +180,5 @@ export const connectDatabase = async (): Promise<void> => {
   await db.connect();
 };
 
+export { db };
 export default db;
