@@ -2,21 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/server.js",
+      "src": "src/server.ts",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["dist/**", "public/**"]
+        "includeFiles": ["public/**"]
       }
     }
   ],
   "routes": [
     {
+      "src": "/styles.css",
+      "dest": "/public/styles.css"
+    },
+    {
       "src": "/api/v1/(.*)",
-      "dest": "dist/server.js"
+      "dest": "src/server.ts"
     },
     {
       "src": "/(.*)",
-      "dest": "dist/server.js"
+      "dest": "src/server.ts"
     }
   ],
   "env": {

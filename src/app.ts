@@ -44,9 +44,10 @@ if (SECURITY_HEADERS) {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com'],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'https:'],
+          fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
         },
       },
       crossOriginEmbedderPolicy: false,
@@ -117,8 +118,7 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   const acceptHeader = req.headers.accept || '';
 
-  // Si el cliente acepta HTML y no está solicitando específicamente JSON
-  if (acceptHeader.includes('text/html') && !acceptHeader.includes('application/json')) {
+  if (acceptHeader.includes('text/html')) {
     return res.sendFile(path.join(__dirname, '../public/index.html'));
   }
 
