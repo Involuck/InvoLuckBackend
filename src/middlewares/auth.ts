@@ -85,7 +85,7 @@ export const authMiddleware = asyncHandler(
 
     // Attach user to request
     req.user = {
-      id: (user as any)._id.toString()(),
+      id: (user as any)._id.toString(),
       _id: user._id,
       email: user.email,
       name: user.name,
@@ -94,7 +94,7 @@ export const authMiddleware = asyncHandler(
 
     logger.debug({
       msg: 'User authenticated',
-      userId: (user as any)._id.toString()(),
+      userId: (user as any)._id.toString(),
       email: user.email,
       requestId: req.id,
     });
@@ -121,7 +121,7 @@ export const optionalAuthMiddleware = asyncHandler(
 
       if (user) {
         req.user = {
-          id: (user as any)._id.toString()(),
+          id: (user as any)._id.toString(),
           _id: user._id,
           email: user.email,
           name: user.name,

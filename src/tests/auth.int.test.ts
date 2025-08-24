@@ -229,7 +229,7 @@ describe('Authentication Endpoints', () => {
     beforeEach(async () => {
       const { user, token } = await testUtils.createAuthenticatedUser();
       authToken = token;
-      userId = (user as any)._id.toString()();
+      userId = (user as any)._id.toString();
     });
 
     it('should return user profile with valid token', async () => {
@@ -276,7 +276,7 @@ describe('Authentication Endpoints', () => {
     beforeEach(async () => {
       const { user, token } = await testUtils.createAuthenticatedUser();
       authToken = token;
-      userId = (user as any)._id.toString()();
+      userId = (user as any)._id.toString();
     });
 
     it('should update user profile with valid data', async () => {

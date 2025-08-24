@@ -171,7 +171,7 @@ export const testUtils = {
     const jwt = await import('jsonwebtoken');
     const { JWT_SECRET } = await import('../config/env');
 
-    const token = jwt.sign({ id: (user as any)._id.toString()(), email: user.email }, JWT_SECRET, {
+    const token = jwt.sign({ id: (user as any)._id.toString(), email: user.email }, JWT_SECRET, {
       expiresIn: '1h',
     });
 

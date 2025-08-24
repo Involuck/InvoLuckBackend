@@ -13,7 +13,7 @@ describe('Clients Endpoints', () => {
   beforeEach(async () => {
     const { user, token } = await testUtils.createAuthenticatedUser();
     authToken = token;
-    userId = (user as any)._id.toString()();
+    userId = (user as any)._id.toString();
   });
 
   describe('POST /api/v1/clients', () => {

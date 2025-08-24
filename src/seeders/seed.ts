@@ -37,7 +37,7 @@ async function seedUsersData(): Promise<Map<string, string>> {
       const user = new User(userData);
       await user.save();
 
-      userIdMap.set(userData.email, (user as any)._id.toString()());
+      userIdMap.set(userData.email, (user as any)._id.toString());
 
       logger.info(`✅ Created user: ${userData.name} (${userData.email})`);
     } catch (error) {

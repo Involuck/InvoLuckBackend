@@ -59,7 +59,8 @@ export const generalRateLimit = rateLimit({
 
 // Strict rate limiter for authentication endpoints
 export const authRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  /* windowMs: 15 * 60 * 1000, */ // 15 minutes
+  windowMs: 0, // 1 minute
   handler: (req: Request, res: Response) => {
     logger.warn({
       msg: 'Auth rate limit exceeded',

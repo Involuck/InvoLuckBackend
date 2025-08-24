@@ -55,11 +55,11 @@ class AuthService {
    * Create auth response object
    */
   private createAuthResponse(user: IUser): AuthResponse {
-    const token = this.generateToken((user as any)._id.toString()(), user.email);
+    const token = this.generateToken((user as any)._id.toString(), user.email);
 
     return {
       user: {
-        id: (user as any)._id.toString()(),
+        id: (user as any)._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,
@@ -94,7 +94,7 @@ class AuthService {
 
       logger.info({
         msg: 'User registered successfully',
-        userId: (user as any)._id.toString()(),
+        userId: (user as any)._id.toString(),
         email: user.email,
       });
 
@@ -135,7 +135,7 @@ class AuthService {
 
       logger.info({
         msg: 'User logged in successfully',
-        userId: (user as any)._id.toString()(),
+        userId: (user as any)._id.toString(),
         email: user.email,
       });
 
@@ -162,7 +162,7 @@ class AuthService {
       }
 
       return {
-        id: (user as any)._id.toString()(),
+        id: (user as any)._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,
@@ -210,12 +210,12 @@ class AuthService {
 
       logger.info({
         msg: 'User profile updated',
-        userId: (user as any)._id.toString()(),
+        userId: (user as any)._id.toString(),
         updatedFields: Object.keys(updateData),
       });
 
       return {
-        id: (user as any)._id.toString()(),
+        id: (user as any)._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,
@@ -258,7 +258,7 @@ class AuthService {
 
       logger.info({
         msg: 'Password changed successfully',
-        userId: (user as any)._id.toString()(),
+        userId: (user as any)._id.toString(),
       });
     } catch (error) {
       logger.error({
@@ -344,7 +344,7 @@ class AuthService {
 
       logger.info({
         msg: 'User account deactivated',
-        userId: (user as any)._id.toString()(),
+        userId: (user as any)._id.toString(),
         email: user.email,
       });
     } catch (error) {
