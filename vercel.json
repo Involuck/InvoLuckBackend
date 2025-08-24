@@ -2,13 +2,12 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/node",
-      "config": {
-        "buildCommand": "npm run build",
-        "outputDirectory": "dist",
-        "installCommand": "npm install --omit=dev"
-      }
+      "src": "api/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -17,12 +16,8 @@
       "dest": "/public/styles.css"
     },
     {
-      "src": "/api/v1/(.*)",
-      "dest": "/dist/server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/dist/server.js"
+      "dest": "/api/index.ts"
     }
   ],
   "env": {
