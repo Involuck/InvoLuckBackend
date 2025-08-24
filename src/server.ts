@@ -3,7 +3,7 @@
  * Starts the Express application and connects to database
  */
 
-import { app } from './app';
+import app from './app';
 import { PORT, NODE_ENV } from './config/env';
 import { connectDatabase } from './config/db';
 import { verifyMailConfig } from './config/mail';
