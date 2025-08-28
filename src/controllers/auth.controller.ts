@@ -49,11 +49,33 @@ class AuthController {
    * Request password reset
    */
   forgotPassword = asyncHandler(async (req: Request, res: Response) => {
-    await authService.requestPasswordReset(req.body.email);
+    const { email } = req.body;
+    await authService.requestPasswordReset(email);
 
     // Always return success to prevent email enumeration
     return ok(res, {
-      message: 'If an account with that email exists, a password reset link has been sent.',
+      message:
+        'If an account with that email exists, a password reset link has been sent.',
+    });
+  });
+
+  /**
+   * POST /api/v1/auth/reset-password
+   * Reset password using token
+   */
+  resetPassword = asyncHandler(async (req: Request, res: Response) => {
+    const { token, newPassword, confirmPassword } = req.body;
+
+    // Service will handle token validation + password match check
+    await authService.resetPassword(token, newPassword, confirmPassword);
+
+    logger.info({
+      msg: 'Password reset successful',
+      requestId: req.id,
+    });
+
+    return ok(res, {
+      message: 'Password reset successful',
     });
   });
 
@@ -110,10 +132,6 @@ class AuthController {
    * Logout user (client-side token removal)
    */
   logout = asyncHandler(async (req: Request, res: Response) => {
-    // In a JWT-based system, logout is typically handled client-side
-    // by removing the token from storage. Server-side logout would
-    // require token blacklisting which is not implemented here.
-
     logger.info({
       msg: 'User logout',
       userId: req.user!.id,
