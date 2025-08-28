@@ -4,6 +4,11 @@ import authRoute from './authRoutes.js';
 const router = express.Router();
 
 router.use('/auth', authRoute);
+<<<<<<< HEAD
+=======
+
+/* router.use('/invoices', invoiceRoutes); */
+>>>>>>> origin/asmakhokharr/eng-34-implement-user-authentication-api
 
 /* router.use('/invoices', invoiceRoutes); */
 
