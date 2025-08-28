@@ -1,10 +1,5 @@
 // This file will contain custom middleware.
 // For example, middleware for authenticating users with JWT.
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/asmakhokharr/eng-34-implement-user-authentication-api
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 
@@ -65,7 +60,3 @@ const protect = async (req, res, next) => {
 };
 
 export { protect };
-<<<<<<< HEAD
->>>>>>> f099da2 (WIP: ongoing work on auth APIs)
-=======
->>>>>>> origin/asmakhokharr/eng-34-implement-user-authentication-api
