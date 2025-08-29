@@ -78,6 +78,13 @@ class AuthService {
   }
 
   /**
+   * Public wrapper for generating access tokens
+   */
+  public issueAccessToken(userId: string, email: string): string {
+    return this.generateToken(userId, email);
+  }
+
+  /**
    * Register new user
    */
   async register(userData: RegisterInput): Promise<AuthResponse> {

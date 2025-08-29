@@ -1,19 +1,14 @@
-/**
- * Authentication controller for InvoLuck Backend
- * Handles HTTP requests for user authentication and profile management
- */
-
 import { Request, Response } from 'express';
-import { asyncHandler } from '../utils/asyncHandler.js';
-import { ok, created } from '../utils/http.js';
-import authService from '../services/auth.service.js';
-import logger from '../config/logger.js';
+import { asyncHandler } from '../utils/asyncHandler';
+import { ok, created } from '../utils/http';
+import authService from '../services/auth.service';
+import RefreshToken from '@/models/refreshTokenModel';
+import crypto from 'crypto';
+import logger from '../config/logger';
+import mongoose from 'mongoose';
 
 class AuthController {
-  /**
-   * POST /api/v1/auth/register
-   * Register a new user
-   */
+  // ================== REGISTER ==================
   register = asyncHandler(async (req: Request, res: Response) => {
     const authResponse = await authService.register(req.body);
 
@@ -27,12 +22,23 @@ class AuthController {
     return created(res, authResponse);
   });
 
-  /**
-   * POST /api/v1/auth/login
-   * Authenticate user login
-   */
+  // ================== LOGIN ==================
   login = asyncHandler(async (req: Request, res: Response) => {
     const authResponse = await authService.login(req.body);
+
+    // Generate refresh token using userId
+    const refreshToken = await this.createRefreshToken(
+      authResponse.user.id.toString(),
+      req
+    );
+
+    // Set refresh token as HttpOnly cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'strict',
+    });
 
     logger.info({
       msg: 'User login successful',
@@ -44,56 +50,89 @@ class AuthController {
     return ok(res, authResponse);
   });
 
-  /**
-   * POST /api/v1/auth/forgot-password
-   * Request password reset
-   */
+  // ================== CREATE REFRESH TOKEN ==================
+  private createRefreshToken = async (
+    userId: string,
+    req: Request
+  ): Promise<string> => {
+    const refreshToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
+
+    await RefreshToken.create({
+      user: new mongoose.Types.ObjectId(userId),
+      token: hashedToken,
+      ip: req.ip,
+      userAgent: req.get('User-Agent') || '',
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    });
+
+    return refreshToken;
+  };
+
+  // ================== REFRESH TOKEN ==================
+  refreshToken = asyncHandler(async (req: Request, res: Response) => {
+    const token = req.cookies.refreshToken || req.body.refreshToken;
+    if (!token) {
+      return ok(res, { message: 'Refresh token is required' });
+    }
+
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const tokenDoc = await RefreshToken.findOne({ token: hashedToken }).populate('user');
+
+    if (!tokenDoc || tokenDoc.expiresAt < new Date()) {
+      return ok(res, { message: 'Invalid or expired refresh token' });
+    }
+
+    // Generate new access token via public method
+    const user = tokenDoc.user as any;
+    const newAccessToken = authService.issueAccessToken(
+      user._id.toString(),
+      user.email
+    );
+
+    return ok(res, { token: newAccessToken });
+  });
+
+  // ================== LOGOUT ==================
+  logout = asyncHandler(async (req: Request, res: Response) => {
+    const token = req.cookies.refreshToken || req.body.refreshToken;
+    if (token) {
+      const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+      await RefreshToken.findOneAndDelete({ token: hashedToken });
+    }
+
+    res.clearCookie('refreshToken');
+
+    logger.info({ msg: 'User logout', userId: req.user!.id, requestId: req.id });
+    return ok(res, { message: 'Logout successful' });
+  });
+
+  // ================== FORGOT PASSWORD ==================
   forgotPassword = asyncHandler(async (req: Request, res: Response) => {
     const { email } = req.body;
     await authService.requestPasswordReset(email);
 
-    // Always return success to prevent email enumeration
     return ok(res, {
-      message:
-        'If an account with that email exists, a password reset link has been sent.',
+      message: 'If an account with that email exists, a password reset link has been sent.',
     });
   });
 
-  /**
-   * POST /api/v1/auth/reset-password
-   * Reset password using token
-   */
+  // ================== RESET PASSWORD ==================
   resetPassword = asyncHandler(async (req: Request, res: Response) => {
     const { token, newPassword, confirmPassword } = req.body;
-
-    // Service will handle token validation + password match check
     await authService.resetPassword(token, newPassword, confirmPassword);
 
-    logger.info({
-      msg: 'Password reset successful',
-      requestId: req.id,
-    });
-
-    return ok(res, {
-      message: 'Password reset successful',
-    });
+    logger.info({ msg: 'Password reset successful', requestId: req.id });
+    return ok(res, { message: 'Password reset successful' });
   });
 
-  /**
-   * GET /api/v1/auth/profile
-   * Get current user profile
-   */
+  // ================== PROFILE ==================
   getProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const profile = await authService.getProfile(userId);
-
     return ok(res, profile);
   });
 
-  /**
-   * PATCH /api/v1/auth/profile
-   * Update user profile
-   */
   updateProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const updatedProfile = await authService.updateProfile(userId, req.body);
@@ -108,68 +147,28 @@ class AuthController {
     return ok(res, updatedProfile);
   });
 
-  /**
-   * POST /api/v1/auth/change-password
-   * Change user password
-   */
+  // ================== CHANGE PASSWORD ==================
   changePassword = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     await authService.changePassword(userId, req.body);
 
-    logger.info({
-      msg: 'Password changed successfully',
-      userId,
-      requestId: req.id,
-    });
-
-    return ok(res, {
-      message: 'Password changed successfully',
-    });
+    logger.info({ msg: 'Password changed successfully', userId, requestId: req.id });
+    return ok(res, { message: 'Password changed successfully' });
   });
 
-  /**
-   * POST /api/v1/auth/logout
-   * Logout user (client-side token removal)
-   */
-  logout = asyncHandler(async (req: Request, res: Response) => {
-    logger.info({
-      msg: 'User logout',
-      userId: req.user!.id,
-      requestId: req.id,
-    });
-
-    return ok(res, {
-      message: 'Logout successful',
-    });
-  });
-
-  /**
-   * DELETE /api/v1/auth/account
-   * Deactivate user account
-   */
+  // ================== DEACTIVATE ACCOUNT ==================
   deactivateAccount = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     await authService.deactivateAccount(userId);
 
-    logger.info({
-      msg: 'Account deactivated',
-      userId,
-      requestId: req.id,
-    });
-
-    return ok(res, {
-      message: 'Account deactivated successfully',
-    });
+    logger.info({ msg: 'Account deactivated', userId, requestId: req.id });
+    return ok(res, { message: 'Account deactivated successfully' });
   });
 
-  /**
-   * GET /api/v1/auth/stats
-   * Get user statistics
-   */
+  // ================== USER STATS ==================
   getUserStats = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;
     const stats = await authService.getUserStats(userId);
-
     return ok(res, stats);
   });
 }
