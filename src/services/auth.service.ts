@@ -117,6 +117,7 @@ class AuthService {
         email: userData.email,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
+      
       throw error;
     }
   }
