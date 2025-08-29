@@ -138,6 +138,8 @@ const userSchema = new Schema<IUser>(
           type: Boolean,
           default: true,
         },
+        passwordResetToken: { type: String, default: null },
+        passwordResetExpires: { type: Date, default: null },
       },
     },
   },

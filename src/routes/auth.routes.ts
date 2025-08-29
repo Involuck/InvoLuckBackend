@@ -14,6 +14,7 @@ import {
   updateProfileSchema,
   forgotPasswordSchema,
 } from '../validators/auth.schema.js';
+import { resetPasswordSchema } from '../validators/auth.schema.js';
 import authController from '../controllers/auth.controller.js';
 
 const router = Router();
@@ -44,6 +45,17 @@ router.post(
   authRateLimit,
   validate({ body: forgotPasswordSchema }),
   authController.forgotPassword
+);
+
+/**
+ * POST /api/v1/auth/reset-password
+ * Reset password using token
+ */
+router.post(
+  '/reset-password',
+  authRateLimit,
+  validate({ body: resetPasswordSchema }),
+  authController.resetPassword
 );
 
 /**

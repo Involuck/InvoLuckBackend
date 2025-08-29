@@ -14,6 +14,7 @@ import {
   ChangePasswordInput,
   UpdateProfileInput,
 } from '../validators/auth.schema.js';
+// import { string, undefined } from 'zod';
 
 // Auth response interface
 export interface AuthResponse {
@@ -77,6 +78,13 @@ class AuthService {
   }
 
   /**
+   * Public wrapper for generating access tokens
+   */
+  public issueAccessToken(userId: string, email: string): string {
+    return this.generateToken(userId, email);
+  }
+
+  /**
    * Register new user
    */
   async register(userData: RegisterInput): Promise<AuthResponse> {
@@ -109,6 +117,7 @@ class AuthService {
         email: userData.email,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
+      
       throw error;
     }
   }
@@ -273,6 +282,38 @@ class AuthService {
       throw error;
     }
   }
+
+  
+async resetPassword(token: string, newPassword: string, confirmPassword?: string): Promise<void> {
+    try {
+      if (confirmPassword && newPassword !== confirmPassword) {
+        throw ApiErrors.badRequest('Passwords do not match');
+      }
+
+      const user = await User.findOne({
+        passwordResetToken: token,
+        passwordResetExpires: { $gt: new Date() },
+        isActive: true,
+      }).select('+password');
+
+      if (!user) throw ApiErrors.badRequest('Invalid or expired password reset token');
+
+      user.password = newPassword;
+
+      // IMPORTANT: clear using NULL (not undefined) unless your types explicitly allow undefined
+      user.passwordResetToken = null as any;
+      user.passwordResetExpires = null as any;
+
+      await user.save();
+
+      logger.info({ msg: 'Password reset successful', userId: (user as any)._id.toString(), email: user.email });
+    } catch (error) {
+      logger.error({ msg: 'Password reset failed', error: error instanceof Error ? error.message : 'Unknown error' });
+      throw error;
+    }
+  }
+
+
 
   /**
    * Verify JWT token and return user
