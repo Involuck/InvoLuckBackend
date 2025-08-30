@@ -31,7 +31,7 @@ export function generatePlainText(type, data = {}) {
                 Ready State: ${data.readyState || 'N/A'}
                 Error: ${data.error || 'N/A'}
                 Timestamp: ${data.timestamp || 'N/A'}
-            `.trim(),
+            `.trim()
     };
 
     text = templates[type] || '';

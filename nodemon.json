@@ -1,7 +1,12 @@
 {
   "watch": ["src"],
   "ext": "ts,json",
-  "ignore": ["src/**/*.test.ts", "src/**/*.spec.ts", "src/tests/**/*", "src/emails/compiled/**/*"],
+  "ignore": [
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/tests/**/*",
+    "src/emails/compiled/**/*"
+  ],
   "exec": "tsx src/server.ts",
   "env": {
     "NODE_ENV": "development"

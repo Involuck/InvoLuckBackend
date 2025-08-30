@@ -43,7 +43,7 @@ class PdfService {
     logger.info({
       msg: 'PDF generation requested (stub)',
       invoiceId: invoiceData.id,
-      template: options.template || 'standard',
+      template: options.template || 'standard'
     });
 
     // TODO: Implement actual PDF generation
@@ -72,7 +72,7 @@ class PdfService {
   ): Promise<Buffer> {
     logger.info({
       msg: 'HTML to PDF conversion requested (stub)',
-      options,
+      options
     });
 
     // TODO: Implement with puppeteer
@@ -108,7 +108,7 @@ class PdfService {
         logger.warn({
           msg: 'Invalid invoice data for PDF generation',
           missingField: field,
-          invoiceId: invoiceData.id,
+          invoiceId: invoiceData.id
         });
         return false;
       }
@@ -117,7 +117,7 @@ class PdfService {
     if (!Array.isArray(invoiceData.items) || invoiceData.items.length === 0) {
       logger.warn({
         msg: 'Invoice has no items for PDF generation',
-        invoiceId: invoiceData.id,
+        invoiceId: invoiceData.id
       });
       return false;
     }
@@ -143,7 +143,7 @@ class PdfService {
     return {
       available: false,
       message: 'PDF generation is handled in the frontend using React-PDF',
-      alternativeMethod: 'Frontend React-PDF implementation',
+      alternativeMethod: 'Frontend React-PDF implementation'
     };
   }
 
@@ -158,7 +158,7 @@ class PdfService {
   }> {
     logger.info({
       msg: 'Invoice attachment generation requested (stub)',
-      invoiceId: invoiceData.id,
+      invoiceId: invoiceData.id
     });
 
     // TODO: Implement when PDF generation is ready
@@ -171,7 +171,7 @@ class PdfService {
   async generateBatchPdfs(invoicesData: any[]): Promise<PdfGenerationResult[]> {
     logger.info({
       msg: 'Batch PDF generation requested (stub)',
-      invoiceCount: invoicesData.length,
+      invoiceCount: invoicesData.length
     });
 
     // TODO: Implement batch processing

@@ -1,21 +1,16 @@
-/**
- * Invoice routes for InvoLuck Backend
- * Handles invoice management endpoints
- */
-
 import { Router } from 'express';
-import { authMiddleware } from '../middlewares/auth.js';
+
 import { moderateRateLimit, lenientRateLimit } from '../config/rateLimit.js';
-import { validate } from '../middlewares/validate.js';
+import invoicesController from '../controllers/invoices.controller.js';
+import { authMiddleware } from '../middlewares/auth.js';
+import { validate, commonSchemas } from '../middlewares/validate.js';
 import {
   createInvoiceSchema,
   updateInvoiceSchema,
   updateInvoiceStatusSchema,
   invoiceQuerySchema,
-  sendInvoiceSchema,
+  sendInvoiceSchema
 } from '../validators/invoice.schema.js';
-import { commonSchemas } from '../middlewares/validate.js';
-import invoicesController from '../controllers/invoices.controller.js';
 
 const router = Router();
 
@@ -76,7 +71,7 @@ router.patch(
   moderateRateLimit,
   validate({
     params: commonSchemas.objectIdParam,
-    body: updateInvoiceSchema,
+    body: updateInvoiceSchema
   }),
   invoicesController.updateInvoice
 );
@@ -101,7 +96,7 @@ router.post(
   moderateRateLimit,
   validate({
     params: commonSchemas.objectIdParam,
-    body: sendInvoiceSchema,
+    body: sendInvoiceSchema
   }),
   invoicesController.sendInvoice
 );
@@ -115,7 +110,7 @@ router.patch(
   moderateRateLimit,
   validate({
     params: commonSchemas.objectIdParam,
-    body: updateInvoiceStatusSchema,
+    body: updateInvoiceStatusSchema
   }),
   invoicesController.updateInvoiceStatus
 );

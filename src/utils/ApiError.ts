@@ -1,12 +1,7 @@
-/**
- * Custom API Error class for InvoLuck Backend
- * Provides structured error handling with status codes and error details
- */
-
 export interface ErrorDetail {
   field?: string;
   message: string;
-  code?: string;
+  code?: string | number;
 }
 
 export class ApiError extends Error {
@@ -29,13 +24,10 @@ export class ApiError extends Error {
     this.details = details || [];
     this.isOperational = isOperational;
 
-    // Maintain proper stack trace
     Error.captureStackTrace(this, this.constructor);
   }
 
-  /**
-   * Get default error code based on status code
-   */
+  // Get default error code based on status code
   private getDefaultCode(statusCode: number): string {
     switch (statusCode) {
       case 400:
@@ -61,56 +53,79 @@ export class ApiError extends Error {
     }
   }
 
-  /**
-   * Convert error to JSON format for API responses
-   */
+  // Convert error to JSON format for API responses
   toJSON(): Record<string, unknown> {
     return {
       code: this.code,
       message: this.message,
       details: this.details,
-      statusCode: this.statusCode,
+      statusCode: this.statusCode
     };
   }
 }
 
 // Static factory methods for common errors
 export class ApiErrors {
-  static badRequest(message = 'Bad request', details?: ErrorDetail[]): ApiError {
-    return new ApiError(400, message, 'BAD_REQUEST', details);
+  static badRequest(
+    message = 'Bad request',
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
+    return new ApiError(400, message, options?.code, options?.details);
   }
 
-  static unauthorized(message = 'Unauthorized access'): ApiError {
-    return new ApiError(401, message, 'UNAUTHORIZED');
+  static unauthorized(
+    message = 'Unauthorized access',
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
+    return new ApiError(401, message, options?.code ?? 'UNAUTHORIZED', options?.details);
   }
 
-  static forbidden(message = 'Access forbidden'): ApiError {
-    return new ApiError(403, message, 'FORBIDDEN');
+  static forbidden(
+    message = 'Access forbidden',
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
+    return new ApiError(403, message, options?.code ?? 'FORBIDDEN', options?.details);
   }
 
-  static notFound(resource = 'Resource', id?: string): ApiError {
+  static notFound(
+    resource = 'Resource',
+    id?: string,
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
     const message = id ? `${resource} with ID ${id} not found` : `${resource} not found`;
-    return new ApiError(404, message, 'NOT_FOUND');
+    return new ApiError(404, message, options?.code ?? 'NOT_FOUND', options?.details);
   }
 
-  static conflict(message = 'Resource conflict'): ApiError {
-    return new ApiError(409, message, 'CONFLICT');
+  static conflict(
+    message = 'Resource conflict',
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
+    return new ApiError(409, message, options?.code ?? 'CONFLICT', options?.details);
   }
 
   static validation(message = 'Validation failed', details?: ErrorDetail[]): ApiError {
     return new ApiError(422, message, 'VALIDATION_ERROR', details);
   }
 
-  static tooManyRequests(message = 'Too many requests'): ApiError {
-    return new ApiError(429, message, 'RATE_LIMIT_EXCEEDED');
+  static tooManyRequests(
+    message = 'Too many requests',
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
+    return new ApiError(429, message, options?.code ?? 'RATE_LIMIT_EXCEEDED', options?.details);
   }
 
-  static internal(message = 'Internal server error'): ApiError {
-    return new ApiError(500, message, 'INTERNAL_SERVER_ERROR');
+  static internal(
+    message = 'Internal server error',
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
+    return new ApiError(500, message, options?.code ?? 'INTERNAL_SERVER_ERROR', options?.details);
   }
 
-  static serviceUnavailable(message = 'Service temporarily unavailable'): ApiError {
-    return new ApiError(503, message, 'SERVICE_UNAVAILABLE');
+  static serviceUnavailable(
+    message = 'Service temporarily unavailable',
+    options?: { code?: string; details?: ErrorDetail[] }
+  ): ApiError {
+    return new ApiError(503, message, options?.code ?? 'SERVICE_UNAVAILABLE', options?.details);
   }
 
   static custom(

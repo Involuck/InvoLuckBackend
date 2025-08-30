@@ -1,29 +1,25 @@
-/**
- * Clients service for InvoLuck Backend
- * Handles business logic for client management
- */
-
 import { Types } from 'mongoose';
-import { Client, IClient } from '../models/Client.js';
+
+import logger from '../config/logger.js';
+import { Client } from '../models/Client.js';
 import { ApiErrors } from '../utils/ApiError.js';
 import { parsePagination, createPaginatedResponse, createSortObject } from '../utils/pagination.js';
-import logger from '../config/logger.js';
-import {
+
+import type { IClient } from '../models/Client.js';
+import type {
   CreateClientInput,
   UpdateClientInput,
-  ClientQueryInput,
+  ClientQueryInput
 } from '../validators/client.schema.js';
 
 class ClientsService {
-  /**
-   * Create a new client
-   */
+  // Create a new client
   async createClient(userId: string, clientData: CreateClientInput): Promise<IClient> {
     try {
       // Check if client with same email already exists for this user
       const existingClient = await Client.findOne({
         userId: new Types.ObjectId(userId),
-        email: clientData.email,
+        email: clientData.email
       });
 
       if (existingClient) {
@@ -32,7 +28,7 @@ class ClientsService {
 
       const client = new Client({
         userId: new Types.ObjectId(userId),
-        ...clientData,
+        ...clientData
       });
 
       await client.save();
@@ -41,7 +37,7 @@ class ClientsService {
         msg: 'Client created successfully',
         clientId: (client._id as Types.ObjectId).toString(),
         userId,
-        clientEmail: client.email,
+        clientEmail: client.email
       });
 
       return client;
@@ -50,15 +46,13 @@ class ClientsService {
         msg: 'Failed to create client',
         userId,
         clientEmail: clientData.email,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Get clients with pagination and filtering
-   */
+  // Get clients with pagination and filtering
   async getClients(userId: string, query: ClientQueryInput) {
     try {
       const pagination = parsePagination({ query } as any);
@@ -70,7 +64,7 @@ class ClientsService {
         filter.$or = [
           { name: { $regex: query.search, $options: 'i' } },
           { email: { $regex: query.search, $options: 'i' } },
-          { company: { $regex: query.search, $options: 'i' } },
+          { company: { $regex: query.search, $options: 'i' } }
         ];
       }
 
@@ -104,13 +98,13 @@ class ClientsService {
       const sort = createSortObject({
         ...pagination,
         sort: query.sort || 'createdAt',
-        order: query.order || 'desc',
+        order: query.order || 'desc'
       });
 
       // Execute queries
       const [clients, total] = await Promise.all([
         Client.find(filter).sort(sort).skip(pagination.skip).limit(pagination.limit).lean(),
-        Client.countDocuments(filter),
+        Client.countDocuments(filter)
       ]);
 
       return createPaginatedResponse(clients, total, pagination);
@@ -118,20 +112,18 @@ class ClientsService {
       logger.error({
         msg: 'Failed to get clients',
         userId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Get client by ID
-   */
+  // Get client by ID
   async getClientById(userId: string, clientId: string): Promise<IClient> {
     try {
       const client = await Client.findOne({
         _id: new Types.ObjectId(clientId),
-        userId: new Types.ObjectId(userId),
+        userId: new Types.ObjectId(userId)
       });
 
       if (!client) {
@@ -144,15 +136,13 @@ class ClientsService {
         msg: 'Failed to get client by ID',
         userId,
         clientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Update client
-   */
+  // Update client
   async updateClient(
     userId: string,
     clientId: string,
@@ -164,7 +154,7 @@ class ClientsService {
         const existingClient = await Client.findOne({
           userId: new Types.ObjectId(userId),
           email: updateData.email,
-          _id: { $ne: new Types.ObjectId(clientId) },
+          _id: { $ne: new Types.ObjectId(clientId) }
         });
 
         if (existingClient) {
@@ -175,7 +165,7 @@ class ClientsService {
       const client = await Client.findOneAndUpdate(
         {
           _id: new Types.ObjectId(clientId),
-          userId: new Types.ObjectId(userId),
+          userId: new Types.ObjectId(userId)
         },
         updateData,
         { new: true, runValidators: true }
@@ -189,7 +179,7 @@ class ClientsService {
         msg: 'Client updated successfully',
         clientId: (client._id as Types.ObjectId).toString(),
         userId,
-        updatedFields: Object.keys(updateData),
+        updatedFields: Object.keys(updateData)
       });
 
       return client;
@@ -198,19 +188,16 @@ class ClientsService {
         msg: 'Failed to update client',
         userId,
         clientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Delete client
-   */
+  // Delete client
   async deleteClient(userId: string, clientId: string): Promise<void> {
     try {
       // Check if client has invoices
-      // TODO: Uncomment when Invoice model is properly imported
       // const invoiceCount = await Invoice.countDocuments({ clientId: new Types.ObjectId(clientId) });
       const invoiceCount = 0;
 
@@ -222,7 +209,7 @@ class ClientsService {
 
       const client = await Client.findOneAndDelete({
         _id: new Types.ObjectId(clientId),
-        userId: new Types.ObjectId(userId),
+        userId: new Types.ObjectId(userId)
       });
 
       if (!client) {
@@ -233,22 +220,20 @@ class ClientsService {
         msg: 'Client deleted successfully',
         clientId: (client._id as Types.ObjectId).toString(),
         userId,
-        clientEmail: client.email,
+        clientEmail: client.email
       });
     } catch (error) {
       logger.error({
         msg: 'Failed to delete client',
         userId,
         clientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Get client statistics
-   */
+  // Get client statistics
   async getClientStats(userId: string, clientId?: string) {
     try {
       const filter: any = { userId: new Types.ObjectId(userId) };
@@ -263,14 +248,14 @@ class ClientsService {
             _id: null,
             totalClients: { $sum: 1 },
             activeClients: {
-              $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] },
+              $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] }
             },
             totalInvoiced: { $sum: '$totalInvoiced' },
             totalPaid: { $sum: '$totalPaid' },
             outstandingBalance: { $sum: '$outstandingBalance' },
-            averageInvoiceValue: { $avg: '$totalInvoiced' },
-          },
-        },
+            averageInvoiceValue: { $avg: '$totalInvoiced' }
+          }
+        }
       ]);
 
       const result = stats[0] || {
@@ -279,7 +264,7 @@ class ClientsService {
         totalInvoiced: 0,
         totalPaid: 0,
         outstandingBalance: 0,
-        averageInvoiceValue: 0,
+        averageInvoiceValue: 0
       };
 
       return result;
@@ -288,20 +273,18 @@ class ClientsService {
         msg: 'Failed to get client statistics',
         userId,
         clientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Search clients by text
-   */
+  // Search clients by text
   async searchClients(userId: string, searchTerm: string, limit = 10) {
     try {
       const clients = await Client.find({
         userId: new Types.ObjectId(userId),
-        $text: { $search: searchTerm },
+        $text: { $search: searchTerm }
       })
         .select('name email company status')
         .limit(limit)
@@ -313,15 +296,13 @@ class ClientsService {
         msg: 'Failed to search clients',
         userId,
         searchTerm,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Update client financial data
-   */
+  // Update client financial data
   async updateClientFinancials(clientId: string): Promise<void> {
     try {
       const client = await Client.findById(clientId);
@@ -332,7 +313,7 @@ class ClientsService {
       logger.error({
         msg: 'Failed to update client financials',
         clientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }

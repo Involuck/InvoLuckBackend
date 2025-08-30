@@ -1,9 +1,4 @@
-/**
- * HTTP response utilities for InvoLuck Backend
- * Standardized API response formats and helper functions
- */
-
-import { Response } from 'express';
+import type { Response } from 'express';
 
 // Standard API response interface
 export interface ApiResponse<T = any> {
@@ -26,9 +21,7 @@ export interface ApiResponse<T = any> {
   };
 }
 
-/**
- * Send successful response with data
- */
+// Send successful response with data
 export const ok = <T>(
   res: Response,
   data: T,
@@ -39,7 +32,7 @@ export const ok = <T>(
     success: true,
     data,
     requestId: res.req.id.toString(),
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   };
 
   if (pagination) {
@@ -49,9 +42,7 @@ export const ok = <T>(
   return res.status(statusCode).json(response);
 };
 
-/**
- * Send successful response for resource creation
- */
+// Send successful response for resource creation
 export const created = <T>(res: Response, data: T, location?: string): Response<ApiResponse<T>> => {
   if (location) {
     res.location(location);
@@ -60,16 +51,12 @@ export const created = <T>(res: Response, data: T, location?: string): Response<
   return ok(res, data, 201);
 };
 
-/**
- * Send successful response with no content
- */
+// Send successful response with no content
 export const noContent = (res: Response): Response => {
   return res.status(204).end();
 };
 
-/**
- * Send error response
- */
+// Send error response
 export const error = (
   res: Response,
   statusCode: number,
@@ -82,18 +69,16 @@ export const error = (
     error: {
       code,
       message,
-      details,
+      details
     },
     requestId: res.req.id.toString(),
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   };
 
   return res.status(statusCode).json(response);
 };
 
-/**
- * Send bad request error (400)
- */
+// Send bad request error (400)
 export const badRequest = (
   res: Response,
   message = 'Bad request',
@@ -102,9 +87,7 @@ export const badRequest = (
   return error(res, 400, 'BAD_REQUEST', message, details);
 };
 
-/**
- * Send unauthorized error (401)
- */
+// Send unauthorized error (401)
 export const unauthorized = (
   res: Response,
   message = 'Unauthorized access'
@@ -112,23 +95,17 @@ export const unauthorized = (
   return error(res, 401, 'UNAUTHORIZED', message);
 };
 
-/**
- * Send forbidden error (403)
- */
+// Send forbidden error (403)
 export const forbidden = (res: Response, message = 'Access forbidden'): Response<ApiResponse> => {
   return error(res, 403, 'FORBIDDEN', message);
 };
 
-/**
- * Send not found error (404)
- */
+// Send not found error (404)
 export const notFound = (res: Response, message = 'Resource not found'): Response<ApiResponse> => {
   return error(res, 404, 'NOT_FOUND', message);
 };
 
-/**
- * Send validation error (422)
- */
+// Send validation error (422)
 export const validationError = (
   res: Response,
   message = 'Validation failed',
@@ -137,9 +114,7 @@ export const validationError = (
   return error(res, 422, 'VALIDATION_ERROR', message, details);
 };
 
-/**
- * Send internal server error (500)
- */
+// Send internal server error (500)
 export const internalError = (
   res: Response,
   message = 'Internal server error'
@@ -147,9 +122,7 @@ export const internalError = (
   return error(res, 500, 'INTERNAL_SERVER_ERROR', message);
 };
 
-/**
- * HTTP status code constants
- */
+// HTTP status code constants
 export const HttpStatus = {
   OK: 200,
   CREATED: 201,
@@ -162,7 +135,7 @@ export const HttpStatus = {
   VALIDATION_ERROR: 422,
   TOO_MANY_REQUESTS: 429,
   INTERNAL_SERVER_ERROR: 500,
-  SERVICE_UNAVAILABLE: 503,
+  SERVICE_UNAVAILABLE: 503
 } as const;
 
 export default {
@@ -176,5 +149,5 @@ export default {
   notFound,
   validationError,
   internalError,
-  HttpStatus,
+  HttpStatus
 };

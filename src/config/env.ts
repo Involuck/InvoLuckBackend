@@ -1,20 +1,15 @@
-/**
- * Environment configuration validation for InvoLuck Backend
- * Uses Zod for runtime validation of environment variables
- */
-
 import dotenv from 'dotenv';
 import { z } from 'zod';
 
-// Load environment variables
 dotenv.config();
 
-// Environment schema validation
 const envSchema = z.object({
   // Application
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(5000),
   APP_URL: z.string().url().default('http://localhost:5000'),
+
+  API_KEY: z.string().min(1, 'API key is required'),
 
   // Database
   MONGODB_URI: z.string().min(1, 'MongoDB URI is required'),
@@ -49,7 +44,7 @@ const envSchema = z.object({
 
   // Development
   DEV_MODE: z.coerce.boolean().default(false),
-  ENABLE_API_DOCS: z.coerce.boolean().default(false),
+  ENABLE_API_DOCS: z.coerce.boolean().default(false)
 });
 
 // Validate and parse environment variables
@@ -75,6 +70,7 @@ export const {
   NODE_ENV,
   PORT,
   APP_URL,
+  API_KEY,
   MONGODB_URI,
   JWT_SECRET,
   JWT_EXPIRES_IN,
@@ -91,5 +87,5 @@ export const {
   LOG_LEVEL,
   SECURITY_HEADERS,
   DEV_MODE,
-  ENABLE_API_DOCS,
+  ENABLE_API_DOCS
 } = env;

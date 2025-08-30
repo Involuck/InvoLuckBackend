@@ -1,14 +1,12 @@
-/**
- * Health check routes for InvoLuck Backend
- * Provides system status and health monitoring endpoints
- */
+import { Router } from 'express';
 
-import { Router, Request, Response } from 'express';
+import { db } from '../config/db.js';
+import logger from '../config/logger.js';
+import { verifyMailConfig } from '../config/mail.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok } from '../utils/http.js';
-import { db } from '../config/db.js';
-import { verifyMailConfig } from '../config/mail.js';
-import logger from '../config/logger.js';
+
+import type { Request, Response } from 'express';
 
 const router = Router();
 
@@ -24,7 +22,7 @@ router.get(
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       version: process.env.npm_package_version || '1.0.0',
-      uptime: process.uptime(),
+      uptime: process.uptime()
     };
 
     return ok(res, healthData);
@@ -60,18 +58,18 @@ router.get(
       services: {
         database: {
           status: dbHealth ? 'ok' : 'error',
-          connectionState: dbStatus,
+          connectionState: dbStatus
         },
         email: {
-          status: emailHealth ? 'ok' : 'error',
-        },
+          status: emailHealth ? 'ok' : 'error'
+        }
       },
       system: {
         memory: process.memoryUsage(),
         cpu: process.cpuUsage(),
         nodeVersion: process.version,
-        platform: process.platform,
-      },
+        platform: process.platform
+      }
     };
 
     // Log health check
@@ -80,7 +78,7 @@ router.get(
       status: healthData.status,
       responseTime,
       dbHealth,
-      emailHealth,
+      emailHealth
     });
 
     const statusCode = healthData.status === 'ok' ? 200 : 503;
@@ -97,7 +95,7 @@ router.get(
   asyncHandler(async (_req: Request, res: Response) => {
     return ok(res, {
       message: 'pong',
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     });
   })
 );

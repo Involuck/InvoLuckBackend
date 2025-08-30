@@ -1,10 +1,6 @@
-/**
- * Request ID middleware for InvoLuck Backend
- * Generates unique identifier for each request for tracing and logging
- */
-
-import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+
+import type { Request, Response, NextFunction } from 'express';
 
 /**
  * Middleware to generate and attach unique request ID

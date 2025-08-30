@@ -1,20 +1,11 @@
-/**
- * Data sanitization utilities for InvoLuck Backend
- * Prevents NoSQL injection and other security vulnerabilities
- */
-
 import mongoSanitize from 'express-mongo-sanitize';
 
-/**
- * Sanitize object to prevent NoSQL injection
- */
+// Sanitize object to prevent NoSQL injection
 export const sanitizeObject = (obj: any): any => {
   return mongoSanitize.sanitize(obj);
 };
 
-/**
- * Sanitize string input
- */
+// Sanitize string input
 export const sanitizeString = (input: string): string => {
   if (typeof input !== 'string') return '';
 
@@ -24,18 +15,14 @@ export const sanitizeString = (input: string): string => {
     .substring(0, 10000); // Limit length
 };
 
-/**
- * Sanitize email input
- */
+// Sanitize email input
 export const sanitizeEmail = (email: string): string => {
   if (typeof email !== 'string') return '';
 
   return email.toLowerCase().trim().substring(0, 254); // Email max length per RFC
 };
 
-/**
- * Sanitize and validate MongoDB ObjectId
- */
+// Sanitize and validate MongoDB ObjectId
 export const sanitizeObjectId = (id: string): string | null => {
   if (typeof id !== 'string') return null;
 
@@ -49,9 +36,7 @@ export const sanitizeObjectId = (id: string): string | null => {
   return cleaned;
 };
 
-/**
- * Sanitize numeric input
- */
+// Sanitize numeric input
 export const sanitizeNumber = (input: any, defaultValue = 0): number => {
   const num = Number(input);
 
@@ -62,9 +47,7 @@ export const sanitizeNumber = (input: any, defaultValue = 0): number => {
   return num;
 };
 
-/**
- * Sanitize boolean input
- */
+// Sanitize boolean input
 export const sanitizeBoolean = (input: any, defaultValue = false): boolean => {
   if (typeof input === 'boolean') return input;
   if (typeof input === 'string') {
@@ -78,18 +61,14 @@ export const sanitizeBoolean = (input: any, defaultValue = false): boolean => {
   return defaultValue;
 };
 
-/**
- * Sanitize array input
- */
+// Sanitize array input
 export const sanitizeArray = (input: any, maxLength = 100): any[] => {
   if (!Array.isArray(input)) return [];
 
   return input.slice(0, maxLength).map(item => sanitizeObject(item));
 };
 
-/**
- * Remove undefined and null values from object
- */
+// Remove undefined and null values from object
 export const removeEmpty = (obj: Record<string, any>): Record<string, any> => {
   const cleaned: Record<string, any> = {};
 
@@ -109,9 +88,7 @@ export const removeEmpty = (obj: Record<string, any>): Record<string, any> => {
   return cleaned;
 };
 
-/**
- * Sanitize file name
- */
+// Sanitize file name
 export const sanitizeFileName = (fileName: string): string => {
   if (typeof fileName !== 'string') return 'unnamed';
 
@@ -122,9 +99,7 @@ export const sanitizeFileName = (fileName: string): string => {
     .substring(0, 255); // Limit length
 };
 
-/**
- * Sanitize URL
- */
+// Sanitize URL
 export const sanitizeUrl = (url: string): string | null => {
   if (typeof url !== 'string') return null;
 
@@ -142,9 +117,7 @@ export const sanitizeUrl = (url: string): string | null => {
   }
 };
 
-/**
- * Escape HTML characters
- */
+// Escape HTML characters
 export const escapeHtml = (input: string): string => {
   if (typeof input !== 'string') return '';
 
@@ -154,15 +127,13 @@ export const escapeHtml = (input: string): string => {
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#x27;',
-    '/': '&#x2F;',
+    '/': '&#x2F;'
   };
 
   return input.replace(/[&<>"'/]/g, match => htmlEscapes[match] || match);
 };
 
-/**
- * Comprehensive input sanitization middleware function
- */
+// Comprehensive input sanitization middleware function
 export const sanitizeInput = (input: any): any => {
   if (input === null || input === undefined) {
     return input;
@@ -203,5 +174,5 @@ export default {
   sanitizeFileName,
   sanitizeUrl,
   escapeHtml,
-  sanitizeInput,
+  sanitizeInput
 };

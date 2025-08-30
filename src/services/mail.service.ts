@@ -1,10 +1,5 @@
-/**
- * Mail service for InvoLuck Backend
- * Handles email template rendering and sending using Maizzle + Nodemailer
- */
-
-import { sendMail } from '../config/mail.js';
 import logger from '../config/logger.js';
+import { sendMail } from '../config/mail.js';
 import { ApiErrors } from '../utils/ApiError.js';
 
 // Email template data interfaces
@@ -38,38 +33,33 @@ export interface WelcomeEmailData {
 }
 
 class MailService {
-  /**
-   * Send invitation email to new team member
-   */
+  // Send invitation email to new team member
   async sendInvitationEmail(to: string, data: InvitationEmailData): Promise<void> {
     try {
-      // TODO: Render template with Maizzle when templates are ready
       const html = this.renderInvitationTemplate(data);
 
       await sendMail({
         to,
         subject: `You're invited to join ${data.companyName || 'InvoLuck'}`,
-        html,
+        html
       });
 
       logger.info({
         msg: 'Invitation email sent successfully',
         recipient: to,
-        inviteeName: data.name,
+        inviteeName: data.name
       });
     } catch (error) {
       logger.error({
         msg: 'Failed to send invitation email',
         recipient: to,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw ApiErrors.internal('Failed to send invitation email');
     }
   }
 
-  /**
-   * Send invoice created notification email
-   */
+  // Send invoice created notification email
   async sendInvoiceCreatedEmail(to: string, data: InvoiceCreatedEmailData): Promise<void> {
     try {
       // TODO: Render template with Maizzle when templates are ready
@@ -78,7 +68,7 @@ class MailService {
       await sendMail({
         to,
         subject: `New Invoice ${data.invoiceNumber} - ${data.currency} ${data.amount}`,
-        html,
+        html
       });
 
       logger.info({
@@ -86,22 +76,20 @@ class MailService {
         recipient: to,
         invoiceNumber: data.invoiceNumber,
         amount: data.amount,
-        currency: data.currency,
+        currency: data.currency
       });
     } catch (error) {
       logger.error({
         msg: 'Failed to send invoice created email',
         recipient: to,
         invoiceNumber: data.invoiceNumber,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw ApiErrors.internal('Failed to send invoice notification email');
     }
   }
 
-  /**
-   * Send password reset email
-   */
+  // Send password reset email
   async sendPasswordResetEmail(to: string, data: PasswordResetEmailData): Promise<void> {
     try {
       const html = this.renderPasswordResetTemplate(data);
@@ -109,27 +97,25 @@ class MailService {
       await sendMail({
         to,
         subject: 'Reset your InvoLuck password',
-        html,
+        html
       });
 
       logger.info({
         msg: 'Password reset email sent successfully',
         recipient: to,
-        userName: data.name,
+        userName: data.name
       });
     } catch (error) {
       logger.error({
         msg: 'Failed to send password reset email',
         recipient: to,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw ApiErrors.internal('Failed to send password reset email');
     }
   }
 
-  /**
-   * Send welcome email to new user
-   */
+  // Send welcome email to new user
   async sendWelcomeEmail(to: string, data: WelcomeEmailData): Promise<void> {
     try {
       const html = this.renderWelcomeTemplate(data);
@@ -137,28 +123,26 @@ class MailService {
       await sendMail({
         to,
         subject: 'Welcome to InvoLuck!',
-        html,
+        html
       });
 
       logger.info({
         msg: 'Welcome email sent successfully',
         recipient: to,
-        userName: data.name,
+        userName: data.name
       });
     } catch (error) {
       logger.error({
         msg: 'Failed to send welcome email',
         recipient: to,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       // Don't throw error for welcome emails as they're not critical
       logger.warn('Welcome email failed but user registration continued');
     }
   }
 
-  /**
-   * Send invoice reminder email
-   */
+  // Send invoice reminder email
   async sendInvoiceReminderEmail(
     to: string,
     data: InvoiceCreatedEmailData & { daysOverdue?: number }
@@ -173,7 +157,7 @@ class MailService {
       await sendMail({
         to,
         subject,
-        html,
+        html
       });
 
       logger.info({
@@ -181,14 +165,14 @@ class MailService {
         recipient: to,
         invoiceNumber: data.invoiceNumber,
         isOverdue,
-        daysOverdue: data.daysOverdue,
+        daysOverdue: data.daysOverdue
       });
     } catch (error) {
       logger.error({
         msg: 'Failed to send invoice reminder email',
         recipient: to,
         invoiceNumber: data.invoiceNumber,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw ApiErrors.internal('Failed to send invoice reminder email');
     }
@@ -361,9 +345,7 @@ class MailService {
     `;
   }
 
-  /**
-   * Render invoice reminder email template
-   */
+  // Render invoice reminder email template
   private renderInvoiceReminderTemplate(
     data: InvoiceCreatedEmailData & { daysOverdue?: number }
   ): string {

@@ -1,19 +1,14 @@
-/**
- * Database seeder for InvoLuck Backend
- * Populates the database with sample data for development and testing
- */
-
 import mongoose from 'mongoose';
+
 import { connectDatabase } from '../config/db';
-import { User } from '../models/User';
+import logger from '../config/logger';
 import { Client } from '../models/Client';
 import { Invoice } from '../models/Invoice';
-import { seedUsers, seedClients, seedInvoices } from './data';
-import logger from '../config/logger';
+import { User } from '../models/User';
 
-/**
- * Clear all data from collections
- */
+import { seedUsers, seedClients, seedInvoices } from './data';
+
+// Clear all data from collections
 async function clearDatabase(): Promise<void> {
   logger.info('Clearing existing data...');
 
@@ -24,9 +19,7 @@ async function clearDatabase(): Promise<void> {
   logger.info('✅ Database cleared');
 }
 
-/**
- * Seed users
- */
+// Seed users
 async function seedUsersData(): Promise<Map<string, string>> {
   logger.info('Seeding users...');
 
@@ -49,9 +42,7 @@ async function seedUsersData(): Promise<Map<string, string>> {
   return userIdMap;
 }
 
-/**
- * Seed clients
- */
+// Seed clients
 async function seedClientsData(userIdMap: Map<string, string>): Promise<Map<string, string>> {
   logger.info('Seeding clients...');
 
@@ -67,7 +58,7 @@ async function seedClientsData(userIdMap: Map<string, string>): Promise<Map<stri
     try {
       const client = new Client({
         ...clientData,
-        userId: new mongoose.Types.ObjectId(userId),
+        userId: new mongoose.Types.ObjectId(userId)
       });
 
       await client.save();
@@ -84,9 +75,7 @@ async function seedClientsData(userIdMap: Map<string, string>): Promise<Map<stri
   return clientIdMap;
 }
 
-/**
- * Seed invoices
- */
+// Seed invoices
 async function seedInvoicesData(
   userIdMap: Map<string, string>,
   clientIdMap: Map<string, string>
@@ -105,7 +94,7 @@ async function seedInvoicesData(
       const invoice = new Invoice({
         ...invoiceData,
         userId: new mongoose.Types.ObjectId(userId),
-        clientId: new mongoose.Types.ObjectId(clientId),
+        clientId: new mongoose.Types.ObjectId(clientId)
       });
 
       await invoice.save();
@@ -119,9 +108,7 @@ async function seedInvoicesData(
   logger.info(`✅ Seeded ${seedInvoices.length} invoices`);
 }
 
-/**
- * Update client financial data
- */
+// Update client financial data
 async function updateClientFinancials(): Promise<void> {
   logger.info('Updating client financial data...');
 
@@ -139,9 +126,7 @@ async function updateClientFinancials(): Promise<void> {
   logger.info('✅ Client financials updated');
 }
 
-/**
- * Main seeder function
- */
+// Main seeder function
 async function main(): Promise<void> {
   try {
     logger.info('🌱 Starting database seeding...');
@@ -167,7 +152,7 @@ async function main(): Promise<void> {
     const stats = await Promise.all([
       User.countDocuments(),
       Client.countDocuments(),
-      Invoice.countDocuments(),
+      Invoice.countDocuments()
     ]);
 
     logger.info('📊 Seeding Summary:');
@@ -188,9 +173,7 @@ async function main(): Promise<void> {
   }
 }
 
-/**
- * Handle cleanup on exit
- */
+// Handle cleanup on exit
 process.on('SIGINT', async () => {
   logger.info('🛑 Seeding interrupted');
   await mongoose.connection.close();
@@ -204,12 +187,10 @@ process.on('SIGTERM', async () => {
 });
 
 // Run seeder if called directly
-if (require.main === module) {
-  main().catch(error => {
-    logger.error('❌ Seeding error:', error);
-    process.exit(1);
-  });
-}
+main().catch(error => {
+  logger.error('❌ Seeding error:', error);
+  process.exit(1);
+});
 
 export { main as runSeeder };
 export default main;

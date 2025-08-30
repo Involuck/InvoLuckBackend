@@ -1,39 +1,30 @@
-/**
- * Error handling middleware for InvoLuck Backend
- * Centralizes error processing and response formatting
- */
-
-import { Request, Response, NextFunction } from 'express';
-import { ZodError } from 'zod';
 import { Error as MongooseError } from 'mongoose';
-import { ApiError, ApiErrors } from '../utils/ApiError.js';
+import { ZodError } from 'zod';
+
 import { isProduction } from '../config/env.js';
 import logger from '../config/logger.js';
+import { ApiError, ApiErrors } from '../utils/ApiError.js';
 
-/**
- * Handle Zod validation errors
- */
+import type { Request, Response, NextFunction } from 'express';
+
+// Handle Zod validation errors
 const handleZodError = (error: ZodError): ApiError => {
   const details = error.errors.map(issue => ({
     field: issue.path.join('.'),
     message: issue.message,
-    code: issue.code,
+    code: issue.code
   }));
 
   return ApiErrors.validation('Validation failed', details);
 };
 
-/**
- * Handle Mongoose cast errors (invalid ObjectId, etc.)
- */
+// Handle Mongoose cast errors (invalid ObjectId, etc.)
 const handleCastError = (error: MongooseError.CastError): ApiError => {
   const message = `Invalid ${error.path}: ${error.value}`;
   return ApiErrors.badRequest(message);
 };
 
-/**
- * Handle Mongoose duplicate key errors
- */
+// Handle Mongoose duplicate key errors
 const handleDuplicateKeyError = (error: any): ApiError => {
   const field = Object.keys(error.keyValue)[0];
   const value = error.keyValue[field];
@@ -42,36 +33,28 @@ const handleDuplicateKeyError = (error: any): ApiError => {
   return ApiErrors.conflict(message);
 };
 
-/**
- * Handle Mongoose validation errors
- */
+// Handle Mongoose validation errors
 const handleValidationError = (error: any): ApiError => {
   const details = Object.values(error.errors).map((err: any) => ({
     field: err.path,
     message: err.message,
-    code: err.kind,
+    code: err.kind
   }));
 
   return ApiErrors.validation('Validation failed', details);
 };
 
-/**
- * Handle JWT errors
- */
+// Handle JWT errors
 const handleJWTError = (): ApiError => {
   return ApiErrors.unauthorized('Invalid token');
 };
 
-/**
- * Handle JWT expired errors
- */
+// Handle JWT expired errors
 const handleJWTExpiredError = (): ApiError => {
   return ApiErrors.unauthorized('Token expired');
 };
 
-/**
- * Convert operational errors to ApiError
- */
+// Main error handler
 const handleError = (error: any): ApiError => {
   // Already an ApiError
   if (error instanceof ApiError) {
@@ -109,9 +92,7 @@ const handleError = (error: any): ApiError => {
   return ApiErrors.internal();
 };
 
-/**
- * Log error with appropriate level
- */
+//  Log error with appropriate level
 const logError = (error: ApiError, req: Request): void => {
   const logData = {
     msg: 'Request error',
@@ -120,7 +101,7 @@ const logError = (error: ApiError, req: Request): void => {
       message: error.message,
       statusCode: error.statusCode,
       details: error.details,
-      stack: !isProduction() ? error.stack : undefined,
+      stack: !isProduction() ? error.stack : undefined
     },
     request: {
       id: req.id,
@@ -128,8 +109,8 @@ const logError = (error: ApiError, req: Request): void => {
       url: req.url,
       userAgent: req.get('User-Agent'),
       ip: req.ip,
-      userId: req.user?.id,
-    },
+      userId: req.user?.id
+    }
   };
 
   // Use appropriate log level based on status code
@@ -142,10 +123,8 @@ const logError = (error: ApiError, req: Request): void => {
   }
 };
 
-/**
- * Main error handling middleware
- * Must be the last middleware in the chain
- */
+// Main error handling middleware
+// Must be the last middleware in the chain
 const errorHandler = (error: any, req: Request, res: Response, _next: NextFunction): void => {
   // Convert error to ApiError
   const apiError = handleError(error);
@@ -160,35 +139,31 @@ const errorHandler = (error: any, req: Request, res: Response, _next: NextFuncti
       code: apiError.code,
       message: apiError.message,
       details: apiError.details,
-      ...(isProduction() ? {} : { stack: apiError.stack }),
+      ...(isProduction() ? {} : { stack: apiError.stack })
     },
     requestId: req.id,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   });
 };
 
-/**
- * Async error handler for unhandled promise rejections
- */
+// Async error handler for unhandled promise rejections
 export const handleAsyncError = (error: any): void => {
   logger.fatal({
     msg: 'Unhandled promise rejection',
     error: error.message,
-    stack: error.stack,
+    stack: error.stack
   });
 
   // Graceful shutdown
   process.exit(1);
 };
 
-/**
- * Handle uncaught exceptions
- */
+// Uncaught exception handler
 export const handleUncaughtException = (error: any): void => {
   logger.fatal({
     msg: 'Uncaught exception',
     error: error.message,
-    stack: error.stack,
+    stack: error.stack
   });
 
   // Graceful shutdown

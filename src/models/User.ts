@@ -1,10 +1,7 @@
-/**
- * User model for InvoLuck Backend
- * Mongoose schema for user authentication and profile management
- */
-
-import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import mongoose, { Schema } from 'mongoose';
+
+import type { Document } from 'mongoose';
 
 // User interface extending Mongoose Document
 export interface IUser extends Document {
@@ -34,10 +31,10 @@ export interface IUser extends Document {
   updatedAt: Date;
 
   // Instance methods
-  comparePassword(candidatePassword: string): Promise<boolean>;
-  generatePasswordResetToken(): string;
-  generateEmailVerificationToken(): string;
-  toJSON(): any;
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
+  generatePasswordResetToken: () => string;
+  generateEmailVerificationToken: () => string;
+  toJSON: () => any;
 }
 
 // User schema definition
@@ -48,7 +45,7 @@ const userSchema = new Schema<IUser>(
       required: [true, 'Name is required'],
       trim: true,
       minlength: [2, 'Name must be at least 2 characters'],
-      maxlength: [50, 'Name cannot exceed 50 characters'],
+      maxlength: [50, 'Name cannot exceed 50 characters']
     },
 
     email: {
@@ -57,101 +54,86 @@ const userSchema = new Schema<IUser>(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'],
+      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
     },
 
     password: {
       type: String,
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters'],
-      select: false, // Don't include password in queries by default
+      select: false // Don't include password in queries by default
     },
 
     role: {
       type: String,
       enum: ['user', 'admin'],
-      default: 'user',
+      default: 'user'
     },
 
     isEmailVerified: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     emailVerificationToken: {
       type: String,
-      select: false,
+      select: false
     },
 
     passwordResetToken: {
       type: String,
-      select: false,
+      select: false
     },
 
     passwordResetExpires: {
       type: Date,
-      select: false,
+      select: false
     },
 
     lastLoginAt: {
-      type: Date,
+      type: Date
     },
 
     isActive: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     avatar: {
-      type: String,
+      type: String
     },
 
     preferences: {
       currency: {
         type: String,
         default: 'USD',
-        maxlength: [3, 'Currency code cannot exceed 3 characters'],
+        maxlength: [3, 'Currency code cannot exceed 3 characters']
       },
       language: {
         type: String,
         default: 'en',
-        maxlength: [5, 'Language code cannot exceed 5 characters'],
+        maxlength: [5, 'Language code cannot exceed 5 characters']
       },
       timezone: {
         type: String,
-        default: 'UTC',
+        default: 'UTC'
       },
       notifications: {
-        email: {
-          type: Boolean,
-          default: true,
-        },
-        browser: {
-          type: Boolean,
-          default: true,
-        },
-        invoiceReminders: {
-          type: Boolean,
-          default: true,
-        },
-        paymentReceived: {
-          type: Boolean,
-          default: true,
-        },
-        passwordResetToken: { type: String, default: null },
-        passwordResetExpires: { type: Date, default: null },
-      },
-    },
+        email: { type: Boolean, default: true },
+        browser: { type: Boolean, default: true },
+        invoiceReminders: { type: Boolean, default: true },
+        paymentReceived: { type: Boolean, default: true }
+      }
+    }
   },
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
 
 // Indexes
-userSchema.index({ email: 1 });
 userSchema.index({ isActive: 1 });
 userSchema.index({ createdAt: -1 });
 userSchema.index({ emailVerificationToken: 1 });
@@ -159,11 +141,12 @@ userSchema.index({ passwordResetToken: 1 });
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
-  // Only hash password if it's been modified (or is new)
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) {
+    next();
+    return;
+  }
 
   try {
-    // Hash password with cost of 12
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -182,7 +165,7 @@ userSchema.pre('save', function (next) {
 
 // Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-  return await bcrypt.compare(candidatePassword, this.password);
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Generate password reset token
@@ -190,7 +173,6 @@ userSchema.methods.generatePasswordResetToken = function (): string {
   const resetToken = require('crypto').randomBytes(32).toString('hex');
 
   this.passwordResetToken = require('crypto').createHash('sha256').update(resetToken).digest('hex');
-
   this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
   return resetToken;
@@ -212,7 +194,6 @@ userSchema.methods.generateEmailVerificationToken = function (): string {
 userSchema.methods.toJSON = function () {
   const userObject = this.toObject();
 
-  // Remove sensitive fields
   delete userObject.password;
   delete userObject.passwordResetToken;
   delete userObject.passwordResetExpires;
@@ -241,7 +222,10 @@ userSchema.virtual('avatarUrl').get(function () {
   if (this.avatar) {
     return this.avatar.startsWith('http') ? this.avatar : `/uploads/avatars/${this.avatar}`;
   }
-  return `https://www.gravatar.com/avatar/${require('crypto').createHash('md5').update(this.email).digest('hex')}?s=200&d=identicon`;
+  return `https://www.gravatar.com/avatar/${require('crypto')
+    .createHash('md5')
+    .update(this.email)
+    .digest('hex')}?s=200&d=identicon`;
 });
 
 // Create and export the User model

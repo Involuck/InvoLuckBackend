@@ -1,8 +1,3 @@
-/**
- * Seed data for InvoLuck Backend
- * Sample data for development and testing purposes
- */
-
 export const seedUsers = [
   {
     name: 'Admin User',
@@ -18,9 +13,9 @@ export const seedUsers = [
         email: true,
         browser: true,
         invoiceReminders: true,
-        paymentReceived: true,
-      },
-    },
+        paymentReceived: true
+      }
+    }
   },
   {
     name: 'John Smith',
@@ -36,9 +31,9 @@ export const seedUsers = [
         email: true,
         browser: false,
         invoiceReminders: true,
-        paymentReceived: true,
-      },
-    },
+        paymentReceived: true
+      }
+    }
   },
   {
     name: 'Sarah Johnson',
@@ -54,10 +49,10 @@ export const seedUsers = [
         email: true,
         browser: true,
         invoiceReminders: false,
-        paymentReceived: true,
-      },
-    },
-  },
+        paymentReceived: true
+      }
+    }
+  }
 ];
 
 export const seedClients = [
@@ -76,23 +71,23 @@ export const seedClients = [
       city: 'New York',
       state: 'NY',
       postalCode: '10001',
-      country: 'United States',
+      country: 'United States'
     },
     shippingAddress: {
       street: '123 Business Ave',
       city: 'New York',
       state: 'NY',
       postalCode: '10001',
-      country: 'United States',
+      country: 'United States'
     },
     contactPerson: {
       name: 'Robert Brown',
       email: 'robert@acme.com',
       phone: '+1-555-0102',
-      position: 'CFO',
+      position: 'CFO'
     },
     tags: ['enterprise', 'technology'],
-    notes: 'Large enterprise client with monthly retainer agreement.',
+    notes: 'Large enterprise client with monthly retainer agreement.'
   },
   {
     name: 'Tech Startup Inc',
@@ -109,16 +104,16 @@ export const seedClients = [
       city: 'San Francisco',
       state: 'CA',
       postalCode: '94105',
-      country: 'United States',
+      country: 'United States'
     },
     contactPerson: {
       name: 'Lisa Wong',
       email: 'lisa@techstartup.io',
       phone: '+1-555-0202',
-      position: 'Operations Manager',
+      position: 'Operations Manager'
     },
     tags: ['startup', 'technology', 'saas'],
-    notes: 'Fast-growing startup, prefers digital invoicing.',
+    notes: 'Fast-growing startup, prefers digital invoicing.'
   },
   {
     name: 'Global Retail Ltd',
@@ -135,16 +130,16 @@ export const seedClients = [
       city: 'London',
       state: 'England',
       postalCode: 'W1A 0AA',
-      country: 'United Kingdom',
+      country: 'United Kingdom'
     },
     contactPerson: {
       name: 'James Wilson',
       email: 'james@globalretail.co.uk',
       phone: '+44-20-7946-0959',
-      position: 'Finance Director',
+      position: 'Finance Director'
     },
     tags: ['retail', 'international'],
-    notes: 'International client, requires VAT on invoices.',
+    notes: 'International client, requires VAT on invoices.'
   },
   {
     name: 'Local Marketing Agency',
@@ -159,17 +154,17 @@ export const seedClients = [
       city: 'Austin',
       state: 'TX',
       postalCode: '78701',
-      country: 'United States',
+      country: 'United States'
     },
     contactPerson: {
       name: 'Mike Davis',
       email: 'mike@localmarketing.com',
       phone: '+1-555-0302',
-      position: 'Owner',
+      position: 'Owner'
     },
     tags: ['marketing', 'local'],
-    notes: 'Client is currently on hold, may resume services next quarter.',
-  },
+    notes: 'Client is currently on hold, may resume services next quarter.'
+  }
 ];
 
 export const seedInvoices = [
@@ -187,7 +182,7 @@ export const seedInvoices = [
         taxRate: 8.25,
         discount: 0,
         category: 'Development',
-        unit: 'project',
+        unit: 'project'
       },
       {
         description: 'SEO Optimization',
@@ -196,8 +191,8 @@ export const seedInvoices = [
         taxRate: 8.25,
         discount: 10,
         category: 'Marketing',
-        unit: 'hours',
-      },
+        unit: 'hours'
+      }
     ],
     taxRate: 8.25,
     discountType: 'percentage',
@@ -206,7 +201,7 @@ export const seedInvoices = [
     notes: 'Thank you for your business!',
     terms: 'Payment due within 30 days of invoice date.',
     tags: ['development', 'website'],
-    paidAt: new Date('2024-02-10'),
+    paidAt: new Date('2024-02-10')
   },
   {
     number: 'INV-2024-002',
@@ -222,8 +217,8 @@ export const seedInvoices = [
         taxRate: 8.25,
         discount: 0,
         category: 'Consulting',
-        unit: 'month',
-      },
+        unit: 'month'
+      }
     ],
     taxRate: 8.25,
     discountType: 'fixed',
@@ -232,7 +227,7 @@ export const seedInvoices = [
     notes: 'Monthly retainer for ongoing consulting services.',
     terms: 'Payment due within 15 days of invoice date.',
     tags: ['retainer', 'consulting'],
-    sentAt: new Date('2024-01-20'),
+    sentAt: new Date('2024-01-20')
   },
   {
     number: 'INV-2024-003',
@@ -248,7 +243,7 @@ export const seedInvoices = [
         taxRate: 20,
         discount: 0,
         category: 'Development',
-        unit: 'project',
+        unit: 'project'
       },
       {
         description: 'Payment Gateway Integration',
@@ -257,8 +252,8 @@ export const seedInvoices = [
         taxRate: 20,
         discount: 0,
         category: 'Integration',
-        unit: 'project',
-      },
+        unit: 'project'
+      }
     ],
     taxRate: 20,
     discountType: 'percentage',
@@ -268,7 +263,7 @@ export const seedInvoices = [
     terms: 'Payment due within 45 days of invoice date.',
     tags: ['ecommerce', 'development', 'integration'],
     sentAt: new Date('2024-01-25'),
-    viewedAt: new Date('2024-01-28'),
+    viewedAt: new Date('2024-01-28')
   },
   {
     number: 'INV-2024-004',
@@ -284,7 +279,7 @@ export const seedInvoices = [
         taxRate: 8.25,
         discount: 0,
         category: 'Development',
-        unit: 'project',
+        unit: 'project'
       },
       {
         description: 'UI/UX Design',
@@ -293,8 +288,8 @@ export const seedInvoices = [
         taxRate: 8.25,
         discount: 5,
         category: 'Design',
-        unit: 'hours',
-      },
+        unit: 'hours'
+      }
     ],
     taxRate: 8.25,
     discountType: 'percentage',
@@ -302,12 +297,12 @@ export const seedInvoices = [
     shippingCost: 0,
     notes: 'Draft invoice for mobile app development project.',
     terms: 'Payment due within 30 days of invoice date.',
-    tags: ['mobile', 'development', 'design'],
-  },
+    tags: ['mobile', 'development', 'design']
+  }
 ];
 
 export default {
   seedUsers,
   seedClients,
-  seedInvoices,
+  seedInvoices
 };

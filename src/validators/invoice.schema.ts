@@ -1,13 +1,5 @@
-/**
- * Invoice validation schemas for InvoLuck Backend
- * Defines Zod schemas for invoice-related endpoints
- */
-
 import { z } from 'zod';
 
-/**
- * Invoice item schema
- */
 export const invoiceItemSchema = z.object({
   description: z
     .string()
@@ -39,12 +31,10 @@ export const invoiceItemSchema = z.object({
 
   category: z.string().max(50, 'Category must not exceed 50 characters').trim().optional(),
 
-  unit: z.string().max(20, 'Unit must not exceed 20 characters').trim().optional(),
+  unit: z.string().max(20, 'Unit must not exceed 20 characters').trim().optional()
 });
 
-/**
- * Payment terms schema
- */
+// Payment terms schema
 export const paymentTermsSchema = z.object({
   dueDate: z.string().datetime('Invalid due date format').or(z.date()),
 
@@ -60,12 +50,10 @@ export const paymentTermsSchema = z.object({
 
   paymentMethods: z
     .array(z.enum(['cash', 'check', 'credit_card', 'bank_transfer', 'paypal', 'other']))
-    .default(['bank_transfer']),
+    .default(['bank_transfer'])
 });
 
-/**
- * Create invoice schema
- */
+// Create invoice schema
 export const createInvoiceSchema = z
   .object({
     clientId: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid client ID format'),
@@ -118,7 +106,7 @@ export const createInvoiceSchema = z
 
     tags: z.array(z.string().max(50)).max(10, 'Maximum 10 tags allowed').default([]),
 
-    metadata: z.record(z.any()).optional(),
+    metadata: z.record(z.any()).optional()
   })
   .refine(
     data => {
@@ -128,16 +116,11 @@ export const createInvoiceSchema = z
     },
     {
       message: 'Due date must be on or after issue date',
-      path: ['dueDate'],
+      path: ['dueDate']
     }
   );
 
-/**
- * Update invoice schema
- */
-/**
- * Update invoice schema
- */
+// Update invoice schema
 export const updateInvoiceSchema = z
   .object({
     number: z
@@ -185,14 +168,13 @@ export const updateInvoiceSchema = z
 
     tags: z.array(z.string().max(50)).max(10, 'Maximum 10 tags allowed').optional(),
 
-    metadata: z.record(z.any()).optional(),
+    metadata: z.record(z.any()).optional()
   })
   .refine(data => Object.keys(data).length > 0, {
-    message: 'At least one field must be provided for update',
+    message: 'At least one field must be provided for update'
   });
-/**
- * Invoice status update schema
- */
+
+// Invoice status update schema
 export const updateInvoiceStatusSchema = z
   .object({
     status: z.enum(['draft', 'sent', 'viewed', 'paid', 'overdue', 'cancelled']),
@@ -203,7 +185,7 @@ export const updateInvoiceStatusSchema = z
     paymentReference: z
       .string()
       .max(100, 'Payment reference must not exceed 100 characters')
-      .optional(),
+      .optional()
   })
   .refine(
     data => {
@@ -214,13 +196,11 @@ export const updateInvoiceStatusSchema = z
     },
     {
       message: 'Paid date is required when status is paid',
-      path: ['paidDate'],
+      path: ['paidDate']
     }
   );
 
-/**
- * Invoice query filters schema
- */
+// Invoice query filters schema
 export const invoiceQuerySchema = z
   .object({
     search: z.string().max(100, 'Search term must not exceed 100 characters').trim().optional(),
@@ -257,7 +237,7 @@ export const invoiceQuerySchema = z
     sort: z
       .enum(['number', 'issueDate', 'dueDate', 'amount', 'status', 'createdAt'])
       .default('createdAt'),
-    order: z.enum(['asc', 'desc']).default('desc'),
+    order: z.enum(['asc', 'desc']).default('desc')
   })
   .refine(
     data => {
@@ -268,20 +248,16 @@ export const invoiceQuerySchema = z
     },
     {
       message: 'Maximum amount must be greater than or equal to minimum amount',
-      path: ['maxAmount'],
+      path: ['maxAmount']
     }
   );
 
-/**
- * Invoice ID parameter schema
- */
+// Invoice ID parameter schema
 export const invoiceParamsSchema = z.object({
-  id: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid invoice ID format'),
+  id: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid invoice ID format')
 });
 
-/**
- * Send invoice schema
- */
+// Send invoice schema
 export const sendInvoiceSchema = z.object({
   to: z
     .array(z.string().email())
@@ -299,12 +275,10 @@ export const sendInvoiceSchema = z.object({
   message: z.string().max(2000, 'Message must not exceed 2000 characters').optional(),
 
   sendReminder: z.boolean().default(false),
-  reminderDays: z.number().min(1).max(30).optional(),
+  reminderDays: z.number().min(1).max(30).optional()
 });
 
-/**
- * Invoice analytics filters schema
- */
+// Invoice analytics filters schema
 export const invoiceAnalyticsSchema = z.object({
   period: z.enum(['week', 'month', 'quarter', 'year', 'custom']).default('month'),
 
@@ -319,7 +293,7 @@ export const invoiceAnalyticsSchema = z.object({
 
   currency: z.string().length(3, 'Currency must be a 3-letter code').toUpperCase().optional(),
 
-  groupBy: z.enum(['day', 'week', 'month', 'client', 'status']).default('month'),
+  groupBy: z.enum(['day', 'week', 'month', 'client', 'status']).default('month')
 });
 
 // Export types for TypeScript

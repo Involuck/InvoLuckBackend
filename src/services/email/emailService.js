@@ -55,7 +55,7 @@ class EmailService {
       return {
         success: false,
         error: 'Email service not configured or initialized',
-        message: 'Email service is not available',
+        message: 'Email service is not available'
       };
     }
 
@@ -76,7 +76,7 @@ class EmailService {
         waitTimeMinutes,
         waitTimeSeconds,
         message: `You must wait ${waitTimeMinutes} minute(s) before sending another ${type} email. Try again in ${waitTimeSeconds} seconds.`,
-        nextAllowedTime: new Date(Date.now() + throttleInfo.waitMs).toISOString(),
+        nextAllowedTime: new Date(Date.now() + throttleInfo.waitMs).toISOString()
       };
     }
 
@@ -90,7 +90,7 @@ class EmailService {
         to: [this.config.adminEmail],
         subject,
         html,
-        text: generatePlainText(type, data),
+        text: generatePlainText(type, data)
       });
 
       console.log(`✅ ${type} email sent successfully:`, result.data?.id);
@@ -100,14 +100,14 @@ class EmailService {
       return {
         success: true,
         emailId: result.data?.id,
-        message: `${type} email sent successfully`,
+        message: `${type} email sent successfully`
       };
     } catch (err) {
       console.error(`❌ Error sending email [${type}]:`, err.message);
       return {
         success: false,
         error: err.message,
-        message: `Failed to send ${type} email: ${err.message}`,
+        message: `Failed to send ${type} email: ${err.message}`
       };
     }
   }
@@ -168,7 +168,7 @@ class EmailService {
         throttled: true,
         waitMs,
         lastSent: new Date(lastSent).toISOString(),
-        throttleTimeMs: throttleTime,
+        throttleTimeMs: throttleTime
       };
     }
 
@@ -214,7 +214,7 @@ class EmailService {
       url: context.req?.originalUrl || 'N/A',
       method: context.req?.method || 'N/A',
       userAgent: context.req?.get('User-Agent') || 'N/A',
-      ip: context.req?.ip || 'N/A',
+      ip: context.req?.ip || 'N/A'
     };
   }
 

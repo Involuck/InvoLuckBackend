@@ -8,7 +8,7 @@ export const emailPlaceholders = {
     url: errorDetails.url,
     method: errorDetails.method,
     userAgent: errorDetails.userAgent,
-    ip: errorDetails.ip,
+    ip: errorDetails.ip
   }),
 
   databaseErrorEmail: dbInfo => ({
@@ -16,6 +16,6 @@ export const emailPlaceholders = {
     host: dbInfo.host || 'Unknown',
     readyState: dbInfo.readyState || 'Unknown',
     error: dbInfo.error || 'Unknown',
-    timestamp: dbInfo.timestamp || new Date().toISOString(),
-  }),
+    timestamp: dbInfo.timestamp || new Date().toISOString()
+  })
 };

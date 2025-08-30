@@ -2,197 +2,183 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>InvoLuck - API</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvoLuck - API</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <div class="particles" id="particles"></div>
+    <div class="particles" id="particles"></div>
 
-  <div class="main-container">
-    <div class="header">
-      <div class="logo">IL</div>
-      <h1>INVOLUCK - API</h1>
-      <p class="subtitle">
-        Consulta en tiempo real la disponibilidad y el rendimiento de
-        nuestra API, con información precisa sobre su estado y posibles
-        incidencias.
-      </p>
-      <div class="api-badge status-checking" id="apiStatusBadge">
-        <i class="fas fa-circle-notch fa-spin"></i>
-        Verificando API...
-      </div>
+    <div class="main-container">
+        <div class="header">
+            <div class="logo">IL</div>
+            <h1>INVOLUCK - API</h1>
+            <p class="subtitle">
+                Consulta en tiempo real la disponibilidad y el rendimiento de nuestra API, con información precisa sobre su estado y posibles incidencias.
+            </p>
+            <div class="api-badge status-checking" id="apiStatusBadge">
+                <i class="fas fa-circle-notch fa-spin"></i> Verificando API...
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="security-banner">
+                <i class="fas fa-shield-alt security-icon"></i>
+                <div class="security-text">
+                    <div class="security-title">
+                        Conexión Segura y Autenticada
+                    </div>
+                    <div class="security-description">
+                        El acceso a esta API está protegido mediante API Key. Asegúrate de contar con credenciales autorizadas para interactuar con la plataforma de forma segura.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;">
+                    Características de la API
+                </h3>
+                <div class="api-info">
+                    <div class="api-info-item">
+                        <div class="api-info-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="api-info-text">
+                            <div class="api-info-title">API REST</div>
+                            <div class="api-info-desc">
+                                Arquitectura RESTful con autenticación segura
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-info-item">
+                        <div class="api-info-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="api-info-text">
+                            <div class="api-info-title">Documentación</div>
+                            <div class="api-info-desc">
+                                Guías completas y ejemplos de uso
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-info-item">
+                        <div class="api-info-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="api-info-text">
+                            <div class="api-info-title">Alto Rendimiento</div>
+                            <div class="api-info-desc">
+                                Respuestas rápidas y confiables
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-info-item">
+                        <div class="api-info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="api-info-text">
+                            <div class="api-info-title">24/7 Disponibilidad</div>
+                            <div class="api-info-desc">
+                                Servicio continuo sin interrupciones
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="footer-content">
+                    <div class="version-badge">InvoLuck API v1.0.0</div>
+                    <div class="timestamp" id="timestamp"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="main-content">
-      <div class="security-banner">
-        <i class="fas fa-shield-alt security-icon"></i>
-        <div class="security-text">
-          <div class="security-title">
-            Conexión Segura y Autenticada
-          </div>
-          <div class="security-description">
-            El acceso a esta API está protegido mediante API Key.
-            Asegúrate de contar con credenciales autorizadas para
-            interactuar con la plataforma de forma segura.
-          </div>
-        </div>
-      </div>
+    <script>
+        function createParticles() {
+            const container = document.getElementById("particles");
+            const particleCount = window.innerWidth < 768 ? 20 : 50;
 
-      <div class="card">
-        <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;">
-          Características de la API
-        </h3>
-        <div class="api-info">
-          <div class="api-info-item">
-            <div class="api-info-icon">
-              <i class="fas fa-code"></i>
-            </div>
-            <div class="api-info-text">
-              <div class="api-info-title">API REST</div>
-              <div class="api-info-desc">
-                Arquitectura RESTful con autenticación segura
-              </div>
-            </div>
-          </div>
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement("div");
+                particle.className = "particle";
+                particle.style.left = Math.random() * 100 + "%";
+                particle.style.top = Math.random() * 100 + "%";
+                particle.style.animationDelay = Math.random() * 8 + "s";
+                particle.style.animationDuration = Math.random() * 4 + 6 + "s";
+                container.appendChild(particle);
+            }
+        }
 
-          <div class="api-info-item">
-            <div class="api-info-icon">
-              <i class="fas fa-book"></i>
-            </div>
-            <div class="api-info-text">
-              <div class="api-info-title">Documentación</div>
-              <div class="api-info-desc">
-                Guías completas y ejemplos de uso
-              </div>
-            </div>
-          </div>
+        async function checkAPIHealth() {
+            const badge = document.getElementById("apiStatusBadge");
 
-          <div class="api-info-item">
-            <div class="api-info-icon">
-              <i class="fas fa-tachometer-alt"></i>
-            </div>
-            <div class="api-info-text">
-              <div class="api-info-title">Alto Rendimiento</div>
-              <div class="api-info-desc">
-                Respuestas rápidas y confiables
-              </div>
-            </div>
-          </div>
+            try {
+                const res = await fetch('/api/v1/health');
+                if (res.ok) {
+                    badge.innerHTML = '<i class="fas fa-check-circle badge-success"></i> API Funcionando';
+                    badge.className = "api-badge status-online";
+                } else throw new Error('No OK');
+            } catch (error) {
+                badge.innerHTML = '<i class="fas fa-exclamation-triangle badge-error"></i> API No Disponible';
+                badge.className = "api-badge status-offline";
+            }
+        }
 
-          <div class="api-info-item">
-            <div class="api-info-icon">
-              <i class="fas fa-clock"></i>
-            </div>
-            <div class="api-info-text">
-              <div class="api-info-title">24/7 Disponibilidad</div>
-              <div class="api-info-desc">
-                Servicio continuo sin interrupciones
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div class="footer-content">
-          <div class="version-badge">InvoLuck API v1.0.0</div>
-          <div class="timestamp" id="timestamp"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function createParticles() {
-      const container = document.getElementById("particles");
-      const particleCount = window.innerWidth < 768 ? 20 : 50;
-
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement("div");
-        particle.className = "particle";
-        particle.style.left = Math.random() * 100 + "%";
-        particle.style.top = Math.random() * 100 + "%";
-        particle.style.animationDelay = Math.random() * 8 + "s";
-        particle.style.animationDuration = Math.random() * 4 + 6 + "s";
-        container.appendChild(particle);
-      }
-    }
-
-    async function checkAPIHealth() {
-      const badge = document.getElementById("apiStatusBadge");
-
-      try {
-        const res = await fetch('/health');
-        if (res.ok) {
-          badge.innerHTML = '<i class="fas fa-check-circle badge-success"></i> API Funcionando';
-          badge.className = "api-badge status-online";
-        } else throw new Error('No OK');
-      } catch (error) {
-        // Intentar una vez más con la ruta completa
-        try {
-          const res = await fetch('/api/v1/health');
-          if (res.ok) {
-            badge.innerHTML = '<i class="fas fa-check-circle badge-success"></i> API Funcionando';
-            badge.className = "api-badge status-online";
-            return;
-          }
-        } catch {}
-        
-        badge.innerHTML = '<i class="fas fa-exclamation-triangle badge-error"></i> API No Disponible';
-        badge.className = "api-badge status-offline";
-      }
-    }
-
-    function updateTimestamp() {
-      const now = new Date();
-      const options = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        timeZoneName: "short",
-      };
-      document.getElementById("timestamp").textContent =
-        "Última actualización: " + now.toLocaleString("es-ES", options);
-    }
+        function updateTimestamp() {
+            const now = new Date();
+            const options = {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                timeZoneName: "short",
+            };
+            document.getElementById("timestamp").textContent =
+                "Última actualización: " + now.toLocaleString("es-ES", options);
+        }
 
 
-    let mouseX = 0, mouseY = 0;
-    document.addEventListener("mousemove", (e) => {
-      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-    });
+        let mouseX = 0,
+            mouseY = 0;
+        document.addEventListener("mousemove", (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
 
-    function animateParticles() {
-      const particles = document.querySelectorAll(".particle");
-      particles.forEach((particle, index) => {
-        const speed = ((index % 3) + 1) * 0.2;
-        const x = mouseX * speed * 15;
-        const y = mouseY * speed * 15;
-        particle.style.transform = `translate(${x}px, ${y}px)`;
-      });
-      requestAnimationFrame(animateParticles);
-    }
+        function animateParticles() {
+            const particles = document.querySelectorAll(".particle");
+            particles.forEach((particle, index) => {
+                const speed = ((index % 3) + 1) * 0.2;
+                const x = mouseX * speed * 15;
+                const y = mouseY * speed * 15;
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+            requestAnimationFrame(animateParticles);
+        }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      createParticles();
-      updateTimestamp();
-      checkAPIHealth();
-      animateParticles();
-    });
+        document.addEventListener("DOMContentLoaded", () => {
+            createParticles();
+            updateTimestamp();
+            checkAPIHealth();
+            animateParticles();
+        });
 
-    window.addEventListener('resize', () => {
-      const container = document.getElementById("particles");
-      container.innerHTML = '';
-      createParticles();
-    });
-  </script>
+        window.addEventListener('resize', () => {
+            const container = document.getElementById("particles");
+            container.innerHTML = '';
+            createParticles();
+        });
+    </script>
 </body>
 
 </html>

@@ -1,43 +1,41 @@
-/**
- * Express application setup for InvoLuck Backend
- * Configures middleware, routes, and error handling
- */
-
-import express from 'express';
-import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
-import pinoHttp from 'pino-http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Import configuration
-import { isDevelopment, SECURITY_HEADERS } from './config/env.js';
-import corsMiddleware from './config/cors.js';
-import { generalRateLimit } from './config/rateLimit.js';
-import { httpLoggerConfig } from './config/logger.js';
+import express from 'express';
+import mongoSanitize from 'express-mongo-sanitize';
+import helmet from 'helmet';
+import pinoHttp from 'pino-http';
 
-// Import middleware
-import { requestIdMiddleware } from './middlewares/requestId.js';
-import { errorHandler } from './middlewares/error.js';
-import { notFoundHandler } from './middlewares/notFound.js';
+import corsMiddleware from './config/cors';
+import { isDevelopment, SECURITY_HEADERS } from './config/env';
+import { httpLoggerConfig } from './config/logger';
+import { generalRateLimit } from './config/rateLimit';
+import { errorHandler } from './middlewares/error';
+import { notFoundHandler } from './middlewares/notFound';
+import { requestIdMiddleware } from './middlewares/requestId';
+import routes from './routes/index';
 
-// Import routes
-import routes from './routes/index.js';
-
-// Create Express application
 const app = express();
 
-// Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let currentFile: string;
+let currentDir: string;
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, '../public')));
+if (process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined) {
+  try {
+    currentFile = typeof __filename !== 'undefined' ? __filename : '/app';
+    currentDir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+  } catch {
+    currentFile = '/app';
+    currentDir = process.cwd();
+  }
+} else {
+  currentFile = fileURLToPath(import.meta.url);
+  currentDir = path.dirname(currentFile);
+}
 
-// Trust proxy (for reverse proxies like nginx, AWS ALB, etc.)
+app.use(express.static(path.join(currentDir, '../public')));
 app.set('trust proxy', 1);
 
-// Security middleware
 if (SECURITY_HEADERS) {
   app.use(
     helmet({
@@ -47,98 +45,65 @@ if (SECURITY_HEADERS) {
           styleSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com'],
           scriptSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'https:'],
-          fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
-        },
+          fontSrc: ["'self'", 'https://cdnjs.cloudflare.com']
+        }
       },
-      crossOriginEmbedderPolicy: false,
+      crossOriginEmbedderPolicy: false
     })
   );
 }
 
-// Request ID middleware (before logging)
 app.use(requestIdMiddleware);
-
-// HTTP request logging
 app.use(pinoHttp(httpLoggerConfig));
-
-// CORS configuration
 app.use(corsMiddleware);
-
-// Rate limiting
 app.use(generalRateLimit);
 
-// Body parsing middleware
 app.use(
   express.json({
     limit: '10mb',
     verify: (req, _res, buf) => {
-      // Store raw body for webhook verification if needed
       (req as any).rawBody = buf;
-    },
+    }
   })
 );
 
 app.use(
   express.urlencoded({
     extended: true,
-    limit: '10mb',
+    limit: '10mb'
   })
 );
 
-// Data sanitization
 app.use(mongoSanitize());
 
-// Development middleware
 if (isDevelopment()) {
-  // Additional development middleware can go here
   app.use((_req, res, next) => {
     res.header('X-Development-Mode', 'true');
     next();
   });
 }
 
-// API routes
 app.use('/api/v1', routes);
 
-// Health check endpoint (before catch-all)
-app.get('/health', (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV,
-      version: process.env.npm_package_version || '1.0.0',
-    },
-    requestId: req.id,
-  });
-});
-
-// Basic root endpoint
 app.get('/', (req, res) => {
   const acceptHeader = req.headers.accept || '';
-
   if (acceptHeader.includes('text/html')) {
-    return res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(currentDir, '../public/index.html'));
+    return;
   }
-
-  // Para solicitudes de API, devolver JSON
   res.json({
     success: true,
     data: {
       message: 'InvoLuck Backend API',
       version: '1.0.0',
       documentation: '/api/v1/docs',
-      health: '/health',
+      health: '/health'
     },
-    requestId: req.id,
+    requestId: req.id
   });
 });
 
-// 404 handler (must be after all routes)
 app.use(notFoundHandler);
-
-// Global error handler (must be last)
 app.use(errorHandler);
 
 export default app;
