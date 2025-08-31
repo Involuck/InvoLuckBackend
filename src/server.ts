@@ -1,4 +1,4 @@
-import app from './app';
+import app from './app.js';
 import { connectDatabase } from './config/db';
 import { PORT, NODE_ENV } from './config/env';
 import logger from './config/logger';
