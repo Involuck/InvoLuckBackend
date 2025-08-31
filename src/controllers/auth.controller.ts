@@ -3,13 +3,12 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 
 import logger from '../config/logger.js';
+import RefreshToken from '../models/refreshTokenModel';
 import authService from '../services/auth.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok, created } from '../utils/http.js';
 
 import type { Request, Response } from 'express';
-
-import RefreshToken from '@/models/refreshTokenModel';
 
 class AuthController {
   // ================== REGISTER ==================

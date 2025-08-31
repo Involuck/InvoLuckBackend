@@ -16,9 +16,7 @@
     "sourceMap": true,
     "removeComments": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": "./",
-    "paths": { "@/*": ["src/*"] }
+    "emitDecoratorMetadata": true
   },
   "include": ["src", "src/tests"],
   "exclude": ["node_modules", "dist"],
