@@ -1,23 +1,17 @@
-/**
- * Client routes for InvoLuck Backend
- * Handles client management endpoints
- */
-
 import { Router } from 'express';
-import { authMiddleware } from '../middlewares/auth.js';
+
 import { moderateRateLimit, lenientRateLimit } from '../config/rateLimit.js';
-import { validate } from '../middlewares/validate.js';
+import clientsController from '../controllers/clients.controller.js';
+import { authMiddleware } from '../middlewares/auth.js';
+import { validate, commonSchemas } from '../middlewares/validate.js';
 import {
   createClientSchema,
   updateClientSchema,
-  clientQuerySchema,
+  clientQuerySchema
 } from '../validators/client.schema.js';
-import { commonSchemas } from '../middlewares/validate.js';
-import clientsController from '../controllers/clients.controller.js';
 
 const router = Router();
 
-// All client routes require authentication
 router.use(authMiddleware);
 
 /**
@@ -74,7 +68,7 @@ router.patch(
   moderateRateLimit,
   validate({
     params: commonSchemas.objectIdParam,
-    body: updateClientSchema,
+    body: updateClientSchema
   }),
   clientsController.updateClient
 );

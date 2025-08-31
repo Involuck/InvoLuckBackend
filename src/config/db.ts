@@ -1,9 +1,5 @@
-/**
- * MongoDB database connection configuration for InvoLuck Backend
- * Handles connection, reconnection, and error management
- */
-
 import mongoose from 'mongoose';
+
 import { MONGODB_URI, isDevelopment, isTest } from './env.js';
 import logger from './logger.js';
 
@@ -12,19 +8,15 @@ const connectionOptions: mongoose.ConnectOptions = {
   maxPoolSize: 10,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
-  bufferCommands: false,
+  bufferCommands: false
   /* bufferMaxEntries: 0, */
 };
 
-// Database connection class
 class DatabaseConnection {
   private retryCount = 0;
-  private maxRetries = 5;
-  private retryDelay = 5000;
+  private readonly maxRetries = 5;
+  private readonly retryDelay = 5000;
 
-  /**
-   * Connect to MongoDB database
-   */
   async connect(): Promise<void> {
     try {
       // Set mongoose options
@@ -35,13 +27,12 @@ class DatabaseConnection {
         mongoose.set('debug', true);
       }
 
-      // Connect to database
       await mongoose.connect(MONGODB_URI, connectionOptions);
 
       logger.info({
         msg: 'Connected to MongoDB',
         uri: this.getRedactedUri(MONGODB_URI),
-        env: process.env.NODE_ENV,
+        env: process.env.NODE_ENV
       });
 
       this.retryCount = 0;
@@ -49,16 +40,14 @@ class DatabaseConnection {
       logger.error({
         msg: 'Failed to connect to MongoDB',
         error: error instanceof Error ? error.message : 'Unknown error',
-        retryCount: this.retryCount,
+        retryCount: this.retryCount
       });
 
       await this.handleConnectionError();
     }
   }
 
-  /**
-   * Disconnect from MongoDB database
-   */
+  // Disconnect from database
   async disconnect(): Promise<void> {
     try {
       await mongoose.disconnect();
@@ -66,14 +55,12 @@ class DatabaseConnection {
     } catch (error) {
       logger.error({
         msg: 'Error disconnecting from MongoDB',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   }
 
-  /**
-   * Handle connection errors with retry logic
-   */
+  // Handle database connection error
   private async handleConnectionError(): Promise<void> {
     if (isTest()) {
       throw new Error('Database connection failed in test environment');
@@ -85,7 +72,7 @@ class DatabaseConnection {
         msg: 'Retrying database connection',
         retryCount: this.retryCount,
         maxRetries: this.maxRetries,
-        delay: this.retryDelay,
+        delay: this.retryDelay
       });
 
       await new Promise(resolve => setTimeout(resolve, this.retryDelay));
@@ -96,9 +83,7 @@ class DatabaseConnection {
     }
   }
 
-  /**
-   * Setup database event listeners
-   */
+  // Set up event listeners
   setupEventListeners(): void {
     const db = mongoose.connection;
 
@@ -109,7 +94,7 @@ class DatabaseConnection {
     db.on('error', error => {
       logger.error({
         msg: 'Mongoose connection error',
-        error: error.message,
+        error: error.message
       });
     });
 
@@ -129,9 +114,7 @@ class DatabaseConnection {
     });
   }
 
-  /**
-   * Get redacted database URI for logging
-   */
+  // Get redacted URI
   private getRedactedUri(uri: string): string {
     try {
       const url = new URL(uri);
@@ -144,9 +127,7 @@ class DatabaseConnection {
     }
   }
 
-  /**
-   * Check database connection health
-   */
+  // Check connection health
   async isHealthy(): Promise<boolean> {
     try {
       const state = mongoose.connection.readyState;
@@ -156,15 +137,13 @@ class DatabaseConnection {
     }
   }
 
-  /**
-   * Get database connection status
-   */
+  // Get connection status
   getConnectionStatus(): string {
     const states = {
       0: 'disconnected',
       1: 'connected',
       2: 'connecting',
-      3: 'disconnecting',
+      3: 'disconnecting'
     };
 
     return states[mongoose.connection.readyState as keyof typeof states] || 'unknown';

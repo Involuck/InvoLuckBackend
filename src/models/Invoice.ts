@@ -1,9 +1,6 @@
-/**
- * Invoice model for InvoLuck Backend
- * Mongoose schema for invoice management
- */
+import mongoose, { Schema } from 'mongoose';
 
-import mongoose, { Document, Schema, Types } from 'mongoose';
+import type { Document, Types } from 'mongoose';
 
 // Invoice item interface
 export interface IInvoiceItem {
@@ -70,14 +67,14 @@ export interface IInvoice extends Document {
   updatedAt: Date;
 
   // Instance methods
-  calculateTotals(): void;
-  addPayment(payment: Partial<IPaymentRecord>): void;
-  markAsSent(): void;
-  markAsViewed(): void;
-  markAsPaid(paymentData?: Partial<IPaymentRecord>): void;
-  isOverdue(): boolean;
-  getDaysUntilDue(): number;
-  toJSON(): any;
+  calculateTotals: () => void;
+  addPayment: (payment: Partial<IPaymentRecord>) => void;
+  markAsSent: () => void;
+  markAsViewed: () => void;
+  markAsPaid: (paymentData?: Partial<IPaymentRecord>) => void;
+  isOverdue: () => boolean;
+  getDaysUntilDue: () => number;
+  toJSON: () => any;
 }
 
 // Invoice item schema
@@ -87,54 +84,54 @@ const invoiceItemSchema = new Schema<IInvoiceItem>(
       type: String,
       required: [true, 'Item description is required'],
       trim: true,
-      maxlength: [500, 'Description cannot exceed 500 characters'],
+      maxlength: [500, 'Description cannot exceed 500 characters']
     },
     quantity: {
       type: Number,
       required: [true, 'Quantity is required'],
       min: [0.01, 'Quantity must be greater than 0'],
-      max: [999999.99, 'Quantity too large'],
+      max: [999999.99, 'Quantity too large']
     },
     unitPrice: {
       type: Number,
       required: [true, 'Unit price is required'],
       min: [0, 'Unit price cannot be negative'],
-      max: [999999.99, 'Unit price too large'],
+      max: [999999.99, 'Unit price too large']
     },
     taxRate: {
       type: Number,
       min: [0, 'Tax rate cannot be negative'],
       max: [100, 'Tax rate cannot exceed 100%'],
-      default: 0,
+      default: 0
     },
     discount: {
       type: Number,
       min: [0, 'Discount cannot be negative'],
       max: [100, 'Discount cannot exceed 100%'],
-      default: 0,
+      default: 0
     },
     category: {
       type: String,
       trim: true,
-      maxlength: [50, 'Category cannot exceed 50 characters'],
+      maxlength: [50, 'Category cannot exceed 50 characters']
     },
     unit: {
       type: String,
       trim: true,
-      maxlength: [20, 'Unit cannot exceed 20 characters'],
+      maxlength: [20, 'Unit cannot exceed 20 characters']
     },
     subtotal: {
       type: Number,
-      default: 0,
+      default: 0
     },
     taxAmount: {
       type: Number,
-      default: 0,
+      default: 0
     },
     total: {
       type: Number,
-      default: 0,
-    },
+      default: 0
+    }
   },
   { _id: false }
 );
@@ -144,29 +141,29 @@ const paymentTermsSchema = new Schema<IPaymentTerms>(
   {
     dueDate: {
       type: Date,
-      required: [true, 'Due date is required'],
+      required: [true, 'Due date is required']
     },
     lateFee: {
       type: Number,
       min: [0, 'Late fee cannot be negative'],
-      default: 0,
+      default: 0
     },
     discountRate: {
       type: Number,
       min: [0, 'Discount rate cannot be negative'],
       max: [100, 'Discount rate cannot exceed 100%'],
-      default: 0,
+      default: 0
     },
     discountDays: {
       type: Number,
       min: [0, 'Discount days cannot be negative'],
-      default: 0,
+      default: 0
     },
     paymentMethods: {
       type: [String],
       enum: ['cash', 'check', 'credit_card', 'bank_transfer', 'paypal', 'other'],
-      default: ['bank_transfer'],
-    },
+      default: ['bank_transfer']
+    }
   },
   { _id: false }
 );
@@ -177,28 +174,28 @@ const paymentRecordSchema = new Schema<IPaymentRecord>(
     amount: {
       type: Number,
       required: [true, 'Payment amount is required'],
-      min: [0.01, 'Payment amount must be greater than 0'],
+      min: [0.01, 'Payment amount must be greater than 0']
     },
     date: {
       type: Date,
       required: [true, 'Payment date is required'],
-      default: Date.now,
+      default: Date.now
     },
     method: {
       type: String,
       required: [true, 'Payment method is required'],
-      enum: ['cash', 'check', 'credit_card', 'bank_transfer', 'paypal', 'other'],
+      enum: ['cash', 'check', 'credit_card', 'bank_transfer', 'paypal', 'other']
     },
     reference: {
       type: String,
       trim: true,
-      maxlength: [100, 'Payment reference cannot exceed 100 characters'],
+      maxlength: [100, 'Payment reference cannot exceed 100 characters']
     },
     notes: {
       type: String,
       trim: true,
-      maxlength: [500, 'Payment notes cannot exceed 500 characters'],
-    },
+      maxlength: [500, 'Payment notes cannot exceed 500 characters']
+    }
   },
   { timestamps: true }
 );
@@ -209,37 +206,37 @@ const invoiceSchema = new Schema<IInvoice>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'User ID is required'],
+      required: [true, 'User ID is required']
     },
 
     clientId: {
       type: Schema.Types.ObjectId,
       ref: 'Client',
-      required: [true, 'Client ID is required'],
+      required: [true, 'Client ID is required']
     },
 
     number: {
       type: String,
       required: [true, 'Invoice number is required'],
       trim: true,
-      maxlength: [50, 'Invoice number cannot exceed 50 characters'],
+      maxlength: [50, 'Invoice number cannot exceed 50 characters']
     },
 
     issueDate: {
       type: Date,
       required: [true, 'Issue date is required'],
-      default: Date.now,
+      default: Date.now
     },
 
     dueDate: {
       type: Date,
-      required: [true, 'Due date is required'],
+      required: [true, 'Due date is required']
     },
 
     status: {
       type: String,
       enum: ['draft', 'sent', 'viewed', 'paid', 'overdue', 'cancelled'],
-      default: 'draft',
+      default: 'draft'
     },
 
     items: {
@@ -249,57 +246,57 @@ const invoiceSchema = new Schema<IInvoice>(
         validator: function (v: IInvoiceItem[]) {
           return v.length > 0 && v.length <= 100;
         },
-        message: 'Invoice must have between 1 and 100 items',
-      },
+        message: 'Invoice must have between 1 and 100 items'
+      }
     },
 
     subtotal: {
       type: Number,
       min: [0, 'Subtotal cannot be negative'],
-      default: 0,
+      default: 0
     },
 
     taxRate: {
       type: Number,
       min: [0, 'Tax rate cannot be negative'],
       max: [100, 'Tax rate cannot exceed 100%'],
-      default: 0,
+      default: 0
     },
 
     taxAmount: {
       type: Number,
       min: [0, 'Tax amount cannot be negative'],
-      default: 0,
+      default: 0
     },
 
     discountType: {
       type: String,
       enum: ['percentage', 'fixed'],
-      default: 'percentage',
+      default: 'percentage'
     },
 
     discountValue: {
       type: Number,
       min: [0, 'Discount value cannot be negative'],
-      default: 0,
+      default: 0
     },
 
     discountAmount: {
       type: Number,
       min: [0, 'Discount amount cannot be negative'],
-      default: 0,
+      default: 0
     },
 
     shippingCost: {
       type: Number,
       min: [0, 'Shipping cost cannot be negative'],
-      default: 0,
+      default: 0
     },
 
     total: {
       type: Number,
       min: [0, 'Total cannot be negative'],
-      default: 0,
+      default: 0
     },
 
     currency: {
@@ -307,37 +304,37 @@ const invoiceSchema = new Schema<IInvoice>(
       required: [true, 'Currency is required'],
       uppercase: true,
       length: [3, 'Currency must be a 3-letter code'],
-      default: 'USD',
+      default: 'USD'
     },
 
     notes: {
       type: String,
       trim: true,
-      maxlength: [1000, 'Notes cannot exceed 1000 characters'],
+      maxlength: [1000, 'Notes cannot exceed 1000 characters']
     },
 
     terms: {
       type: String,
       trim: true,
-      maxlength: [1000, 'Terms cannot exceed 1000 characters'],
+      maxlength: [1000, 'Terms cannot exceed 1000 characters']
     },
 
     paymentTerms: paymentTermsSchema,
 
     payments: {
       type: [paymentRecordSchema],
-      default: [],
+      default: []
     },
 
     totalPaid: {
       type: Number,
       min: [0, 'Total paid cannot be negative'],
-      default: 0,
+      default: 0
     },
 
     remainingBalance: {
       type: Number,
-      default: 0,
+      default: 0
     },
 
     sentAt: Date,
@@ -350,20 +347,20 @@ const invoiceSchema = new Schema<IInvoice>(
         validator: function (v: string[]) {
           return v.length <= 10;
         },
-        message: 'Maximum 10 tags allowed',
+        message: 'Maximum 10 tags allowed'
       },
-      default: [],
+      default: []
     },
 
     metadata: {
       type: Schema.Types.Mixed,
-      default: {},
-    },
+      default: {}
+    }
   },
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
 
@@ -473,7 +470,7 @@ invoiceSchema.methods.addPayment = function (payment: Partial<IPaymentRecord>): 
     date: payment.date || new Date(),
     method: payment.method!,
     reference: payment.reference,
-    notes: payment.notes,
+    notes: payment.notes
   });
 
   // Recalculate total paid
@@ -511,7 +508,7 @@ invoiceSchema.methods.markAsPaid = function (paymentData?: Partial<IPaymentRecor
       amount: paymentData.amount || this.remainingBalance,
       method: paymentData.method || 'other',
       reference: paymentData.reference,
-      notes: paymentData.notes,
+      notes: paymentData.notes
     });
   } else {
     this.status = 'paid';
@@ -548,7 +545,7 @@ invoiceSchema.statics.findByUser = function (userId: Types.ObjectId) {
 invoiceSchema.statics.findOverdue = function () {
   return this.find({
     status: { $in: ['sent', 'viewed', 'overdue'] },
-    dueDate: { $lt: new Date() },
+    dueDate: { $lt: new Date() }
   }).populate('clientId', 'name email company');
 };
 

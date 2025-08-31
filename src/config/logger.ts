@@ -1,22 +1,17 @@
-/**
- * Pino logger configuration for InvoLuck Backend
- * Provides structured logging with request ID correlation
- */
-
 import pino from 'pino';
+
 import { LOG_LEVEL, isDevelopment } from './env.js';
 
-// Base logger configuration
 const loggerConfig: pino.LoggerOptions = {
   level: LOG_LEVEL,
   timestamp: pino.stdTimeFunctions.isoTime,
   formatters: {
-    level: (label: string) => ({ level: label }),
+    level: (label: string) => ({ level: label })
   },
   redact: {
     paths: ['password', 'token', 'authorization', 'cookie'],
-    censor: '[REDACTED]',
-  },
+    censor: '[REDACTED]'
+  }
 };
 
 // Development configuration with pretty printing
@@ -28,8 +23,8 @@ if (isDevelopment()) {
       translateTime: 'SYS:standard',
       ignore: 'pid,hostname',
       singleLine: true,
-      hideObject: false,
-    },
+      hideObject: false
+    }
   };
 }
 
@@ -52,11 +47,11 @@ export const httpLoggerConfig = {
       url: req.url,
       userAgent: req.headers?.['user-agent'],
       ip: req.ip,
-      userId: req.user?.id,
+      userId: req.user?.id
     }),
     res: (res: any) => ({
-      statusCode: res.statusCode,
-    }),
+      statusCode: res.statusCode
+    })
   },
   customLogLevel: (_req: any, res: any) => {
     if (res.statusCode >= 400) return 'warn';
@@ -69,7 +64,7 @@ export const httpLoggerConfig = {
   },
   customErrorMessage: (req: any, res: any) => {
     return `${req.method} ${req.url} - ${res.statusCode}`;
-  },
+  }
 };
 
 export { logger };

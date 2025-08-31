@@ -1,16 +1,21 @@
 # 🎯 InvoLuck Backend
 
-> Professional invoice management system backend built with TypeScript, Express, and MongoDB.
+> Professional invoice management system backend built with TypeScript, Express,
+> and MongoDB.
 
 ## 📋 Overview
 
-InvoLuck Backend is a robust, scalable REST API designed for invoice management and client billing. Built with modern technologies and best practices, it provides a solid foundation for invoice generation, client management, and payment tracking.
+InvoLuck Backend is a robust, scalable REST API designed for invoice management
+and client billing. Built with modern technologies and best practices, it
+provides a solid foundation for invoice generation, client management, and
+payment tracking.
 
 ## 🚀 Features
 
 - **🔐 Authentication & Authorization**: JWT-based auth with role management
 - **👥 Client Management**: Complete CRUD operations for client data
-- **📄 Invoice System**: Create, manage, and track invoices with automatic calculations
+- **📄 Invoice System**: Create, manage, and track invoices with automatic
+  calculations
 - **📧 Email Integration**: Maizzle-powered email templates with Nodemailer
 - **🛡️ Security**: Helmet, CORS, rate limiting, and data sanitization
 - **📊 Analytics**: User and business statistics
@@ -365,7 +370,8 @@ Make sure to set these environment variables in production:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details.
 
 ## 🆘 Support
 

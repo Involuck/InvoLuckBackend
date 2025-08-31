@@ -1,13 +1,6 @@
-/**
- * Client validation schemas for InvoLuck Backend
- * Defines Zod schemas for client-related endpoints
- */
-
 import { z } from 'zod';
 
-/**
- * Address schema (reusable)
- */
+// Address schema (reusable)
 export const addressSchema = z
   .object({
     street: z
@@ -15,13 +8,11 @@ export const addressSchema = z
       .min(1, 'Street is required')
       .max(100, 'Street must not exceed 100 characters')
       .trim(),
-
     city: z
       .string()
       .min(1, 'City is required')
       .max(50, 'City must not exceed 50 characters')
       .trim(),
-
     state: z
       .string()
       .min(1, 'State is required')
@@ -38,13 +29,11 @@ export const addressSchema = z
       .string()
       .min(1, 'Country is required')
       .max(50, 'Country must not exceed 50 characters')
-      .trim(),
+      .trim()
   })
   .optional();
 
-/**
- * Contact person schema
- */
+// Contact person schema
 export const contactPersonSchema = z
   .object({
     name: z
@@ -62,13 +51,11 @@ export const contactPersonSchema = z
       .trim()
       .optional(),
 
-    position: z.string().max(50, 'Position must not exceed 50 characters').trim().optional(),
+    position: z.string().max(50, 'Position must not exceed 50 characters').trim().optional()
   })
   .optional();
 
-/**
- * Create client schema
- */
+// Create client schema
 export const createClientSchema = z.object({
   name: z
     .string()
@@ -108,21 +95,17 @@ export const createClientSchema = z.object({
     .toUpperCase()
     .default('USD'),
 
-  tags: z.array(z.string().max(50)).max(10, 'Maximum 10 tags allowed').default([]),
+  tags: z.array(z.string().max(50)).max(10, 'Maximum 10 tags allowed').default([])
 });
 
-/**
- * Update client schema (all fields optional except restrictions)
- */
+// Update client schema (all fields optional except restrictions)
 export const updateClientSchema = createClientSchema
   .partial()
   .refine(data => Object.keys(data).length > 0, {
-    message: 'At least one field must be provided for update',
+    message: 'At least one field must be provided for update'
   });
 
-/**
- * Client query filters schema
- */
+// Client query filters schema
 export const clientQuerySchema = z.object({
   search: z.string().max(100, 'Search term must not exceed 100 characters').trim().optional(),
 
@@ -145,30 +128,24 @@ export const clientQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
   sort: z.enum(['name', 'email', 'company', 'createdAt', 'updatedAt']).default('createdAt'),
-  order: z.enum(['asc', 'desc']).default('desc'),
+  order: z.enum(['asc', 'desc']).default('desc')
 });
 
-/**
- * Client ID parameter schema
- */
+// Client ID parameter schema
 export const clientParamsSchema = z.object({
-  id: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid client ID format'),
+  id: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid client ID format')
 });
 
-/**
- * Bulk operations schema
- */
+// Bulk operations schema
 export const bulkClientOperationSchema = z.object({
   operation: z.enum(['delete', 'activate', 'deactivate', 'suspend']),
   clientIds: z
     .array(z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid client ID format'))
     .min(1, 'At least one client ID required')
-    .max(100, 'Maximum 100 clients can be processed at once'),
+    .max(100, 'Maximum 100 clients can be processed at once')
 });
 
-/**
- * Import clients schema
- */
+// Import clients schema
 export const importClientsSchema = z.object({
   clients: z
     .array(createClientSchema.omit({ status: true }))
@@ -176,7 +153,7 @@ export const importClientsSchema = z.object({
     .max(1000, 'Maximum 1000 clients can be imported at once'),
 
   skipDuplicates: z.boolean().default(true),
-  updateExisting: z.boolean().default(false),
+  updateExisting: z.boolean().default(false)
 });
 
 // Export types for TypeScript

@@ -1,9 +1,5 @@
-/**
- * Email configuration for InvoLuck Backend
- * Nodemailer setup for SMTP email delivery
- */
-
 import nodemailer from 'nodemailer';
+
 import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, isDevelopment } from './env.js';
 import logger from './logger.js';
 
@@ -12,14 +8,14 @@ const createTransporter = (): nodemailer.Transporter => {
   const config: any = {
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: SMTP_PORT === 465, // true for 465, false for other ports
+    secure: SMTP_PORT === 465 // true for 465, false for other ports
   };
 
   // Add authentication if credentials are provided
   if (SMTP_USER && SMTP_PASS) {
     config.auth = {
       user: SMTP_USER,
-      pass: SMTP_PASS,
+      pass: SMTP_PASS
     };
   }
 
@@ -51,9 +47,7 @@ export interface EmailOptions {
   }>;
 }
 
-/**
- * Send email using configured transporter
- */
+// Send email using configured transporter
 export const sendMail = async (options: EmailOptions): Promise<void> => {
   try {
     const mailOptions = {
@@ -68,7 +62,7 @@ export const sendMail = async (options: EmailOptions): Promise<void> => {
       subject: options.subject,
       html: options.html,
       text: options.text,
-      attachments: options.attachments,
+      attachments: options.attachments
     };
 
     const info = await mailTransporter.sendMail(mailOptions);
@@ -78,22 +72,20 @@ export const sendMail = async (options: EmailOptions): Promise<void> => {
       messageId: info.messageId,
       to: options.to,
       subject: options.subject,
-      preview: isDevelopment() ? nodemailer.getTestMessageUrl(info) : undefined,
+      preview: isDevelopment() ? nodemailer.getTestMessageUrl(info) : undefined
     });
   } catch (error) {
     logger.error({
       msg: 'Failed to send email',
       error: error instanceof Error ? error.message : 'Unknown error',
       to: options.to,
-      subject: options.subject,
+      subject: options.subject
     });
     throw error;
   }
 };
 
-/**
- * Verify email transporter configuration
- */
+// Verify email transporter configuration
 export const verifyMailConfig = async (): Promise<boolean> => {
   try {
     await mailTransporter.verify();
@@ -101,7 +93,7 @@ export const verifyMailConfig = async (): Promise<boolean> => {
       msg: 'Mail transporter configuration verified',
       host: SMTP_HOST,
       port: SMTP_PORT,
-      hasAuth: !!(SMTP_USER && SMTP_PASS),
+      hasAuth: !!(SMTP_USER && SMTP_PASS)
     });
     return true;
   } catch (error) {
@@ -109,7 +101,7 @@ export const verifyMailConfig = async (): Promise<boolean> => {
       msg: 'Mail transporter configuration failed',
       error: error instanceof Error ? error.message : 'Unknown error',
       host: SMTP_HOST,
-      port: SMTP_PORT,
+      port: SMTP_PORT
     });
     return false;
   }
@@ -119,5 +111,5 @@ export const verifyMailConfig = async (): Promise<boolean> => {
 export default {
   transporter: mailTransporter,
   sendMail,
-  verifyConfig: verifyMailConfig,
+  verifyConfig: verifyMailConfig
 };

@@ -1,4 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+
+import type { Document } from 'mongoose';
 // import crypto from 'crypto';
 
 export interface IRefreshToken extends Document {
@@ -17,7 +19,7 @@ const refreshTokenSchema = new Schema<IRefreshToken>(
     token: { type: String, required: true }, // store hashed token
     ip: { type: String },
     userAgent: { type: String },
-    expiresAt: { type: Date, required: true },
+    expiresAt: { type: Date, required: true }
   },
   { timestamps: true }
 );

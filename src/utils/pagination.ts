@@ -1,17 +1,13 @@
-/**
- * Pagination utilities for InvoLuck Backend
- * Handles query parsing and pagination metadata generation
- */
-
-import { Request } from 'express';
 import { z } from 'zod';
+
+import type { Request } from 'express';
 
 // Pagination query schema
 const paginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
   sort: z.string().optional(),
-  order: z.enum(['asc', 'desc']).default('desc'),
+  order: z.enum(['asc', 'desc']).default('desc')
 });
 
 // Pagination options interface
@@ -33,9 +29,7 @@ export interface PaginationMeta {
   hasPrev: boolean;
 }
 
-/**
- * Parse pagination parameters from request query
- */
+// Parse pagination parameters from request query
 export const parsePagination = (req: Request): PaginationOptions => {
   const parsed = paginationSchema.parse(req.query);
 
@@ -44,13 +38,11 @@ export const parsePagination = (req: Request): PaginationOptions => {
     limit: parsed.limit,
     sort: parsed.sort,
     order: parsed.order,
-    skip: (parsed.page - 1) * parsed.limit,
+    skip: (parsed.page - 1) * parsed.limit
   };
 };
 
-/**
- * Generate pagination metadata
- */
+// Generate pagination metadata
 export const generatePaginationMeta = (
   page: number,
   limit: number,
@@ -64,13 +56,11 @@ export const generatePaginationMeta = (
     total,
     totalPages,
     hasNext: page < totalPages,
-    hasPrev: page > 1,
+    hasPrev: page > 1
   };
 };
 
-/**
- * Create Mongoose sort object from pagination options
- */
+// Create Mongoose sort object from pagination options
 export const createSortObject = (options: PaginationOptions): Record<string, 1 | -1> => {
   if (!options.sort) {
     return { createdAt: -1 }; // Default sort by creation date descending
@@ -80,17 +70,13 @@ export const createSortObject = (options: PaginationOptions): Record<string, 1 |
   return { [options.sort]: sortDirection };
 };
 
-/**
- * Paginated result interface
- */
+// Paginated result interface
 export interface PaginatedResult<T> {
   data: T[];
   pagination: PaginationMeta;
 }
 
-/**
- * Create paginated response helper
- */
+// Create paginated response helper
 export const createPaginatedResponse = <T>(
   data: T[],
   total: number,
@@ -100,13 +86,11 @@ export const createPaginatedResponse = <T>(
 
   return {
     data,
-    pagination,
+    pagination
   };
 };
 
-/**
- * Validate and sanitize sort field
- */
+// Validate and sanitize sort field
 export const sanitizeSortField = (
   sortField: string,
   allowedFields: string[]
@@ -124,13 +108,11 @@ export const sanitizeSortField = (
   return undefined;
 };
 
-/**
- * Get allowed sort fields for common models
- */
+// Get allowed sort fields for common models
 export const CommonSortFields = {
   user: ['email', 'name', 'createdAt', 'updatedAt'],
   client: ['name', 'email', 'company', 'createdAt', 'updatedAt'],
-  invoice: ['number', 'amount', 'status', 'dueDate', 'createdAt', 'updatedAt'],
+  invoice: ['number', 'amount', 'status', 'dueDate', 'createdAt', 'updatedAt']
 } as const;
 
 export default {
@@ -139,5 +121,5 @@ export default {
   createSortObject,
   createPaginatedResponse,
   sanitizeSortField,
-  CommonSortFields,
+  CommonSortFields
 };

@@ -1,0 +1,63 @@
+{
+  "preset": "ts-jest/presets/default-esm",
+  "testEnvironment": "node",
+  "extensionsToTreatAsEsm": [".ts"],
+  "setupFilesAfterEnv": ["<rootDir>/src/tests/setup.ts"],
+  "testMatch": [
+    "<rootDir>/src/tests/**/*.test.ts",
+    "<rootDir>/src/tests/**/*.spec.ts"
+  ],
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/**/*.d.ts",
+    "!src/types/**/*",
+    "!src/config/database.ts",
+    "!src/server.ts",
+    "!src/tests/**/*"
+  ],
+  "coverageDirectory": "coverage",
+  "coverageReporters": ["text", "lcov", "html"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@tests/(.*)$": "<rootDir>/src/tests/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
+  "transform": {
+    "^.+\\.ts$": [
+      "ts-jest",
+      {
+        "useESM": true,
+        "tsconfig": {
+          "module": "esnext",
+          "target": "es2022",
+          "lib": ["es2022"],
+          "allowJs": true,
+          "skipLibCheck": true,
+          "esModuleInterop": true,
+          "allowSyntheticDefaultImports": true,
+          "strict": true,
+          "forceConsistentCasingInFileNames": true,
+          "moduleResolution": "node",
+          "resolveJsonModule": true,
+          "isolatedModules": true,
+          "noEmit": true,
+          "experimentalDecorators": true,
+          "emitDecoratorMetadata": true
+        }
+      }
+    ]
+  },
+  "transformIgnorePatterns": ["node_modules/(?!(mongodb-memory-server)/)"],
+  "moduleFileExtensions": ["ts", "js", "json"],
+  "testTimeout": 30000,
+  "verbose": true,
+  "forceExit": true,
+  "detectOpenHandles": true,
+  "maxWorkers": 1,
+  "clearMocks": true,
+  "resetMocks": true,
+  "restoreMocks": true,
+  "testEnvironmentOptions": {
+    "NODE_ENV": "test"
+  }
+}

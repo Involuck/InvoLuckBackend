@@ -1,27 +1,24 @@
 # Multi-stage Dockerfile for InvoLuck Backend
 # Optimized for production deployment with security and performance best practices
 
-# Stage 1: Build dependencies and compile TypeScript
+########################
+# Stage 1: Builder
+########################
 FROM node:18-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Install system dependencies for native modules
-RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    git
+RUN apk add --no-cache python3 make g++ git bash curl
 
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm ci --only=production --ignore-scripts && \
-    npm cache clean --force
+# Install all dependencies (including local packages)
+RUN npm ci
 
-# Copy source code
+# Copy all source code
 COPY . .
 
 # Build email templates
@@ -30,32 +27,31 @@ RUN npm run email:build
 # Build TypeScript
 RUN npm run build
 
-# Remove dev dependencies and files not needed in production
+# Remove development files not needed in production
 RUN rm -rf src/ \
-    .eslintrc.cjs \
-    .prettierrc.json \
-    jest.config.ts \
-    nodemon.json \
-    tsconfig.json \
-    .env.example \
-    .gitignore \
-    README.md \
-    src/emails/maizzle/
+  .eslintrc.cjs \
+  .prettierrc.json \
+  jest.config.ts \
+  nodemon.json \
+  tsconfig.json \
+  .env.example \
+  .gitignore \
+  README.md \
+  src/emails/maizzle/
 
-# Stage 2: Production image
+########################
+# Stage 2: Production
+########################
 FROM node:18-alpine AS production
 
-# Create non-root user for security
+# Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S involuck -u 1001
+  adduser -S involuck -u 1001
 
-# Set working directory
 WORKDIR /app
 
-# Install only production runtime dependencies
-RUN apk add --no-cache \
-    dumb-init \
-    curl
+# Install only runtime dependencies
+RUN apk add --no-cache dumb-init curl
 
 # Copy built application from builder stage
 COPY --from=builder --chown=involuck:nodejs /app/dist ./dist
@@ -64,8 +60,7 @@ COPY --from=builder --chown=involuck:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=involuck:nodejs /app/src/emails/compiled ./src/emails/compiled
 
 # Create logs directory
-RUN mkdir -p /app/logs && \
-    chown involuck:nodejs /app/logs
+RUN mkdir -p /app/logs && chown involuck:nodejs /app/logs
 
 # Switch to non-root user
 USER involuck
@@ -75,7 +70,7 @@ EXPOSE 5000
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:5000/health || exit 1
+  CMD curl -f http://localhost:5000/health || exit 1
 
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
@@ -85,10 +80,10 @@ CMD ["node", "dist/server.js"]
 
 # Metadata
 LABEL \
-    org.opencontainers.image.title="InvoLuck Backend" \
-    org.opencontainers.image.description="Professional invoice management system backend" \
-    org.opencontainers.image.version="1.0.0" \
-    org.opencontainers.image.authors="InvoLuck Team <team@involuck.dev>" \
-    org.opencontainers.image.url="https://involuck.dev" \
-    org.opencontainers.image.source="https://github.com/involuck/backend" \
-    org.opencontainers.image.licenses="MIT"
+  org.opencontainers.image.title="InvoLuck Backend" \
+  org.opencontainers.image.description="Professional invoice management system backend" \
+  org.opencontainers.image.version="1.0.0" \
+  org.opencontainers.image.authors="InvoLuck Team <team@involuck.dev>" \
+  org.opencontainers.image.url="https://involuck.dev" \
+  org.opencontainers.image.source="https://github.com/involuck/backend" \
+  org.opencontainers.image.licenses="MIT"

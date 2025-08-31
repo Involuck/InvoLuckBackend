@@ -1,26 +1,23 @@
-/**
- * CORS configuration for InvoLuck Backend
- * Configures Cross-Origin Resource Sharing with environment-based origins
- */
-
 import cors from 'cors';
+
 import { CORS_ORIGIN, isDevelopment } from './env.js';
 import logger from './logger.js';
 
-// Parse allowed origins from environment
 const getAllowedOrigins = (): string[] => {
-  const origins = CORS_ORIGIN.split(',').map(origin => origin.trim());
+  if (!CORS_ORIGIN) return [];
 
-  // In development, allow all localhost origins
+  const origins = CORS_ORIGIN.split(',')
+    .map(o => o.trim())
+    .filter(Boolean);
+
   if (isDevelopment()) {
-    const developmentOrigins = [
+    const localOrigins = [
       'http://localhost:3000',
       'http://localhost:3001',
       'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001',
+      'http://127.0.0.1:3001'
     ];
-
-    return [...new Set([...origins, ...developmentOrigins])];
+    return [...new Set([...origins, ...localOrigins])];
   }
 
   return origins;
@@ -28,30 +25,27 @@ const getAllowedOrigins = (): string[] => {
 
 const allowedOrigins = getAllowedOrigins();
 
-// CORS configuration
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) {
-      return callback(null, true);
+      callback(null, true);
+      return;
     }
 
-    // Check if origin is allowed
     if (allowedOrigins.includes(origin)) {
-      logger.debug(`CORS: Allowing origin ${origin}`);
-      return callback(null, true);
+      if (isDevelopment()) logger.debug({ msg: 'CORS allowed', origin });
+      callback(null, true);
+      return;
     }
 
-    // In development, be more permissive
     if (isDevelopment()) {
-      logger.debug(`CORS: Allowing development origin ${origin}`);
-      return callback(null, true);
+      logger.debug({ msg: 'CORS allowed (dev override)', origin });
+      callback(null, true);
+      return;
     }
 
-    // Reject origin
-    logger.warn(`CORS: Blocking origin ${origin}`);
-    const error = new Error(`Origin ${origin} not allowed by CORS policy`);
-    callback(error, false);
+    logger.warn({ msg: 'CORS blocked', origin });
+    callback(new Error(`Origin ${origin} not allowed by CORS policy`), false);
   },
 
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -64,30 +58,23 @@ const corsOptions: cors.CorsOptions = {
     'Authorization',
     'Cache-Control',
     'X-Request-ID',
+    'X-API-Key'
   ],
 
   exposedHeaders: ['X-Request-ID', 'X-Total-Count', 'X-Page-Count'],
 
   credentials: true,
-
-  // Preflight cache time (24 hours)
   maxAge: 86400,
-
-  // Include successful OPTIONS requests in logs
-  optionsSuccessStatus: 200,
+  optionsSuccessStatus: 200
 };
 
-// Create CORS middleware
 const corsMiddleware = cors(corsOptions);
 
-// Log CORS configuration on startup
 logger.info({
   msg: 'CORS configuration loaded',
-  allowedOrigins: isDevelopment() ? 'All localhost origins + configured origins' : allowedOrigins,
-  isDevelopment: isDevelopment(),
+  allowedOrigins: isDevelopment() ? 'All localhost + configured origins' : allowedOrigins,
+  isDevelopment: isDevelopment()
 });
 
-// Export both named and default exports
-export { allowedOrigins };
-export { corsMiddleware };
+export { allowedOrigins, corsMiddleware };
 export default corsMiddleware;

@@ -1,9 +1,4 @@
-/**
- * Async handler wrapper for InvoLuck Backend
- * Wraps async route handlers to properly catch and forward errors
- */
-
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 type AsyncRequestHandler = (
   req: Request,

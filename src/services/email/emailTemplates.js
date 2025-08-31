@@ -4,8 +4,8 @@ export const emailTemplates = {
     subject: 'Test Email - InvoLuck API',
     getReplacements: d => ({
       timestamp: new Date().toISOString(),
-      environment: d.environment || process.env.NODE_ENV || 'development',
-    }),
+      environment: d.environment || process.env.NODE_ENV || 'development'
+    })
   }),
 
   database: async data => ({
@@ -16,8 +16,8 @@ export const emailTemplates = {
       host: d.connectionInfo?.host || 'Unknown',
       readyState: d.connectionInfo?.readyState || 'Unknown',
       error: d.dbError,
-      timestamp: new Date().toISOString(),
-    }),
+      timestamp: new Date().toISOString()
+    })
   }),
 
   recovery: async data => ({
@@ -25,7 +25,7 @@ export const emailTemplates = {
     subject: 'Service Restored - InvoLuck API',
     getReplacements: d => ({
       timestamp: new Date().toISOString(),
-      message: d.message || 'Service restored successfully',
-    }),
-  }),
+      message: d.message || 'Service restored successfully'
+    })
+  })
 };

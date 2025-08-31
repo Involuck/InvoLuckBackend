@@ -1,30 +1,66 @@
-# Prettier ignore patterns for InvoLuck Backend
-
-# Build outputs
-dist/
-build/
-
 # Dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Email templates (compiled)
-src/emails/compiled/
+# Build files
+dist/
+build/
+out/
+.next/
 
-# Coverage reports
-coverage/
-
-# Environment files
-.env
-.env.*
-
-# Logs
+# Development files
+.env*
+.DS_Store
 *.log
-logs/
 
-# Package lock files
+# Coverage and tests
+coverage/
+.nyc_output/
+junit.xml
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Lock files
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
 # Generated files
-*.d.ts
+*.d.ts.map
+*.js.map
+
+# Generated documentation
+docs/generated/
+api-docs/
+
+# Configuration files that should not be formatted
+*.min.js
+*.min.css
+*.bundle.js
+
+# Database files
+*.sqlite
+*.db
+
+# Binary files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.ico
+*.svg
+*.woff
+*.woff2
+*.ttf
+*.eot

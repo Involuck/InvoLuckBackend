@@ -1,19 +1,18 @@
-/**
- * Authentication service for InvoLuck Backend
- * Handles user registration, login, and token management
- */
+import jwt from 'jsonwebtoken';
 
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import { User, IUser } from '../models/User.js';
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env.js';
-import { ApiErrors } from '../utils/ApiError.js';
 import logger from '../config/logger.js';
-import {
+import { User } from '../models/User.js';
+import { ApiErrors } from '../utils/ApiError.js';
+
+import type { IUser } from '../models/User.js';
+import type {
   RegisterInput,
   LoginInput,
   ChangePasswordInput,
-  UpdateProfileInput,
+  UpdateProfileInput
 } from '../validators/auth.schema.js';
+import type { Secret, SignOptions } from 'jsonwebtoken';
 // import { string, undefined } from 'zod';
 
 // Auth response interface
@@ -45,9 +44,7 @@ export interface UserProfile {
 }
 
 class AuthService {
-  /**
-   * Generate JWT token for user
-   */
+  // Generate JWT token for user
   private generateToken(userId: string, email: string): string {
     return jwt.sign(
       { id: userId, email },
@@ -56,9 +53,7 @@ class AuthService {
     );
   }
 
-  /**
-   * Create auth response object
-   */
+  // Create auth response object
   private createAuthResponse(user: IUser): AuthResponse {
     const token = this.generateToken((user as any)._id.toString(), user.email);
 
@@ -70,23 +65,19 @@ class AuthService {
         role: user.role,
         isEmailVerified: user.isEmailVerified,
         preferences: user.preferences,
-        createdAt: user.createdAt,
+        createdAt: user.createdAt
       },
       token,
-      expiresIn: JWT_EXPIRES_IN,
+      expiresIn: JWT_EXPIRES_IN
     };
   }
 
-  /**
-   * Public wrapper for generating access tokens
-   */
+  // Public wrapper for generating access tokens
   public issueAccessToken(userId: string, email: string): string {
     return this.generateToken(userId, email);
   }
 
-  /**
-   * Register new user
-   */
+  // Register new user
   async register(userData: RegisterInput): Promise<AuthResponse> {
     try {
       // Check if user already exists
@@ -99,7 +90,7 @@ class AuthService {
       const user = new User({
         name: userData.name,
         email: userData.email,
-        password: userData.password,
+        password: userData.password
       });
 
       await user.save();
@@ -107,7 +98,7 @@ class AuthService {
       logger.info({
         msg: 'User registered successfully',
         userId: (user as any)._id.toString(),
-        email: user.email,
+        email: user.email
       });
 
       return this.createAuthResponse(user);
@@ -115,22 +106,21 @@ class AuthService {
       logger.error({
         msg: 'User registration failed',
         email: userData.email,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
-      
+
       throw error;
     }
   }
 
-  /**
-   * Authenticate user login
-   */
+  // Authenticate user login
   async login(credentials: LoginInput): Promise<AuthResponse> {
     try {
       // Find user with password
-      const user = await User.findOne({ email: credentials.email, isActive: true }).select(
-        '+password'
-      );
+      const user = await User.findOne({
+        email: credentials.email,
+        isActive: true
+      }).select('+password');
 
       if (!user) {
         throw ApiErrors.unauthorized('Invalid email or password');
@@ -149,7 +139,7 @@ class AuthService {
       logger.info({
         msg: 'User logged in successfully',
         userId: (user as any)._id.toString(),
-        email: user.email,
+        email: user.email
       });
 
       return this.createAuthResponse(user);
@@ -157,15 +147,13 @@ class AuthService {
       logger.warn({
         msg: 'Login attempt failed',
         email: credentials.email,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Get user profile by ID
-   */
+  // Get user profile by ID
   async getProfile(userId: string): Promise<UserProfile> {
     try {
       const user = await User.findById(userId);
@@ -183,28 +171,26 @@ class AuthService {
         preferences: user.preferences,
         avatarUrl: user.avatar || '',
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
+        updatedAt: user.updatedAt
       };
     } catch (error) {
       logger.error({
         msg: 'Failed to get user profile',
         userId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Update user profile
-   */
+  // Update user profile
   async updateProfile(userId: string, updateData: UpdateProfileInput): Promise<UserProfile> {
     try {
       // Check if email is being changed and if it's already taken
       if (updateData.email) {
         const existingUser = await User.findOne({
           email: updateData.email,
-          _id: { $ne: userId },
+          _id: { $ne: userId }
         });
 
         if (existingUser) {
@@ -214,7 +200,7 @@ class AuthService {
 
       const user = await User.findByIdAndUpdate(userId, updateData, {
         new: true,
-        runValidators: true,
+        runValidators: true
       });
 
       if (!user) {
@@ -224,7 +210,7 @@ class AuthService {
       logger.info({
         msg: 'User profile updated',
         userId: (user as any)._id.toString(),
-        updatedFields: Object.keys(updateData),
+        updatedFields: Object.keys(updateData)
       });
 
       return {
@@ -236,21 +222,19 @@ class AuthService {
         preferences: user.preferences,
         avatarUrl: user.avatar || '',
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
+        updatedAt: user.updatedAt
       };
     } catch (error) {
       logger.error({
         msg: 'Failed to update user profile',
         userId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Change user password
-   */
+  // Change user password
   async changePassword(userId: string, passwordData: ChangePasswordInput): Promise<void> {
     try {
       const user = await User.findById(userId).select('+password');
@@ -271,20 +255,19 @@ class AuthService {
 
       logger.info({
         msg: 'Password changed successfully',
-        userId: (user as any)._id.toString(),
+        userId: (user as any)._id.toString()
       });
     } catch (error) {
       logger.error({
         msg: 'Password change failed',
         userId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  
-async resetPassword(token: string, newPassword: string, confirmPassword?: string): Promise<void> {
+  async resetPassword(token: string, newPassword: string, confirmPassword?: string): Promise<void> {
     try {
       if (confirmPassword && newPassword !== confirmPassword) {
         throw ApiErrors.badRequest('Passwords do not match');
@@ -293,7 +276,7 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
       const user = await User.findOne({
         passwordResetToken: token,
         passwordResetExpires: { $gt: new Date() },
-        isActive: true,
+        isActive: true
       }).select('+password');
 
       if (!user) throw ApiErrors.badRequest('Invalid or expired password reset token');
@@ -306,21 +289,27 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
 
       await user.save();
 
-      logger.info({ msg: 'Password reset successful', userId: (user as any)._id.toString(), email: user.email });
+      logger.info({
+        msg: 'Password reset successful',
+        userId: (user as any)._id.toString(),
+        email: user.email
+      });
     } catch (error) {
-      logger.error({ msg: 'Password reset failed', error: error instanceof Error ? error.message : 'Unknown error' });
+      logger.error({
+        msg: 'Password reset failed',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
       throw error;
     }
   }
 
-
-
-  /**
-   * Verify JWT token and return user
-   */
+  // Verify JWT token and return user
   async verifyToken(token: string): Promise<IUser> {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { id: string; email: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as {
+        id: string;
+        email: string;
+      };
 
       const user = await User.findById(decoded.id);
       if (!user || !user.isActive) {
@@ -339,9 +328,7 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
     }
   }
 
-  /**
-   * Generate password reset token (stub for future implementation)
-   */
+  // Generate password reset token (stub for future implementation)
   async requestPasswordReset(email: string): Promise<void> {
     try {
       const user = await User.findOne({ email, isActive: true });
@@ -350,7 +337,7 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
         // Don't reveal if email exists
         logger.warn({
           msg: 'Password reset requested for non-existent email',
-          email,
+          email
         });
         return;
       }
@@ -362,7 +349,7 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
       logger.info({
         msg: 'Password reset token generated',
         userId: (user as any)._id.toString(),
-        email: user.email,
+        email: user.email
       });
 
       // await mailService.sendPasswordResetEmail(user.email, resetToken);
@@ -370,15 +357,13 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
       logger.error({
         msg: 'Password reset request failed',
         email,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Deactivate user account
-   */
+  // Deactivate user account
   async deactivateAccount(userId: string): Promise<void> {
     try {
       const user = await User.findByIdAndUpdate(userId, { isActive: false }, { new: true });
@@ -390,21 +375,19 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
       logger.info({
         msg: 'User account deactivated',
         userId: (user as any)._id.toString(),
-        email: user.email,
+        email: user.email
       });
     } catch (error) {
       logger.error({
         msg: 'Account deactivation failed',
         userId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }
   }
 
-  /**
-   * Get user statistics
-   */
+  // Get user statistics
   async getUserStats(userId: string): Promise<{
     totalClients: number;
     totalInvoices: number;
@@ -421,21 +404,21 @@ async resetPassword(token: string, newPassword: string, confirmPassword?: string
         Promise.resolve({
           totalInvoices: 0,
           totalRevenue: 0,
-          pendingInvoices: 0,
-        }),
+          pendingInvoices: 0
+        })
       ]);
 
       return {
         totalClients: clientStats,
         totalInvoices: invoiceStats.totalInvoices || 0,
         totalRevenue: invoiceStats.totalRevenue || 0,
-        pendingInvoices: invoiceStats.pendingInvoices || 0,
+        pendingInvoices: invoiceStats.pendingInvoices || 0
       };
     } catch (error) {
       logger.error({
         msg: 'Failed to get user stats',
         userId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
     }

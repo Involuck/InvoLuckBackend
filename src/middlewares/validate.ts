@@ -1,24 +1,18 @@
-/**
- * Validation middleware for InvoLuck Backend
- * Uses Zod schemas to validate request data
- */
-
-import { Request, Response, NextFunction } from 'express';
 import { z, ZodError } from 'zod';
 
-type ZodSchema = z.ZodSchema;
-import { ApiErrors, ErrorDetail } from '../utils/ApiError.js';
-import { asyncHandler } from '../utils/asyncHandler.js';
 import logger from '../config/logger.js';
+import { ApiErrors } from '../utils/ApiError.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
 
-/**
- * Request parts that can be validated
- */
+import type { ErrorDetail } from '../utils/ApiError.js';
+import type { Request, Response, NextFunction } from 'express';
+
+type ZodSchema = z.ZodSchema;
+
+// Request parts that can be validated
 export type ValidationTarget = 'body' | 'params' | 'query' | 'headers';
 
-/**
- * Validation schemas interface
- */
+// Validation schemas interface
 export interface ValidationSchemas {
   body?: ZodSchema;
   params?: ZodSchema;
@@ -26,20 +20,16 @@ export interface ValidationSchemas {
   headers?: ZodSchema;
 }
 
-/**
- * Convert Zod error to API error details
- */
+// Convert Zod error to API error details
 const formatZodError = (error: ZodError): ErrorDetail[] => {
   return error.errors.map(issue => ({
     field: issue.path.join('.'),
     message: issue.message,
-    code: issue.code,
+    code: issue.code
   }));
 };
 
-/**
- * Validate specific part of request
- */
+// Validate specific part of request
 const validateRequestPart = (data: any, schema: ZodSchema, target: ValidationTarget): any => {
   try {
     return schema.parse(data);
@@ -88,7 +78,7 @@ const validate = (schemas: ValidationSchemas) => {
         msg: 'Request validation successful',
         requestId: req.id,
         path: req.path,
-        method: req.method,
+        method: req.method
       });
 
       next();
@@ -98,7 +88,7 @@ const validate = (schemas: ValidationSchemas) => {
         requestId: req.id,
         path: req.path,
         method: req.method,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
 
       throw error;
@@ -114,23 +104,17 @@ export const validateBody = (schema: ZodSchema) => {
   return validate({ body: schema });
 };
 
-/**
- * Validate only request params
- */
+// Validate only request params
 export const validateParams = (schema: ZodSchema) => {
   return validate({ params: schema });
 };
 
-/**
- * Validate only request query
- */
+// Validate only request query
 export const validateQuery = (schema: ZodSchema) => {
   return validate({ query: schema });
 };
 
-/**
- * Validate file upload
- */
+// Validate file upload
 export const validateFile = (options: {
   required?: boolean;
   maxSize?: number;
@@ -147,7 +131,8 @@ export const validateFile = (options: {
 
     // If no file and not required, skip validation
     if (!file) {
-      return next();
+      next();
+      return;
     }
 
     // Check file size
@@ -167,20 +152,18 @@ export const validateFile = (options: {
       fileName: file.originalname,
       fileSize: file.size,
       mimeType: file.mimetype,
-      requestId: req.id,
+      requestId: req.id
     });
 
     next();
   });
 };
 
-/**
- * Common validation schemas
- */
+// Common validation schemas
 export const commonSchemas = {
   // MongoDB ObjectId parameter
   objectIdParam: z.object({
-    id: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid ObjectId format'),
+    id: z.string().regex(/^[a-fA-F0-9]{24}$/, 'Invalid ObjectId format')
   }),
 
   // Pagination query
@@ -188,13 +171,13 @@ export const commonSchemas = {
     page: z.coerce.number().min(1).optional(),
     limit: z.coerce.number().min(1).max(100).optional(),
     sort: z.string().optional(),
-    order: z.enum(['asc', 'desc']).optional(),
+    order: z.enum(['asc', 'desc']).optional()
   }),
 
   // Search query
   searchQuery: z.object({
-    q: z.string().min(1).max(100).optional(),
-  }),
+    q: z.string().min(1).max(100).optional()
+  })
 };
 
 export { validate };

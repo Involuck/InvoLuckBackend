@@ -1,9 +1,4 @@
-/**
- * Express type extensions for InvoLuck Backend
- * Extends Request interface to include user authentication and request ID
- */
-
-import { Types } from 'mongoose';
+import type { Types } from 'mongoose';
 
 export interface AuthenticatedUser {
   id: string;

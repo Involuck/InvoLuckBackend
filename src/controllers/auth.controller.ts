@@ -1,11 +1,15 @@
-import { Request, Response } from 'express';
+import crypto from 'crypto';
+
+import mongoose from 'mongoose';
+
+import logger from '../config/logger';
+import authService from '../services/auth.service';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ok, created } from '../utils/http';
-import authService from '../services/auth.service';
+
+import type { Request, Response } from 'express';
+
 import RefreshToken from '@/models/refreshTokenModel';
-import crypto from 'crypto';
-import logger from '../config/logger';
-import mongoose from 'mongoose';
 
 class AuthController {
   // ================== REGISTER ==================
@@ -16,7 +20,7 @@ class AuthController {
       msg: 'User registration successful',
       userId: authResponse.user.id,
       email: authResponse.user.email,
-      requestId: req.id,
+      requestId: req.id
     });
 
     return created(res, authResponse);
@@ -26,35 +30,27 @@ class AuthController {
   login = asyncHandler(async (req: Request, res: Response) => {
     const authResponse = await authService.login(req.body);
 
-    // Generate refresh token using userId
-    const refreshToken = await this.createRefreshToken(
-      authResponse.user.id.toString(),
-      req
-    );
+    const refreshToken = await this.createRefreshToken(authResponse.user.id.toString(), req);
 
-    // Set refresh token as HttpOnly cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      sameSite: 'strict',
+      sameSite: 'strict'
     });
 
     logger.info({
       msg: 'User login successful',
       userId: authResponse.user.id,
       email: authResponse.user.email,
-      requestId: req.id,
+      requestId: req.id
     });
 
     return ok(res, authResponse);
   });
 
   // ================== CREATE REFRESH TOKEN ==================
-  private createRefreshToken = async (
-    userId: string,
-    req: Request
-  ): Promise<string> => {
+  private readonly createRefreshToken = async (userId: string, req: Request): Promise<string> => {
     const refreshToken = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
@@ -63,7 +59,7 @@ class AuthController {
       token: hashedToken,
       ip: req.ip,
       userAgent: req.get('User-Agent') || '',
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
     });
 
     return refreshToken;
@@ -73,22 +69,40 @@ class AuthController {
   refreshToken = asyncHandler(async (req: Request, res: Response) => {
     const token = req.cookies.refreshToken || req.body.refreshToken;
     if (!token) {
-      return ok(res, { message: 'Refresh token is required' });
+      return res.status(401).json({
+        success: false,
+        error: {
+          code: 'REFRESH_TOKEN_REQUIRED',
+          message: 'Refresh token is required'
+        },
+        requestId: req.id
+      });
     }
 
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    const tokenDoc = await RefreshToken.findOne({ token: hashedToken }).populate('user');
+    const tokenDoc = await RefreshToken.findOne({
+      token: hashedToken
+    }).populate('user');
 
     if (!tokenDoc || tokenDoc.expiresAt < new Date()) {
-      return ok(res, { message: 'Invalid or expired refresh token' });
+      return res.status(401).json({
+        success: false,
+        error: {
+          code: 'INVALID_REFRESH_TOKEN',
+          message: 'Invalid or expired refresh token'
+        },
+        requestId: req.id
+      });
     }
 
-    // Generate new access token via public method
     const user = tokenDoc.user as any;
-    const newAccessToken = authService.issueAccessToken(
-      user._id.toString(),
-      user.email
-    );
+    const newAccessToken = authService.issueAccessToken(user._id.toString(), user.email);
+
+    logger.info({
+      msg: 'Access token refreshed',
+      userId: user._id.toString(),
+      requestId: req.id
+    });
 
     return ok(res, { token: newAccessToken });
   });
@@ -103,7 +117,12 @@ class AuthController {
 
     res.clearCookie('refreshToken');
 
-    logger.info({ msg: 'User logout', userId: req.user!.id, requestId: req.id });
+    logger.info({
+      msg: 'User logout',
+      userId: req.user?.id,
+      requestId: req.id
+    });
+
     return ok(res, { message: 'Logout successful' });
   });
 
@@ -113,7 +132,7 @@ class AuthController {
     await authService.requestPasswordReset(email);
 
     return ok(res, {
-      message: 'If an account with that email exists, a password reset link has been sent.',
+      message: 'If an account with that email exists, a password reset link has been sent.'
     });
   });
 
@@ -141,7 +160,7 @@ class AuthController {
       msg: 'User profile updated',
       userId,
       updatedFields: Object.keys(req.body),
-      requestId: req.id,
+      requestId: req.id
     });
 
     return ok(res, updatedProfile);
@@ -152,7 +171,12 @@ class AuthController {
     const userId = req.user!.id;
     await authService.changePassword(userId, req.body);
 
-    logger.info({ msg: 'Password changed successfully', userId, requestId: req.id });
+    logger.info({
+      msg: 'Password changed successfully',
+      userId,
+      requestId: req.id
+    });
+
     return ok(res, { message: 'Password changed successfully' });
   });
 

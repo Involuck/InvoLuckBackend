@@ -1,24 +1,14 @@
-/**
- * Server entry point for InvoLuck Backend
- * Starts the Express application and connects to database
- */
+import app from './app';
+import { connectDatabase } from './config/db';
+import { PORT, NODE_ENV } from './config/env';
+import logger from './config/logger';
+import { verifyMailConfig } from './config/mail';
+import { handleAsyncError, handleUncaughtException } from './middlewares/error';
 
-import app from './app.js';
-import { PORT, NODE_ENV } from './config/env.js';
-import { connectDatabase } from './config/db.js';
-import { verifyMailConfig } from './config/mail.js';
-import { handleAsyncError, handleUncaughtException } from './middlewares/error.js';
-import logger from './config/logger.js';
-
-// Handle uncaught exceptions
 process.on('uncaughtException', handleUncaughtException);
 
-// Handle unhandled promise rejections
 process.on('unhandledRejection', handleAsyncError);
 
-/**
- * Start the server
- */
 async function startServer(): Promise<void> {
   try {
     // Connect to database
@@ -39,7 +29,7 @@ async function startServer(): Promise<void> {
         environment: NODE_ENV,
         url: `http://localhost:${PORT}`,
         apiUrl: `http://localhost:${PORT}/api/v1`,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       });
     });
 
@@ -59,24 +49,27 @@ async function startServer(): Promise<void> {
       }, 30000);
     };
 
-    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    process.on('SIGTERM', () => {
+      gracefulShutdown('SIGTERM');
+    });
+    process.on('SIGINT', () => {
+      gracefulShutdown('SIGINT');
+    });
   } catch (error) {
     logger.fatal({
       msg: 'Server startup failed',
       error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
+      stack: error instanceof Error ? error.stack : undefined
     });
     process.exit(1);
   }
 }
 
-// Start the server
 startServer().catch(error => {
   logger.fatal({
     msg: 'Failed to start server',
     error: error.message,
-    stack: error.stack,
+    stack: error.stack
   });
   process.exit(1);
 });

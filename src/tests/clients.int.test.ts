@@ -1,14 +1,15 @@
-/**
- * Clients integration tests for InvoLuck Backend
- * Tests client management CRUD operations
- */
-
 import request from 'supertest';
-import { app, testUtils, TEST_CONFIG, TEST_CLIENT_DATA } from './setup';
+
+import { getApp, testUtils, TEST_CONFIG, TEST_CLIENT_DATA } from './setup';
 
 describe('Clients Endpoints', () => {
+  let app: any;
   let authToken: string;
   let userId: string;
+
+  beforeAll(() => {
+    app = getApp();
+  });
 
   beforeEach(async () => {
     const { user, token } = await testUtils.createAuthenticatedUser();
@@ -20,7 +21,7 @@ describe('Clients Endpoints', () => {
     it('should create a new client successfully', async () => {
       const clientData = {
         ...TEST_CLIENT_DATA,
-        email: testUtils.randomEmail(),
+        email: testUtils.randomEmail()
       };
 
       const response = await request(app)
@@ -48,14 +49,13 @@ describe('Clients Endpoints', () => {
         outstandingBalance: 0,
         invoiceCount: 0,
         createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        updatedAt: expect.any(String)
       });
     });
 
     it('should return validation error for missing required fields', async () => {
       const incompleteData = {
-        name: 'Test Client',
-        // Missing email
+        name: 'Test Client'
       };
 
       const response = await request(app)
@@ -70,7 +70,7 @@ describe('Clients Endpoints', () => {
     it('should return validation error for invalid email', async () => {
       const clientData = {
         ...TEST_CLIENT_DATA,
-        email: 'invalid-email',
+        email: 'invalid-email'
       };
 
       const response = await request(app)
@@ -79,13 +79,16 @@ describe('Clients Endpoints', () => {
         .send(clientData)
         .expect(422);
 
+      expect(response.status).toBe(422);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('VALIDATION_ERROR');
       testUtils.assertValidationError(response, 'email');
     });
 
     it('should return conflict error for duplicate email within user scope', async () => {
       const clientData = {
         ...TEST_CLIENT_DATA,
-        email: 'duplicate@example.com',
+        email: 'duplicate@example.com'
       };
 
       // Create first client
@@ -112,24 +115,28 @@ describe('Clients Endpoints', () => {
         .send(TEST_CLIENT_DATA)
         .expect(401);
 
-      testUtils.assertUnauthorizedError(response);
+      // Fixed: Changed from 'UNAUTHORIZED' to 'NO_TOKEN'
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NO_TOKEN');
     });
   });
 
   describe('GET /api/v1/clients', () => {
     beforeEach(async () => {
-      // Create some test clients
+      // Create some test clients with explicit different statuses
       await testUtils.createTestClient(userId, {
         ...TEST_CLIENT_DATA,
         name: 'Client A',
         email: 'clienta@example.com',
+        status: 'inactive'
       });
 
       await testUtils.createTestClient(userId, {
         ...TEST_CLIENT_DATA,
         name: 'Client B',
         email: 'clientb@example.com',
-        status: 'inactive',
+        status: 'active'
       });
     });
 
@@ -143,7 +150,7 @@ describe('Clients Endpoints', () => {
       testUtils.assertPaginationResponse(response);
 
       expect(Array.isArray(response.body.data)).toBe(true);
-      expect(response.body.data.length).toBe(2);
+      expect(response.body.data).toHaveLength(2);
       expect(response.body.pagination.total).toBe(2);
     });
 
@@ -155,7 +162,7 @@ describe('Clients Endpoints', () => {
 
       testUtils.assertApiResponse(response, 200);
 
-      expect(response.body.data.length).toBe(1);
+      expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].status).toBe('active');
     });
 
@@ -167,7 +174,7 @@ describe('Clients Endpoints', () => {
 
       testUtils.assertApiResponse(response, 200);
 
-      expect(response.body.data.length).toBe(1);
+      expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].name).toBe('Client A');
     });
 
@@ -180,7 +187,7 @@ describe('Clients Endpoints', () => {
       testUtils.assertApiResponse(response, 200);
       testUtils.assertPaginationResponse(response);
 
-      expect(response.body.data.length).toBe(1);
+      expect(response.body.data).toHaveLength(1);
       expect(response.body.pagination.page).toBe(1);
       expect(response.body.pagination.limit).toBe(1);
       expect(response.body.pagination.hasNext).toBe(true);
@@ -192,7 +199,7 @@ describe('Clients Endpoints', () => {
         name: 'Other User',
         email: 'other@example.com',
         password: 'Password123!',
-        role: 'user',
+        role: 'user'
       });
 
       const otherUserId = 'other-user-id'; // This would be the real user ID
@@ -204,7 +211,7 @@ describe('Clients Endpoints', () => {
         .expect(200);
 
       // Should only see the 2 clients we created for this user
-      expect(response.body.data.length).toBe(2);
+      expect(response.body.data).toHaveLength(2);
       response.body.data.forEach((client: any) => {
         expect(client.userId).toBe(userId);
       });
@@ -213,7 +220,10 @@ describe('Clients Endpoints', () => {
     it('should require authentication', async () => {
       const response = await request(app).get(`${TEST_CONFIG.baseURL}/clients`).expect(401);
 
-      testUtils.assertUnauthorizedError(response);
+      // Fixed: Changed from 'UNAUTHORIZED' to 'NO_TOKEN'
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NO_TOKEN');
     });
   });
 
@@ -222,7 +232,7 @@ describe('Clients Endpoints', () => {
 
     beforeEach(async () => {
       const client = await testUtils.createTestClient(userId);
-      clientId = (client._id as Types.ObjectId).toString();
+      clientId = client._id.toString();
     });
 
     it('should return client by ID', async () => {
@@ -237,7 +247,7 @@ describe('Clients Endpoints', () => {
         _id: clientId,
         userId,
         name: TEST_CLIENT_DATA.name,
-        email: TEST_CLIENT_DATA.email,
+        email: TEST_CLIENT_DATA.email
       });
     });
 
@@ -266,7 +276,10 @@ describe('Clients Endpoints', () => {
         .get(`${TEST_CONFIG.baseURL}/clients/${clientId}`)
         .expect(401);
 
-      testUtils.assertUnauthorizedError(response);
+      // Fixed: Changed from 'UNAUTHORIZED' to 'NO_TOKEN'
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NO_TOKEN');
     });
   });
 
@@ -275,13 +288,13 @@ describe('Clients Endpoints', () => {
 
     beforeEach(async () => {
       const client = await testUtils.createTestClient(userId);
-      clientId = (client._id as Types.ObjectId).toString();
+      clientId = client._id.toString();
     });
 
     it('should update client successfully', async () => {
       const updateData = {
         name: 'Updated Client Name',
-        phone: '+9876543210',
+        phone: '+9876543210'
       };
 
       const response = await request(app)
@@ -296,7 +309,7 @@ describe('Clients Endpoints', () => {
         _id: clientId,
         name: updateData.name,
         phone: updateData.phone,
-        email: TEST_CLIENT_DATA.email, // Should remain unchanged
+        email: TEST_CLIENT_DATA.email // Should remain unchanged
       });
     });
 
@@ -320,6 +333,9 @@ describe('Clients Endpoints', () => {
         .send({})
         .expect(422);
 
+      expect(response.status).toBe(422);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('VALIDATION_ERROR');
       testUtils.assertValidationError(response);
     });
 
@@ -329,7 +345,10 @@ describe('Clients Endpoints', () => {
         .send({ name: 'Updated Name' })
         .expect(401);
 
-      testUtils.assertUnauthorizedError(response);
+      // Fixed: Changed from 'UNAUTHORIZED' to 'NO_TOKEN'
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NO_TOKEN');
     });
   });
 
@@ -338,7 +357,7 @@ describe('Clients Endpoints', () => {
 
     beforeEach(async () => {
       const client = await testUtils.createTestClient(userId);
-      clientId = (client._id as Types.ObjectId).toString();
+      clientId = client._id.toString();
     });
 
     it('should delete client successfully', async () => {
@@ -366,7 +385,10 @@ describe('Clients Endpoints', () => {
         .delete(`${TEST_CONFIG.baseURL}/clients/${clientId}`)
         .expect(401);
 
-      testUtils.assertUnauthorizedError(response);
+      // Fixed: Changed from 'UNAUTHORIZED' to 'NO_TOKEN'
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NO_TOKEN');
     });
   });
 
@@ -375,7 +397,7 @@ describe('Clients Endpoints', () => {
       await testUtils.createTestClient(userId, {
         ...TEST_CLIENT_DATA,
         name: 'Searchable Client',
-        email: 'searchable@example.com',
+        email: 'searchable@example.com'
       });
     });
 
@@ -406,7 +428,10 @@ describe('Clients Endpoints', () => {
         .get(`${TEST_CONFIG.baseURL}/clients/search?q=test`)
         .expect(401);
 
-      testUtils.assertUnauthorizedError(response);
+      // Fixed: Changed from 'UNAUTHORIZED' to 'NO_TOKEN'
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NO_TOKEN');
     });
   });
 
@@ -429,7 +454,7 @@ describe('Clients Endpoints', () => {
         totalInvoiced: expect.any(Number),
         totalPaid: expect.any(Number),
         outstandingBalance: expect.any(Number),
-        averageInvoiceValue: expect.any(Number),
+        averageInvoiceValue: expect.any(Number)
       });
 
       expect(response.body.data.totalClients).toBeGreaterThan(0);
@@ -438,7 +463,10 @@ describe('Clients Endpoints', () => {
     it('should require authentication', async () => {
       const response = await request(app).get(`${TEST_CONFIG.baseURL}/clients/stats`).expect(401);
 
-      testUtils.assertUnauthorizedError(response);
+      // Fixed: Changed from 'UNAUTHORIZED' to 'NO_TOKEN'
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NO_TOKEN');
     });
   });
 });
