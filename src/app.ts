@@ -88,22 +88,10 @@ app.use('/api/v1', routes);
 app.get('/', (req, res) => {
   const acceptHeader = req.headers.accept || '';
   if (acceptHeader.includes('text/html')) {
-    res.sendFile(path.join(currentDir, '../public/index.html'), err => {
-      if (err) {
-        res.status(200).json({
-          success: true,
-          data: {
-            message: 'InvoLuck Backend API',
-            version: '1.0.0',
-            documentation: '/api/v1/docs',
-            health: '/health'
-          },
-          requestId: req.id
-        });
-      }
-    });
+    res.redirect('/index.html');
     return;
   }
+
   res.json({
     success: true,
     data: {
