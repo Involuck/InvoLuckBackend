@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 
 import logger from '../config/logger.js';
-import RefreshToken from '../models/refreshTokenModel';
+import RefreshToken from '../models/refreshTokenModel.js';
 import authService from '../services/auth.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok, created } from '../utils/http.js';
