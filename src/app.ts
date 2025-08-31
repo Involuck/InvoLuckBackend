@@ -6,14 +6,14 @@ import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 
-import corsMiddleware from './config/cors';
-import { isDevelopment, SECURITY_HEADERS } from './config/env';
-import { httpLoggerConfig } from './config/logger';
-import { generalRateLimit } from './config/rateLimit';
-import { errorHandler } from './middlewares/error';
-import { notFoundHandler } from './middlewares/notFound';
-import { requestIdMiddleware } from './middlewares/requestId';
-import routes from './routes/index';
+import corsMiddleware from './config/cors.js';
+import { isDevelopment, SECURITY_HEADERS } from './config/env.js';
+import { httpLoggerConfig } from './config/logger.js';
+import { generalRateLimit } from './config/rateLimit.js';
+import { errorHandler } from './middlewares/error.js';
+import { notFoundHandler } from './middlewares/notFound.js';
+import { requestIdMiddleware } from './middlewares/requestId.js';
+import routes from './routes/index.js';
 
 const app = express();
 

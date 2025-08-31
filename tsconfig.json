@@ -18,14 +18,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "paths": { "@/*": ["src/*"] }
   },
   "include": ["src", "src/tests"],
   "exclude": ["node_modules", "dist"],
-  "ts-node": {
-    "esm": true,
-    "require": ["tsconfig-paths/register"]
-  }
+  "ts-node": { "esm": true, "require": ["tsconfig-paths/register"] }
 }

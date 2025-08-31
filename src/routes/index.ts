@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 // Import route modules
-import { checkApiKey } from '../config/apiKey'; // ✅ nuevo
+import { checkApiKey } from '../config/apiKey.js';
 
 import authRoutes from './auth.routes.js';
 import clientsRoutes from './clients.routes.js';
