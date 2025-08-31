@@ -1,3 +1,4 @@
+/* eslint-disable jest/require-top-level-describe */
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
@@ -89,84 +90,82 @@ export const TEST_INVOICE_DATA = {
   shippingCost: 25
 };
 
-describe('Test setup', () => {
-  // Setup MongoDB Memory Server before all tests
-  beforeAll(async () => {
+// Setup MongoDB Memory Server before all tests
+beforeAll(async () => {
+  try {
+    process.env.NODE_ENV = 'test';
+
+    const appModule = await import('../app.js');
+    appInstance = appModule.default;
+
+    // Set up logger to be silent during tests
     try {
-      process.env.NODE_ENV = 'test';
-
-      const appModule = await import('../app.js');
-      appInstance = appModule.default;
-
-      // Set up logger to be silent during tests
-      try {
-        const loggerModule = await import('../config/logger.js');
-        const logger = loggerModule.default || loggerModule.logger;
-        if (logger && typeof logger === 'object' && 'level' in logger) {
-          logger.level = 'silent';
-        }
-      } catch (loggerError) {
-        // Silently continue without logger in tests
-        console.error('❌ Test setup failed:', loggerError);
+      const loggerModule = await import('../config/logger.js');
+      const logger = loggerModule.default || loggerModule.logger;
+      if (logger && typeof logger === 'object' && 'level' in logger) {
+        logger.level = 'silent';
       }
-
-      // Start MongoDB Memory Server
-      mongoServer = await MongoMemoryServer.create({
-        instance: {
-          dbName: TEST_CONFIG.dbName
-        }
-      });
-
-      const mongoUri = mongoServer.getUri();
-
-      // Disconnect any existing connections
-      if (mongoose.connection.readyState !== 0) {
-        await mongoose.disconnect();
-      }
-
-      // Connect to test database
-      await mongoose.connect(mongoUri);
-
-      console.log('✅ Test database connected');
-    } catch (error) {
-      console.error('❌ Test setup failed:', error);
-      process.exit(1);
+    } catch (loggerError) {
+      // Silently continue without logger in tests
+      console.error('❌ Test setup failed:', loggerError);
     }
-  }, TEST_CONFIG.timeout);
 
-  // Cleanup after all tests
-  afterAll(async () => {
-    try {
-      // Close database connection
-      if (mongoose.connection.readyState !== 0) {
-        await mongoose.connection.close();
+    // Start MongoDB Memory Server
+    mongoServer = await MongoMemoryServer.create({
+      instance: {
+        dbName: TEST_CONFIG.dbName
       }
+    });
 
-      // Stop MongoDB Memory Server
-      if (mongoServer) {
-        await mongoServer.stop();
-      }
+    const mongoUri = mongoServer.getUri();
 
-      console.log('✅ Test cleanup completed');
-    } catch (error) {
-      console.error('❌ Test cleanup failed:', error);
+    // Disconnect any existing connections
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
     }
-  }, TEST_CONFIG.timeout);
 
-  // Clear database before each test
-  beforeEach(async () => {
-    try {
-      // Get all collections
-      const collections = mongoose.connection.collections;
+    // Connect to test database
+    await mongoose.connect(mongoUri);
 
-      // Clear all collections
-      const clearPromises = Object.values(collections).map(collection => collection.deleteMany({}));
+    console.log('✅ Test database connected');
+  } catch (error) {
+    console.error('❌ Test setup failed:', error);
+    process.exit(1);
+  }
+}, TEST_CONFIG.timeout);
 
-      await Promise.all(clearPromises);
-    } catch (error) {
-      console.error('❌ Database cleanup failed:', error);
+// Cleanup after all tests
+afterAll(async () => {
+  try {
+    // Close database connection
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
     }
-  });
+
+    // Stop MongoDB Memory Server
+    if (mongoServer) {
+      await mongoServer.stop();
+    }
+
+    console.log('✅ Test cleanup completed');
+  } catch (error) {
+    console.error('❌ Test cleanup failed:', error);
+  }
+}, TEST_CONFIG.timeout);
+
+// Clear database before each test
+beforeEach(async () => {
+  try {
+    // Get all collections
+    const collections = mongoose.connection.collections;
+
+    // Clear all collections
+    const clearPromises = Object.values(collections).map(collection => collection.deleteMany({}));
+
+    await Promise.all(clearPromises);
+  } catch (error) {
+    console.error('❌ Database cleanup failed:', error);
+  }
 });
 
 // Test utilities
