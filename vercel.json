@@ -12,6 +12,14 @@
   ],
   "routes": [
     {
+      "src": "/index.html",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/public/(.*)",
+      "dest": "/public/$1"
+    },
+    {
       "src": "/styles.css",
       "dest": "/public/styles.css"
     },

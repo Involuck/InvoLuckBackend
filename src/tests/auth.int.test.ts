@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import { getApp, testUtils, TEST_CONFIG } from './setup';
+import { getApp, testUtils, TEST_CONFIG } from './setup.js';
 
 describe('Authentication Endpoints (Improved)', () => {
   let app: any;

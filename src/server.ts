@@ -1,9 +1,9 @@
-import app from './app';
-import { connectDatabase } from './config/db';
-import { PORT, NODE_ENV } from './config/env';
-import logger from './config/logger';
-import { verifyMailConfig } from './config/mail';
-import { handleAsyncError, handleUncaughtException } from './middlewares/error';
+import app from './app.js';
+import { connectDatabase } from './config/db.js';
+import { PORT, NODE_ENV } from './config/env.js';
+import logger from './config/logger.js';
+import { verifyMailConfig } from './config/mail.js';
+import { handleAsyncError, handleUncaughtException } from './middlewares/error.js';
 
 process.on('uncaughtException', handleUncaughtException);
 

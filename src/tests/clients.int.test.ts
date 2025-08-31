@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import { getApp, testUtils, TEST_CONFIG, TEST_CLIENT_DATA } from './setup';
+import { getApp, testUtils, TEST_CONFIG, TEST_CLIENT_DATA } from './setup.js';
 
 describe('Clients Endpoints', () => {
   let app: any;

@@ -1,6 +1,6 @@
-import logger from '../config/logger';
-import { asyncHandler } from '../utils/asyncHandler';
-import { ok, created, noContent } from '../utils/http';
+import logger from '../config/logger.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { ok, created, noContent } from '../utils/http.js';
 
 import type { Request, Response } from 'express';
 

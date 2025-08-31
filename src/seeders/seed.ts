@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
-import { connectDatabase } from '../config/db';
-import logger from '../config/logger';
-import { Client } from '../models/Client';
-import { Invoice } from '../models/Invoice';
-import { User } from '../models/User';
+import { connectDatabase } from '../config/db.js';
+import logger from '../config/logger.js';
+import { Client } from '../models/Client.js';
+import { Invoice } from '../models/Invoice.js';
+import { User } from '../models/User.js';
 
-import { seedUsers, seedClients, seedInvoices } from './data';
+import { seedUsers, seedClients, seedInvoices } from './data.js';
 
 // Clear all data from collections
 async function clearDatabase(): Promise<void> {
