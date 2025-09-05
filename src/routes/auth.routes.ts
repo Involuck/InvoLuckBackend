@@ -84,6 +84,10 @@ router.post(
   authController.changePassword
 );
 
+router.get('/verify-email/:token', authController.verifyEmail);
+router.post('/resend-verification', authController.resendVerificationEmail);
+
+
 /**
  * POST /api/v1/auth/logout
  * Logout user (client-side token removal)

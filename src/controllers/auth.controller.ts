@@ -144,6 +144,22 @@ class AuthController {
     return ok(res, { message: 'Password reset successful' });
   });
 
+
+  // ================== VERIFY EMAIL ==================
+verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+  const { token } = req.params;
+  await authService.verifyEmail(token);
+  return ok(res, { message: 'Email verified successfully' });
+});
+
+// ================== RESEND VERIFICATION EMAIL ==================
+resendVerificationEmail = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body;
+  await authService.resendVerificationEmail(email);
+  return ok(res, { message: 'Verification email resent' });
+});
+
+
   // ================== PROFILE ==================
   getProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user!.id;

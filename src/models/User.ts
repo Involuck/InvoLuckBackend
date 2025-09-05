@@ -11,6 +11,7 @@ export interface IUser extends Document {
   role: 'user' | 'admin';
   isEmailVerified: boolean;
   emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   lastLoginAt?: Date;
@@ -80,6 +81,10 @@ const userSchema = new Schema<IUser>(
 
     emailVerificationToken: {
       type: String,
+      select: false
+    },
+    emailVerificationExpires: {
+      type: Date,
       select: false
     },
 
@@ -190,8 +195,11 @@ userSchema.methods.generateEmailVerificationToken = function (): string {
     .update(verificationToken)
     .digest('hex');
 
+  this.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
   return verificationToken;
 };
+
 
 // Override toJSON to exclude sensitive fields
 userSchema.methods.toJSON = function () {

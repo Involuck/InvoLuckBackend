@@ -136,6 +136,14 @@ class AuthService {
       user.lastLoginAt = new Date();
       await user.save();
 
+      // Generate email verification token
+      const verificationToken = user.generateEmailVerificationToken();
+      await user.save();
+
+      // TODO: use mailService here
+      // await mailService.sendVerificationEmail(user.email, verificationToken);
+
+
       logger.info({
         msg: 'User logged in successfully',
         userId: (user as any)._id.toString(),
@@ -152,6 +160,58 @@ class AuthService {
       throw error;
     }
   }
+
+
+  async verifyEmail(token: string): Promise<void> {
+  const hashedToken = require('crypto')
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    emailVerificationToken: hashedToken,
+    emailVerificationExpires: { $gt: new Date() }
+  });
+
+  if (!user) {
+    throw ApiErrors.badRequest('Invalid or expired verification token');
+  }
+
+  user.isEmailVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpires = undefined;
+  await user.save();
+
+  logger.info({
+    msg: 'User email verified successfully',
+    userId: (user as any)._id.toString(),
+    email: user.email
+  });
+}
+  
+async resendVerificationEmail(email: string): Promise<void> {
+  const user = await User.findOne({ email, isActive: true });
+  if (!user) {
+    throw ApiErrors.notFound('User not found');
+  }
+
+  if (user.isEmailVerified) {
+    throw ApiErrors.badRequest('Email is already verified');
+  }
+
+  const verificationToken = user.generateEmailVerificationToken();
+  await user.save();
+
+  // TODO: use mailService here
+  // await mailService.sendVerificationEmail(user.email, verificationToken);
+
+  logger.info({
+    msg: 'Verification email resent',
+    userId: (user as any)._id.toString(),
+    email: user.email
+  });
+}
+
 
   // Get user profile by ID
   async getProfile(userId: string): Promise<UserProfile> {
