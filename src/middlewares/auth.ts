@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { JWT_SECRET } from '../config/env.js';
+import { JWT_EXPIRES_IN, JWT_SECRET } from '../config/env.js';
 import logger from '../config/logger.js';
 import { User } from '../models/User.js';
 import { ApiErrors } from '../utils/ApiError.js';
@@ -12,6 +12,7 @@ import type { Types } from 'mongoose';
 interface JwtPayload {
   id: string;
   email: string;
+  tokenVersion: number; 
   iat: number;
   exp: number;
 }
@@ -62,7 +63,7 @@ const authMiddleware = asyncHandler(async (req: Request, _res: Response, next: N
   const decoded = verifyToken(token);
 
   const user = await User.findById(decoded.id).select(
-    '_id email name role isEmailVerified preferences createdAt'
+    '_id email name role isEmailVerified preferences createdAt tokenVersion'
   );
 
   if (!user) {
@@ -91,6 +92,22 @@ const authMiddleware = asyncHandler(async (req: Request, _res: Response, next: N
     requestId: req.id
   });
 
+  if (!user || !user.isActive) {
+  logger.warn({
+    msg: 'Token valid but user inactive or not found',
+    userId: decoded.id,
+    requestId: req.id
+  });
+  throw ApiErrors.unauthorized('User not found or deactivated', {
+    code: 'USER_NOT_ACTIVE'
+  });
+}
+
+
+
+if (decoded.tokenVersion !== user.tokenVersion) {
+  throw ApiErrors.unauthorized('Token has been revoked', { code: 'TOKEN_REVOKED' });
+}
   next();
 });
 
@@ -107,7 +124,7 @@ export const optionalAuthMiddleware = asyncHandler(
     try {
       const decoded = verifyToken(token);
       const user = await User.findById(decoded.id).select(
-        '_id email name role isEmailVerified preferences createdAt'
+        '_id email name role isEmailVerified preferences createdAt tokenVersion'
       );
 
       if (user) {
@@ -127,6 +144,7 @@ export const optionalAuthMiddleware = asyncHandler(
       });
     }
 
+    
     next();
   }
 );
@@ -193,6 +211,9 @@ export const requireOwnershipOrAdmin = (resourceIdField = 'userId') => {
     next();
   });
 };
+
+
+
 
 export { authMiddleware };
 export default authMiddleware;

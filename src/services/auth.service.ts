@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
-
+import RefreshToken from '../models/refreshTokenModel.js';
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env.js';
 import logger from '../config/logger.js';
 import { User } from '../models/User.js';
 import { ApiErrors } from '../utils/ApiError.js';
-
+import crypto from 'crypto';
 import type { IUser } from '../models/User.js';
 import type {
   RegisterInput,
@@ -45,9 +45,9 @@ export interface UserProfile {
 
 class AuthService {
   // Generate JWT token for user
-  private generateToken(userId: string, email: string): string {
+  private generateToken(userId: string, email: string, tokenVersion: number): string {
     return jwt.sign(
-      { id: userId, email },
+      { id: userId, email, tokenVersion },
       JWT_SECRET as Secret,
       { expiresIn: JWT_EXPIRES_IN } as SignOptions
     );
@@ -55,7 +55,7 @@ class AuthService {
 
   // Create auth response object
   private createAuthResponse(user: IUser): AuthResponse {
-    const token = this.generateToken((user as any)._id.toString(), user.email);
+    const token = this.generateToken((user as any)._id.toString(), user.email, user.tokenVersion);
 
     return {
       user: {
@@ -73,8 +73,8 @@ class AuthService {
   }
 
   // Public wrapper for generating access tokens
-  public issueAccessToken(userId: string, email: string): string {
-    return this.generateToken(userId, email);
+  public issueAccessToken(userId: string, email: string, tokenVersion: number): string {
+    return this.generateToken(userId, email, tokenVersion);
   }
 
   // Register new user
@@ -430,6 +430,7 @@ async resendVerificationEmail(email: string): Promise<void> {
 
       if (!user) {
         throw ApiErrors.notFound('User not found');
+        
       }
 
       logger.info({
@@ -446,6 +447,84 @@ async resendVerificationEmail(email: string): Promise<void> {
       throw error;
     }
   }
+
+  // Delete account (owner or admin)
+  async deleteAccount(userId: string, requesterId: string, requesterRole: string) {
+  if (requesterRole !== 'admin' && userId !== requesterId) {
+    throw ApiErrors.forbidden('Not allowed to delete this account');
+  }
+
+  const user = await User.findByIdAndDelete(userId);
+  if (!user) throw ApiErrors.notFound('User not found');
+}
+
+
+  async requestAccountDeactivation(userId: string): Promise<string> {
+  const user = await User.findById(userId);
+  if (!user) throw ApiErrors.notFound('User not found');
+
+  // Create deactivation token (valid 24h)
+  const token = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  user.deactivationToken = hashedToken;
+  user.deactivationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  await user.save();
+
+  // TODO: send email with token link
+  // await mailService.sendDeactivationEmail(user.email, token);
+
+  return token;
+}
+
+async confirmDeactivateAccount(token: string): Promise<void> {
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await User.findOne({
+    deactivationToken: hashedToken,
+    deactivationTokenExpires: { $gt: new Date() }
+  });
+
+  if (!user) throw ApiErrors.badRequest('Invalid or expired token');
+
+  user.isActive = false;
+  user.deactivationToken = undefined;
+  user.deactivationTokenExpires = undefined;
+  await user.save();
+
+  logger.info({ msg: 'Account deactivated via email confirmation', userId: (user as any)._id.toString() });
+}
+
+
+  
+  // Update user role (admin only)
+  async updateUserRole(userId: string, role: string): Promise<IUser> {
+    if (!['user', 'admin'].includes(role)) throw ApiErrors.badRequest('Invalid role');
+
+    const user = await User.findByIdAndUpdate(userId, { role }, { new: true });
+    if (!user) throw ApiErrors.notFound('User not found');
+    return user;
+  }
+
+  // Logout all devices (invalidate all tokens)
+  async logoutAllDevices(userId: string): Promise<void> {
+  try {
+    // Delete all refresh tokens for this user
+    await RefreshToken.deleteMany({ user: userId });
+
+    // Increment tokenVersion so existing access tokens are invalidated
+    await User.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
+
+    logger.info({ msg: 'User logged out from all devices', userId });
+  } catch (error) {
+    logger.error({
+      msg: 'Failed to logout all devices',
+      userId,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+    throw error;
+  }
+}
 
   // Get user statistics
   async getUserStats(userId: string): Promise<{
@@ -484,6 +563,8 @@ async resendVerificationEmail(email: string): Promise<void> {
     }
   }
 }
+
+
 
 export const authService = new AuthService();
 export default authService;
