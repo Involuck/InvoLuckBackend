@@ -9,9 +9,12 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: 'user' | 'admin';
+  tokenVersion: number;
   isEmailVerified: boolean;
   emailVerificationToken?: string;
   emailVerificationExpires?: Date;
+  deactivationToken?: string;
+  deactivationTokenExpires?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   lastLoginAt?: Date;
@@ -126,6 +129,10 @@ const userSchema = new Schema<IUser>(
         type: String,
         default: 'UTC'
       },
+      tokenVersion: {
+        type: Number,
+        default: 0
+      }, // for logout all devices
       notifications: {
         email: { type: Boolean, default: true },
         browser: { type: Boolean, default: true },

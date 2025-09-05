@@ -95,7 +95,7 @@ class AuthController {
     }
 
     const user = tokenDoc.user as any;
-    const newAccessToken = authService.issueAccessToken(user._id.toString(), user.email);
+    const newAccessToken = authService.issueAccessToken(user._id.toString(), user.email, user.tokenVersion);
 
     logger.info({
       msg: 'Access token refreshed',
@@ -210,6 +210,38 @@ resendVerificationEmail = asyncHandler(async (req: Request, res: Response) => {
     const stats = await authService.getUserStats(userId);
     return ok(res, stats);
   });
+
+  // ================== UPDATE USER ROLE (ADMIN ONLY) ==================
+updateUserRole = asyncHandler(async (req: Request, res: Response) => {
+  const { userId, role } = req.body;
+
+  if (!['user', 'admin'].includes(role)) {
+    return res.status(400).json({ message: 'Invalid role' });
+  }
+
+
+  
+
+  const updatedUser = await authService.updateUserRole(userId, role);
+
+  logger.info({
+    msg: 'User role updated',
+    userId,
+    newRole: role,
+    requestId: req.id
+  });
+
+  return ok(res, updatedUser);
+});
+
+logoutAllDevices = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  await authService.logoutAllDevices(userId);
+
+  return ok(res, { message: 'Logged out from all devices successfully' });
+});
+
+
 }
 
 export default new AuthController();
